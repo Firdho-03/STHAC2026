@@ -1,0 +1,19 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <span class="badge-gold-outline mb-2">BERITA &amp; PENGUMUMAN</span>
+    <h1 class="font-display fw-bold text-uppercase text-white mb-1">Warta STHAC 2026</h1>
+    <p class="text-white-50 mb-0">Informasi resmi dari kepanitiaan South Tangerang Horseback Archery Cup.</p>
+  </div>
+  <div class="row g-4">
+    <% newsList.forEach(n => { %>
+      <div class="col-md-6">
+        <div class="sthac-card p-4 h-100">
+          <span class="badge bg-warning text-dark fw-bold mb-2"><%= n.kategori %></span>
+          <h4 class="font-display fw-bold text-white mb-2"><%= n.judul %></h4>
+          <p class="text-gold-bright small mb-2"><%= n.ringkasan %></p>
+          <p class="text-white-50 small mb-0"><%= n.isiBerita %></p>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>

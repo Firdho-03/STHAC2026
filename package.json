@@ -1,0 +1,30 @@
+{
+  "name": "sthac-horseback-archery",
+  "version": "1.0.0",
+  "description": "Website Event & Kejuaraan Club Panahan Berkuda STHAC",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^18.0.9",
+    "ejs": "^7.0.2",
+    "express": "^4.19.2",
+    "express-ejs-layouts": "^2.5.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^10.2.0",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.10",
+    "prisma": "^5.19.0"
+  },
+  "allowScripts": {
+    "@prisma/client@5.22.0": true,
+    "@prisma/engines@5.22.0": true,
+    "prisma@5.22.0": true
+  }
+}

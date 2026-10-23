@@ -1,0 +1,157 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <span class="badge-gold-outline mb-2">REGULASI &amp; SISTEM PENILAIAN</span>
+    <h1 class="font-display fw-bold text-uppercase text-white mb-2">Aturan &amp; Sistem Penilaian</h1>
+    <p class="text-white-50" style="max-width:850px;line-height:1.65;">
+      Penilaian South Tangerang Horseback Archery Cup mengacu pada sistem <strong class="text-gold-bright">IHAA (International Horseback Archery Alliance)</strong> dan format kelas nasional <strong class="text-gold-bright">Pordasi Berkuda Memanah</strong>. Seluruh perhitungan dilakukan otomatis oleh sistem dan dapat diperiksa terbuka.
+    </p>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <div class="col-lg-6">
+      <div class="sthac-card p-4 p-md-5 h-100">
+        <h3 class="font-display fw-bold text-uppercase text-white mb-3 d-flex align-items-center gap-2">
+          <i class="bi bi-globe text-warning"></i> Sistem IHAA
+        </h3>
+        <p class="text-white-50 small mb-3">
+          IHAA menyatukan aturan lintasan internasional. Ciri utamanya: setiap lintasan punya <strong>par time</strong>, <strong>zona target</strong>, dan <strong>bonus/penalti waktu</strong> yang baku, sehingga hasil dari lintasan berbeda tetap bisa dibandingkan.
+        </p>
+        <ul class="small text-white-50 vstack gap-2 mb-0">
+          <li><i class="bi bi-bullseye text-warning me-2"></i> Jumlah poin zona target yang terkena</li>
+          <li><i class="bi bi-stopwatch text-warning me-2"></i> 1 poin per detik lebih cepat, dikurangi bila lebih lambat dari par time</li>
+          <li><i class="bi bi-award text-warning me-2"></i> Bonus mengenai seluruh target dan bonus khusus (qabaq)</li>
+          <li><i class="bi bi-check2-circle text-warning me-2"></i> Umumnya skor run tidak bisa kurang dari 0 (kecuali lintasan yang membolehkan negatif)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="sthac-card p-4 p-md-5 h-100">
+        <h3 class="font-display fw-bold text-uppercase text-white mb-3 d-flex align-items-center gap-2">
+          <i class="bi bi-shield-shaded text-warning"></i> Pordasi Berkuda Memanah
+        </h3>
+        <p class="text-white-50 small mb-3">
+          Format kelas nasional dipakai untuk kelas yang dipertandingkan dalam seri ini: <strong>Track Lurus</strong>, <strong>Track Circle</strong>, dan <strong>Fast Shooting</strong> (Archery for Horse Riding), dengan kategori kelompok umur/terbuka (<strong>U14, Terbuka</strong>) serta jenjang Beginner, Intermediate, dan Advanced.
+        </p>
+        <ul class="small text-white-50 vstack gap-2 mb-0">
+          <li><i class="bi bi-people text-warning me-2"></i> Kategori peserta: <strong class="text-white">U14, Terbuka</strong></li>
+          <li><i class="bi bi-file-earmark-text text-warning me-2"></i> Parameter lintasan (jarak, jumlah target, par time) mengikuti Technical Handbook tiap seri</li>
+          <li><i class="bi bi-sliders text-warning me-2"></i> Panitia dapat menyesuaikan parameter lintasan melalui Panel Panitia tanpa mengubah cara penilaian</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="sthac-card p-4 p-md-5 mb-5">
+    <h3 class="font-display fw-bold text-uppercase text-white mb-2">Rumus Penilaian Satu Run</h3>
+    <p class="text-white-50 small mb-4">Setiap run dihitung dengan urutan berikut, lalu seluruh skor run dijumlahkan menjadi total kelas.</p>
+    <ol class="small text-white-50 vstack gap-3 mb-0 ps-3" style="line-height:1.7;">
+      <li><strong class="text-white">Poin target</strong> — dijumlahkan dari nilai zona setiap target yang terkena.</li>
+      <li><strong class="text-white">Bonus/penalti waktu</strong> — dibandingkan terhadap par time lintasan, dihitung per detik penuh.</li>
+      <li><strong class="text-white">Pengali bonus waktu</strong> — pada lintasan tertentu bonus waktu dikalikan sesuai jumlah target yang terkena (mis. Tabla-4: 0,5 × bila 1 target, 1 × bila 2 target, 1,5 × bila 3 target atau lebih).</li>
+      <li><strong class="text-white">Bonus tambahan</strong> — bonus mengenai seluruh target dan bonus khusus (mis. tembakan qabaq).</li>
+      <li><strong class="text-white">Batas skor</strong> — skor run tidak boleh kurang dari 0 (kecuali lintasan yang membolehkan skor negatif, mis. Turkish Tabla 90).</li>
+      <li><strong class="text-white">Total kelas</strong> — jumlah seluruh run yang dinilai. Bila kelas menetapkan “buang 1 run terendah”, maka skor terendah tidak dihitung.</li>
+      <li><strong class="text-white">Peringkat</strong> — total tertinggi menjadi juara; bila seri, rider dengan poin target terbanyak lebih tinggi peringkatnya.</li>
+    </ol>
+  </div>
+
+  <div class="sthac-card p-4 p-md-5 mb-5">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-6">
+        <span class="badge-gold-outline mb-2">INTERACTIVE TOOL</span>
+        <h3 class="font-display fw-bold text-uppercase text-white mb-2">Kalkulator Simulasi Skor 1 Run</h3>
+        <p class="text-white-50 small mb-0">Uji coba simulasi perhitungan poin target, par time, dan bonus waktu secara instan.</p>
+      </div>
+      <div class="col-lg-6">
+        <div class="row g-3 small">
+          <div class="col-6"><label class="text-white-50 mb-1">Par Time (dtk)</label><input id="sim-par" type="number" value="14" step="0.1" oninput="calcSim()" class="form-control sthac-input" /></div>
+          <div class="col-6"><label class="text-white-50 mb-1">Waktu Rider (dtk)</label><input id="sim-time" type="number" value="11.5" step="0.1" oninput="calcSim()" class="form-control sthac-input" /></div>
+          <div class="col-4"><label class="text-white-50 mb-1">Target 1</label><input id="sim-t1" type="number" value="5" min="0" max="6" oninput="calcSim()" class="form-control sthac-input text-center" /></div>
+          <div class="col-4"><label class="text-white-50 mb-1">Target 2</label><input id="sim-t2" type="number" value="5" min="0" max="6" oninput="calcSim()" class="form-control sthac-input text-center" /></div>
+          <div class="col-4"><label class="text-white-50 mb-1">Target 3</label><input id="sim-t3" type="number" value="5" min="0" max="6" oninput="calcSim()" class="form-control sthac-input text-center" /></div>
+        </div>
+        <div class="p-3 rounded-4 mt-3 d-flex justify-content-between align-items-center" style="background:rgba(217,180,92,0.12);border:1px solid rgba(217,180,92,0.35);">
+          <div>
+            <small class="text-white-50 d-block">Rincian Perhitungan</small>
+            <small id="sim-breakdown" class="text-warning">Poin Target: 15 + Bonus Waktu: 2.50</small>
+          </div>
+          <span id="sim-total" class="font-display fw-bold fs-2 text-gold">17.50</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <h3 class="font-display fw-bold text-uppercase text-white mb-1">Lintasan &amp; Parameter Penilaian</h3>
+    <p class="text-white-50 small mb-4">Semua parameter di bawah ini dipakai sistem saat menghitung skor. Panitia dapat mengubahnya melalui Panel Panitia &rarr; Lintasan.</p>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <% lintasanList.forEach(l => { %>
+      <div class="col-md-6 col-lg-4">
+        <div class="sthac-card p-4 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge bg-warning text-dark fw-bold"><%= l.sistem %></span>
+              <span class="font-monospace small text-gold"><%= l.kodeLintasan %></span>
+            </div>
+            <h5 class="font-display fw-bold text-white mb-1"><%= l.namaLintasan %></h5>
+            <p class="small text-white-50 mb-3">Panjang: <%= l.panjangMeter %>m · Target: <%= l.jumlahTarget %></p>
+            <ul class="small text-white-50 vstack gap-1 mb-3 ps-3">
+              <li>Zona Target: <strong class="text-white"><%= l.nilaiZonaTarget %></strong></li>
+              <li>Par Time: <strong class="text-white"><%= l.parTime > 0 ? l.parTime + ' dtk' : 'Tanpa Waktu' %></strong></li>
+              <% if (l.bonusSapuBersih > 0) { %><li>Bonus Sapu Bersih: <strong class="text-gold">+<%= l.bonusSapuBersih %> pts</strong></li><% } %>
+            </ul>
+          </div>
+          <div class="pt-3 border-top border-secondary border-opacity-25 small text-white-50">
+            Aturan Overtime: <%= l.aturanOvertime %>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="sthac-card p-4 h-100">
+        <h4 class="font-display fw-bold text-uppercase text-white mb-3">Ketentuan Kelas Seri 1</h4>
+        <div class="table-responsive">
+          <table class="table table-dark sthac-table mb-0 small">
+            <thead><tr><th>Kelas</th><th>Kategori</th><th>Lintasan</th><th>Run</th></tr></thead>
+            <tbody>
+              <tr><td class="fw-bold text-white">Beginner ( Walk )</td><td>U14</td><td>Arena Walk-Trot</td><td>6</td></tr>
+              <tr><td class="fw-bold text-white">Beginner ( Trot )</td><td>Terbuka</td><td>Arena Walk-Trot</td><td>3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="sthac-card p-4 h-100">
+        <h4 class="font-display fw-bold text-uppercase text-white mb-3">Aturan Umum Pertandingan</h4>
+        <ol class="small text-white-50 vstack gap-2 mb-0 ps-3" style="line-height:1.65;">
+          <li>Peserta wajib memakai helm dan sepatu berkuda bertumit.</li>
+          <li>Anak panah wajib diperiksa panitia sebelum lomba; tembakan qabaq hanya dengan flu-flu (blunt).</li>
+          <li>Peserta wajib memakai nomor dada (bib) yang dibagikan panitia.</li>
+          <li>Kuda dan rider diperiksa tim medis sebelum bertanding; panitia berhak menghentikan peserta yang dinilai tidak layak.</li>
+          <li>Keputusan juri mengikat; protes disampaikan tertulis maksimal 15 menit setelah kelas selesai.</li>
+          <li>Peserta yang tidak hadir saat namanya dipanggil tiga kali dianggap mundur.</li>
+          <li>Kesejahteraan kuda diutamakan: kekerasan terhadap kuda berakibat diskualifikasi.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function calcSim() {
+    const par = parseFloat(document.getElementById('sim-par').value) || 0;
+    const t = parseFloat(document.getElementById('sim-time').value) || 0;
+    const pts = (parseFloat(document.getElementById('sim-t1').value)||0) + (parseFloat(document.getElementById('sim-t2').value)||0) + (parseFloat(document.getElementById('sim-t3').value)||0);
+    const bonus = (pts > 0 && par > 0) ? Math.max(0, par - t) : 0;
+    document.getElementById('sim-breakdown').innerText = `Poin Target: ${pts} + Bonus Waktu: ${bonus.toFixed(2)}`;
+    document.getElementById('sim-total').innerText = (pts + bonus).toFixed(2);
+  }
+</script>

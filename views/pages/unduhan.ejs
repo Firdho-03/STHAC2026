@@ -1,0 +1,22 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <span class="badge-gold-outline mb-2">OFFICIAL DOCUMENTS</span>
+    <h1 class="font-display fw-bold text-uppercase text-white mb-1">Pusat Unduhan Dokumen</h1>
+    <p class="text-white-50 mb-0">Technical Handbook (THB), Peraturan Pertandingan, dan Formulir Kolektif Stable.</p>
+  </div>
+  <div class="row g-4">
+    <% dokumenList.forEach(d => { %>
+      <div class="col-md-6">
+        <div class="sthac-card p-4 d-flex justify-content-between align-items-center gap-3">
+          <div>
+            <span class="badge bg-warning text-dark fw-bold me-2"><%= d.kodeBadge %></span>
+            <span class="small text-white-50"><%= d.statusInfo %></span>
+            <h5 class="font-display fw-bold text-white mt-2 mb-1"><%= d.judul %></h5>
+            <small class="text-white-50"><%= d.kategori %> · <%= d.ukuran %></small>
+          </div>
+          <a href="<%= d.fileUrl %>" class="btn btn-gold-pill btn-sm px-3"><i class="bi bi-download me-1"></i> Unduh</a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>

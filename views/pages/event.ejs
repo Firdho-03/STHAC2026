@@ -1,0 +1,113 @@
+<div class="container py-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">
+    <div>
+      <span class="badge-gold-outline mb-2">INFORMASI PELAKSANAAN</span>
+      <h1 class="font-display fw-bold text-uppercase text-forest mb-1">Event &amp; Jadwal Seri 1</h1>
+      <p class="text-secondary mb-0">Sabtu, 14 November 2026 · <%= setting.location %></p>
+    </div>
+    <a href="/pendaftaran" class="btn btn-gold-pill px-4 py-2">Daftar Seri 1 &rarr;</a>
+  </div>
+
+  <!-- Banner Fotografi Lebar Sesuai Frame 2 Figma -->
+  <div class="saiga-photo-banner p-4 p-md-5 mb-5 d-flex flex-column justify-content-end">
+    <span class="sthac-eyebrow mb-2" style="width:fit-content;">SERI PEMBUKA 2026</span>
+    <h2 class="font-display fw-bold text-uppercase text-white mb-1">Saiga Stable Equestrian Arena</h2>
+    <p class="mb-0 text-white-50" style="max-width:620px;">
+      Pertandingan dilaksanakan sesuai regulasi keselamatan kuda &amp; rider dengan juri berlisensi Pordasi Berkuda Memanah dan standar lintasan IHAA.
+    </p>
+  </div>
+
+  <div class="sthac-card p-4 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+      <div>
+        <h4 class="font-display fw-bold text-uppercase text-forest mb-0">Kelas Pertandingan — Seri 1</h4>
+        <small class="text-secondary">Penilaian mengacu pada sistem IHAA &amp; Pordasi Berkuda Memanah.</small>
+      </div>
+      <a href="/pendaftaran" class="btn btn-gold-pill btn-sm px-3">Daftar ke Kelas &rarr;</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table sthac-table mb-0">
+        <thead>
+          <tr>
+            <th>URUT</th>
+            <th>KELAS</th>
+            <th>KATEGORI</th>
+            <th>LINTASAN</th>
+            <th class="text-center">RUN DINILAI</th>
+            <th class="text-center">KUOTA PESERTA</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% kelasList.forEach(k => { %>
+            <tr>
+              <td><%= k.urutanTampil %></td>
+              <td class="fw-bold text-forest"><%= k.namaKelas %></td>
+              <td><span class="badge bg-light text-forest border"><%= k.kategori %></span></td>
+              <td><%= k.namaLintasan %></td>
+              <td class="text-center fw-bold"><%= k.jumlahRun %> Run</td>
+              <td class="text-center"><%= k.pesertaTerisi %>/<%= k.kuotaPeserta %></td>
+              <td>
+                <span class="badge rounded-pill bg-success-subtle text-success me-1"><%= k.statusKelas %></span>
+                <% if (k.hitungPoinJuara) { %>
+                  <span class="badge rounded-pill bg-warning-subtle text-dark">IKUT POIN</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <div class="col-lg-6">
+      <div class="sthac-card p-4 h-100">
+        <h4 class="font-display fw-bold text-uppercase text-forest mb-3"><i class="bi bi-clock-history text-gold me-2"></i>Susunan Acara Hari-H (Rundown)</h4>
+        <div class="table-responsive">
+          <table class="table sthac-table mb-0 small">
+            <thead><tr><th style="width:95px;">WAKTU</th><th>KEGIATAN</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">07:00</span></td><td>Registrasi ulang peserta &amp; pemeriksaan anak panah</td></tr>
+              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">07:30</span></td><td>Briefing panitia, juri, dan course designer</td></tr>
+              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">08:00</span></td><td>Pemanasan lintasan (walk/trot) untuk kelas Beginner</td></tr>
+              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">08:30</span></td><td>Kelas Beginner (Pemula) dimulai</td></tr>
+              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">10:00</span></td><td>Kelas Intermediate (Menengah)</td></tr>
+              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">12:00</span></td><td>Ishoma (Istirahat, Sholat, Makan Siang)</td></tr>
+              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">13:00</span></td><td>Kelas Advanced (Mahir)</td></tr>
+              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">15:30</span></td><td>Kelas Open Qabaq (Exhibition)</td></tr>
+              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">16:30</span></td><td>Penyerahan medali &amp; penutupan</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="sthac-card p-4 h-100">
+        <h4 class="font-display fw-bold text-uppercase text-forest mb-3"><i class="bi bi-shield-check text-gold me-2"></i>7 Peraturan Umum Pertandingan</h4>
+        <ol class="small text-secondary vstack gap-2 mb-0 ps-3" style="line-height:1.7;">
+          <li>Peserta wajib mengenakan <strong class="text-forest">helm berkuda</strong> dan <strong class="text-forest">sepatu riding boots berhak (heels)</strong>.</li>
+          <li>Anak panah wajib diperiksa oleh panitia sebelum bertanding; untuk tembakan <em>Qabaq</em> hanya diperbolehkan memakai <strong class="text-forest">anak panah flu-flu (blunt)</strong>.</li>
+          <li>Peserta wajib mengenakan <strong class="text-forest">nomor dada (Bib number)</strong> yang dibagikan panitia.</li>
+          <li>Kuda dan rider diperiksa oleh <strong class="text-forest">tim medis</strong> sebelum berlaga; panitia berhak menghentikan peserta yang dinilai tidak bugar.</li>
+          <li>Keputusan juri bersifat mengikat; protes diajukan secara tertulis maksimal <strong class="text-forest">15 menit setelah kelas berakhir</strong>.</li>
+          <li>Peserta yang tidak hadir setelah <strong class="text-forest">dipanggil 3 kali</strong> dianggap mengundurkan diri (<em>walkover</em>).</li>
+          <li><strong class="text-forest">Kesejahteraan kuda (Horse Welfare)</strong> menjadi prioritas utama: segala bentuk kekerasan terhadap kuda berakibat diskualifikasi langsung.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="saiga-cta-banner p-4 p-md-5 d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <div>
+      <h4 class="font-display fw-bold text-uppercase text-white mb-1">Ingin Berpartisipasi di Seri 1?</h4>
+      <p class="small text-white-50 mb-0">Pastikan data Rider, Pelatih, dan Stable Anda sudah terdaftar sebelum kuota kelas penuh.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="/pendaftaran" class="btn btn-gold-pill px-4 py-2">Daftar Sekarang</a>
+      <a href="/unduhan" class="btn btn-outline-light rounded-pill px-4 py-2">Unduh THB</a>
+    </div>
+  </div>
+</div>

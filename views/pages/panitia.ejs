@@ -1,0 +1,1174 @@
+<div class="container py-4">
+
+  <!-- ==================== GERBANG LOGIN PANITIA (EMAIL OTP SEKALI PAKAI & SANDI) ==================== -->
+  <div id="admin-auth-gate" class="col-md-10 col-lg-6 mx-auto my-4" style="display:none;">
+    <div class="sthac-card p-4 p-md-5 animate-up">
+      <div class="text-center mb-4">
+        <img src="<%= setting.logoUrl %>" alt="STHAC" style="width:68px;height:68px;object-fit:contain;" class="mb-2" />
+        <h3 class="font-display fw-bold text-uppercase text-white mb-1">Panel Panitia · STHAC 2026</h3>
+        <p class="small text-white-50 mb-0">Masuk atau daftar menggunakan Kode Unik Sekali Pakai (OTP) via Email.</p>
+      </div>
+
+      <!-- Pilihan Mode Autentikasi -->
+      <div class="d-flex flex-wrap gap-2 p-1 rounded-4 mb-4" style="background:rgba(0,0,0,0.45);border:1px solid rgba(217,180,92,0.28);">
+        <button type="button" id="tab-auth-otp" onclick="switchAuthTab('otp')" class="btn btn-gold-pill flex-grow-1 py-2 small">
+          <i class="bi bi-envelope-check-fill me-1"></i> Login Email OTP
+        </button>
+        <button type="button" id="tab-auth-reg" onclick="switchAuthTab('reg')" class="btn btn-dark-pill flex-grow-1 py-2 small">
+          <i class="bi bi-person-plus-fill me-1"></i> Daftar Panitia (OTP)
+        </button>
+        <button type="button" id="tab-auth-pass" onclick="switchAuthTab('pass')" class="btn btn-dark-pill flex-grow-1 py-2 small">
+          <i class="bi bi-key-fill me-1"></i> Sandi Cepat
+        </button>
+      </div>
+
+      <!-- MODE 1: LOGIN DENGAN EMAIL OTP SEKALI PAKAI -->
+      <form id="form-auth-otp" onsubmit="handleReqLoginOtp(event)" class="vstack gap-3">
+        <div>
+          <label class="small text-warning fw-bold mb-1">EMAIL PANITIA / JURI TERDAFTAR *</label>
+          <input type="email" name="email" required value="mardiansyah@sthac.com" class="form-control sthac-input py-2" placeholder="Masukkan email panitia..." />
+        </div>
+        <button type="submit" class="btn btn-gold-pill w-100 py-3">
+          <i class="bi bi-send-fill me-1"></i> Kirim Kode OTP Sekali Pakai ke Email
+        </button>
+        <div class="p-3 rounded-3 small text-white-50" style="background:rgba(255,255,255,0.03);border:1px solid rgba(217,180,92,0.2);">
+          <strong class="text-gold-bright d-block mb-1">Akun Panitia Terdaftar (Siap Uji OTP):</strong>
+          • Juri Utama: <code class="text-warning">mardiansyah@sthac.com</code><br/>
+          • Scorer/Pencatat: <code class="text-warning">andi@sthac.com</code>
+        </div>
+      </form>
+
+      <!-- MODE 2: DAFTAR PANITIA BARU DENGAN VERIFIKASI OTP EMAIL -->
+      <form id="form-auth-reg" onsubmit="handleReqRegOtp(event)" class="row g-3 small" style="display:none;">
+        <div class="col-md-6"><label class="text-warning fw-bold mb-1">NAMA LENGKAP *</label><input name="namaLengkap" required class="form-control sthac-input" /></div>
+        <div class="col-md-6"><label class="text-white-50 mb-1">NAMA PANGGILAN *</label><input name="panggilan" required class="form-control sthac-input" /></div>
+        <div class="col-md-6">
+          <label class="text-white-50 mb-1">PERAN KEPANITIAAN</label>
+          <select name="peran" class="form-select sthac-input">
+            <option>Juri Utama</option><option>Juri</option><option>Scorer/Pencatat</option><option>Timer</option><option>Course Designer</option><option>Starter</option><option>Tim Medis</option>
+          </select>
+        </div>
+        <div class="col-md-6"><label class="text-white-50 mb-1">SERTIFIKASI / LISENSI</label><input name="sertif" class="form-control sthac-input" placeholder="Juri Berkuda Memanah" /></div>
+        <div class="col-md-6"><label class="text-white-50 mb-1">KONTAK / WHATSAPP</label><input name="kontakWa" class="form-control sthac-input" /></div>
+        <div class="col-md-6"><label class="text-warning fw-bold mb-1">EMAIL AKTIF (PENERIMA OTP) *</label><input type="email" name="email" required class="form-control sthac-input border-warning" /></div>
+        <div class="col-12"><label class="text-white-50 mb-1">BIO / TUGAS</label><input name="bioTugas" class="form-control sthac-input" /></div>
+        <div class="col-12 mt-3">
+          <button type="submit" class="btn btn-gold-pill w-100 py-3">Daftar &amp; Kirim Kode OTP Verifikasi ke Email</button>
+        </div>
+      </form>
+
+      <!-- MODE 3: LOGIN SANDI PANITIA (sthac2026) -->
+      <form id="form-auth-pass" onsubmit="handlePassLogin(event)" class="vstack gap-3" style="display:none;">
+        <div>
+          <label class="small text-warning fw-bold mb-1">KATA SANDI PANITIA *</label>
+          <input type="password" name="password" required value="sthac2026" class="form-control sthac-input py-2" />
+          <small class="text-white-50">Default sandi sesuai sthac.com: <code class="text-warning">sthac2026</code></small>
+        </div>
+        <button type="submit" class="btn btn-gold-pill w-100 py-3">Masuk Panel Panitia</button>
+      </form>
+
+      <!-- FORM VERIFIKASI 6 DIGIT KODE OTP SEKALI PAKAI -->
+      <form id="form-otp-verify" onsubmit="handleVerifyOtp(event)" class="vstack gap-3 mt-2" style="display:none;">
+        <div class="p-3 rounded-4" style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.4);">
+          <div class="text-success fw-bold small mb-1"><i class="bi bi-check-circle-fill me-1"></i> Kode Unik OTP Telah Dikirim ke Email!</div>
+          <div class="small text-white-50">Email tujuan: <strong id="lbl-otp-email" class="text-white"></strong></div>
+
+        </div>
+        <div>
+          <label class="small text-warning fw-bold mb-1">MASUKKAN 6 DIGIT KODE OTP *</label>
+          <input type="text" id="inp-otp-code" required maxlength="6" class="form-control sthac-input py-3 text-center font-monospace fw-bold fs-4 text-gold" style="letter-spacing:8px;" />
+        </div>
+        <button type="submit" class="btn btn-gold-pill w-100 py-3">Verifikasi Kode OTP &amp; Masuk</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== AREA KERJA PANEL PANITIA (13 MENU LENGKAP) ==================== -->
+  <div id="admin-workspace" style="display:none;">
+
+            <!-- SUB-NAVBAR PANEL PANITIA (MERGED, SOLID DROPDOWN & PENEMPATAN TOMBOL KELUAR RAPI) -->
+    <div class="admin-navbar-card p-3 mb-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        
+        <!-- Kiri: Identitas Panel Panitia -->
+        <div class="d-flex align-items-center gap-3">
+          <img src="<%= setting.logoUrl %>" alt="Logo" style="width:42px;height:42px;object-fit:contain;" />
+          <div>
+            <span class="font-display fw-bold text-uppercase text-white d-block lh-1" style="font-size:1.05rem;letter-spacing:0.8px;">PANEL PANITIA</span>
+            <small class="text-white-50 d-block mt-1" style="font-size:0.72rem;">South Tangerang Horseback Archery Cup</small>
+          </div>
+        </div>
+
+        <!-- Tengah: Kelompok Navigasi Utama (Merged) -->
+        <div class="d-flex flex-wrap gap-2 align-items-center" id="admin-nav-pills">
+          <!-- 1. Ringkasan -->
+          <button type="button" id="adm-group-ringkasan" onclick="openAdminTab('ringkasan')" class="btn btn-sm btn-gold-pill py-2 px-3">
+            <i class="bi bi-speedometer2 me-1"></i> Ringkasan
+          </button>
+
+          <!-- 2. Peserta & Klub -->
+          <div class="dropdown">
+            <button type="button" id="adm-group-peserta" class="btn btn-sm btn-dark-pill dropdown-toggle py-2 px-3" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-people-fill me-1"></i> Peserta &amp; Klub
+            </button>
+            <ul class="dropdown-menu dropdown-menu-sthac">
+              <li><a class="dropdown-item adm-sub-link" data-tab="pendaftar" href="#" onclick="openAdminTab('pendaftar'); return false;"><i class="bi bi-person-check-fill me-2 text-warning"></i> Pendaftar (<%= stats.menungguAcc %> Pending)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="rider" href="#" onclick="openAdminTab('rider'); return false;"><i class="bi bi-person-badge-fill me-2 text-warning"></i> Data Rider</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="pelatih" href="#" onclick="openAdminTab('pelatih'); return false;"><i class="bi bi-person-workspace me-2 text-warning"></i> Data Pelatih</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="stable" href="#" onclick="openAdminTab('stable'); return false;"><i class="bi bi-shield-shaded me-2 text-warning"></i> Data Stable</a></li>
+            </ul>
+          </div>
+
+          <!-- 3. Teknis & Penilaian -->
+          <div class="dropdown">
+            <button type="button" id="adm-group-teknis" class="btn btn-sm btn-dark-pill dropdown-toggle py-2 px-3" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-trophy-fill me-1"></i> Teknis &amp; Penilaian
+            </button>
+            <ul class="dropdown-menu dropdown-menu-sthac">
+              <li><a class="dropdown-item adm-sub-link" data-tab="acara" href="#" onclick="openAdminTab('acara'); return false;"><i class="bi bi-calendar-range-fill me-2 text-warning"></i> Seri &amp; Kelas</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="lintasan" href="#" onclick="openAdminTab('lintasan'); return false;"><i class="bi bi-signpost-split-fill me-2 text-warning"></i> Master Lintasan</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="penilaian" href="#" onclick="openAdminTab('penilaian'); return false;"><i class="bi bi-stopwatch-fill me-2 text-danger"></i> Input Penilaian Run</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="poin" href="#" onclick="openAdminTab('poin'); return false;"><i class="bi bi-award-fill me-2 text-warning"></i> Poin &amp; Juara Umum</a></li>
+            </ul>
+          </div>
+
+          <!-- 4. Sistem & Konten -->
+          <div class="dropdown">
+            <button type="button" id="adm-group-sistem" class="btn btn-sm btn-dark-pill dropdown-toggle py-2 px-3" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-Sliders me-1"></i> Sistem &amp; Konten
+            </button>
+            <ul class="dropdown-menu dropdown-menu-sthac">
+              <li><a class="dropdown-item adm-sub-link" data-tab="panitia" href="#" onclick="openAdminTab('panitia'); return false;"><i class="bi bi-person-vcard-fill me-2 text-warning"></i> Panitia &amp; Juri</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="unduhan" href="#" onclick="openAdminTab('unduhan'); return false;"><i class="bi bi-file-earmark-arrow-down-fill me-2 text-warning"></i> Unduhan Dokumen</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="berita" href="#" onclick="openAdminTab('berita'); return false;"><i class="bi bi-newspaper me-2 text-warning"></i> Berita &amp; Warta</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Kanan: Tombol Setelan & Tombol Keluar Terpisah Rapi -->
+        <div class="d-flex align-items-center gap-2 ms-auto ms-xl-0 ps-xl-3 border-start border-secondary border-opacity-25">
+          <button type="button" id="adm-group-setelan" onclick="openAdminTab('setelan')" class="btn btn-sm btn-dark-pill py-2 px-3" title="Pengaturan Situs">
+            <i class="bi bi-gear-fill text-warning me-1"></i> Setelan
+          </button>
+          <button type="button" onclick="logoutAdmin()" class="btn btn-sm btn-logout-pill py-2 px-3">
+            <i class="bi bi-box-arrow-right me-1"></i> Keluar
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== 1. TAB RINGKASAN (admin.php) ==================== -->
+    <div id="adm-sec-ringkasan" class="admin-section">
+      <div class="p-3 rounded-4 mb-4 small fw-semibold text-white" style="background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.35);">
+        Selamat datang, <span id="lbl-admin-user">Panitia STHAC</span>.
+      </div>
+
+      <h2 class="font-display fw-bold text-uppercase text-white mb-1"><i class="bi bi-bar-chart-fill text-warning me-2"></i>RINGKASAN PANITIA</h2>
+      <p class="text-white-50 small mb-4">Kelola pendaftaran, peserta, kelas, dan hasil penilaian kejuaraan.</p>
+
+      <div class="sthac-card p-3 p-md-4 mb-4" style="border-color:rgba(217,180,92,0.4);">
+        <span class="small text-white-50">
+          Database masih memuat <strong class="text-white">data contoh</strong> (rider, pelatih, stable, panitia, dokumen, dan satu seri uji coba beserta hasilnya). Data ini hanya untuk memperlihatkan tampilan. Hapus setelah data asli mulai masuk:
+        </span>
+        <button onclick="clearDemo()" class="btn btn-sm btn-danger rounded-pill px-3 ms-2 fw-bold">Hapus data contoh</button>
+      </div>
+
+      <!-- 8 Kartu Statistik -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2"><div class="sthac-stat-card"><div class="fs-3 fw-bold font-display text-gold"><%= stats.menungguAcc %></div><div class="small text-white-50 text-uppercase">Pendaftar Menunggu ACC</div></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="sthac-stat-card"><div class="fs-3 fw-bold font-display text-gold"><%= stats.diterima %></div><div class="small text-white-50 text-uppercase">Pendaftar Diterima</div></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="sthac-stat-card"><div class="fs-3 fw-bold font-display text-gold"><%= stats.riderAktif %></div><div class="small text-white-50 text-uppercase">Rider Aktif</div></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="sthac-stat-card"><div class="fs-3 fw-bold font-display text-gold"><%= stats.pelatih %></div><div class="small text-white-50 text-uppercase">Pelatih</div></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="sthac-stat-card"><div class="fs-3 fw-bold font-display text-gold"><%= stats.stable %></div><div class="small text-white-50 text-uppercase">Stable</div></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="sthac-stat-card"><div class="fs-3 fw-bold font-display text-gold"><%= stats.hasilRun %></div><div class="small text-white-50 text-uppercase">Hasil Run Tersimpan</div></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="sthac-stat-card"><div class="fs-3 fw-bold font-display text-gold"><%= stats.panitiaJuri %></div><div class="small text-white-50 text-uppercase">Panitia &amp; Juri</div></div></div>
+        <div class="col-6 col-md-4 col-xl-2"><div class="sthac-stat-card"><div class="fs-3 fw-bold font-display text-gold"><%= stats.dokumen %></div><div class="small text-white-50 text-uppercase">Dokumen Unduhan</div></div></div>
+      </div>
+
+      <!-- Langkah Pengelolaan & Pintasan -->
+      <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+          <div class="sthac-card p-4 h-100">
+            <h5 class="font-display fw-bold text-uppercase text-white mb-3"><i class="bi bi-compass text-warning me-2"></i>LANGKAH PENGELOLAAN</h5>
+            <ol class="small text-white-50 vstack gap-2 mb-0 ps-3">
+              <li><strong class="text-white">Verifikasi pendaftar</strong> — setujui rider/pelatih/stable dari halaman <a href="#" onclick="openAdminTab('pendaftar');return false;" class="text-warning">Pendaftar</a>.</li>
+              <li><strong class="text-white">Atur seri &amp; kelas</strong> — tanggal, lintasan, jumlah run dinilai di halaman <a href="#" onclick="openAdminTab('acara');return false;" class="text-warning">Seri &amp; Kelas</a>.</li>
+              <li><strong class="text-white">Daftarkan peserta ke kelas</strong> — dari halaman <a href="#" onclick="openAdminTab('penilaian');return false;" class="text-warning">Penilaian</a> atau <a href="#" onclick="openAdminTab('rider');return false;" class="text-warning">Rider</a>.</li>
+              <li><strong class="text-white">Masukkan hasil tiap run</strong> — skor dihitung otomatis; papan skor publik langsung diperbarui.</li>
+              <li><strong class="text-white">Periksa klasemen poin</strong> — poin juara umum dihitung otomatis di <a href="#" onclick="openAdminTab('poin');return false;" class="text-warning">Poin &amp; Juara</a>.</li>
+              <li><strong class="text-white">Unggah dokumen</strong> — Technical Handbook &amp; berkas pendukung di <a href="#" onclick="openAdminTab('unduhan');return false;" class="text-warning">Unduhan</a>.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="sthac-card p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <h5 class="font-display fw-bold text-uppercase text-white mb-3"><i class="bi bi-lightning-charge text-warning me-2"></i>PINTASAN</h5>
+              <div class="d-flex flex-wrap gap-2 mb-4">
+                <button onclick="openAdminTab('pendaftar')" class="btn btn-gold-pill btn-sm">Periksa pendaftar</button>
+                <button onclick="openAdminTab('penilaian')" class="btn btn-dark-pill btn-sm">Input hasil run</button>
+                <button onclick="openAdminTab('acara')" class="btn btn-dark-pill btn-sm">Seri &amp; kelas</button>
+                <button onclick="openAdminTab('poin')" class="btn btn-dark-pill btn-sm">Poin &amp; juara</button>
+                <button onclick="openAdminTab('panitia')" class="btn btn-dark-pill btn-sm">Panitia &amp; juri</button>
+                <button onclick="openAdminTab('unduhan')" class="btn btn-dark-pill btn-sm">Dokumen</button>
+                <a href="/skor" class="btn btn-dark-pill btn-sm">Lihat papan skor publik</a>
+                <a href="/juara" class="btn btn-dark-pill btn-sm">Klasemen poin publik</a>
+              </div>
+            </div>
+            <div class="pt-3 border-top border-secondary border-opacity-25">
+              <h6 class="font-display fw-bold text-uppercase text-white mb-1">STATUS PENDAFTARAN PUBLIK</h6>
+              <p class="small text-white-50 mb-0">
+                Saat ini: <strong class="text-gold"><%= setting.registrationOpen ? 'DIBUKA' : 'DITUTUP' %></strong>. Ubah di <a href="#" onclick="openAdminTab('setelan');return false;" class="text-warning">Pengaturan</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabel Seri Kejuaraan -->
+      <div class="sthac-card p-4">
+        <h4 class="font-display fw-bold text-uppercase text-white mb-1">SERI KEJUARAAN</h4>
+        <p class="small text-white-50 mb-3">Ringkasan seri dan jumlah kelasnya.</p>
+        <div class="table-responsive">
+          <table class="table table-dark sthac-table mb-0">
+            <thead><tr><th>SERI</th><th>TANGGAL</th><th>LOKASI</th><th class="text-center">KELAS</th><th class="text-center">PESERTA</th><th>STATUS</th><th class="text-end"></th></tr></thead>
+            <tbody>
+              <% seriList.forEach(s => { %>
+                <tr>
+                  <td class="fw-bold text-white"><%= s.namaSeri %></td>
+                  <td class="text-white-50"><%= s.tanggalTampil %></td>
+                  <td class="text-white-50"><%= s.tempat %></td>
+                  <td class="text-center"><%= s.kelasList ? s.kelasList.length : 0 %></td>
+                  <td class="text-center"><%= s.nomorSeri === 1 ? stats.diterima : 0 %></td>
+                  <td><span class="badge rounded-pill px-3 py-1 <%= s.status.toLowerCase().includes('dibuka') ? 'bg-success-subtle text-success' : 'bg-info-subtle text-info' %>"><%= s.status %></span></td>
+                  <td class="text-end"><button onclick="openAdminTab('acara')" class="btn btn-dark-pill btn-sm">Kelola</button></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 2. TAB PENDAFTAR (admin-pendaftar.php) ==================== -->
+    <div id="adm-sec-pendaftar" class="admin-section" style="display:none;">
+      <div class="d-flex flex-wrap gap-2 mb-4">
+        <button onclick="filterRegistrant('Pending')" class="btn btn-gold-pill btn-sm">MENUNGGU ACC (<%= stats.menungguAcc %>)</button>
+        <button onclick="filterRegistrant('Diterima')" class="btn btn-dark-pill btn-sm">DITERIMA (<%= stats.diterima %>)</button>
+        <button onclick="filterRegistrant('Ditolak')" class="btn btn-dark-pill btn-sm">DITOLAK (<%= stats.ditolak %>)</button>
+        <button onclick="filterRegistrant('all')" class="btn btn-dark-pill btn-sm">SEMUA (<%= stats.semuaPendaftar %>)</button>
+      </div>
+
+      <div class="vstack gap-4">
+        <% adminBundle.allRiders.forEach(r => { %>
+          <div class="sthac-card p-4 reg-card-item" data-status="<%= r.statusAcc %>">
+            <div class="d-flex flex-wrap justify-content-between align-items-start mb-3">
+              <div>
+                <h4 class="font-display fw-bold text-uppercase text-white d-inline me-2"><%= r.namaLengkap %></h4>
+                <span class="badge rounded-pill bg-success-subtle text-success">RIDER</span>
+                <div class="small text-white-50 mt-1">Pendaftaran #<%= r.noBib %> · Kamis, 22 Oktober 2026 04:02</div>
+              </div>
+              <span class="badge rounded-pill px-3 py-2 <%= r.statusAcc === 'Pending' ? 'bg-warning text-dark' : (r.statusAcc === 'Diterima' ? 'bg-success' : 'bg-danger') %>">
+                <%= r.statusAcc.toUpperCase() %>
+              </span>
+            </div>
+
+            <div class="row g-3 small text-white-50 mb-4">
+              <div class="col-md-6 vstack gap-2">
+                <div><i class="bi bi-person text-warning me-2"></i>Panggilan: <strong class="text-white"><%= r.namaPanggilan %></strong></div>
+                <div><i class="bi bi-bullseye text-warning me-2"></i>Kelas: <strong class="text-white"><%= r.kelasDiikuti %></strong></div>
+                <div><i class="bi bi-award text-warning me-2"></i>Kategori: <strong class="text-white"><%= r.kategori %></strong></div>
+                <div><i class="bi bi-shield-shaded text-warning me-2"></i>Asal stable: <strong class="text-white"><%= r.asalStable %></strong></div>
+                <div><i class="bi bi-geo-alt text-warning me-2"></i><%= r.kotaKabupaten %></div>
+              </div>
+              <div class="col-md-6 vstack gap-2">
+                <div><i class="bi bi-whatsapp text-success me-2"></i>WhatsApp: <strong class="text-white"><%= r.noWa %></strong></div>
+                <div><i class="bi bi-envelope text-warning me-2"></i><strong class="text-white"><%= r.email %></strong></div>
+                <div><i class="bi bi-calendar3 text-warning me-2"></i>Lahir: <strong class="text-white"><%= r.formattedDate %></strong> <%= r.ageText %></div>
+              </div>
+            </div>
+
+            <!-- Form Verifikasi ACC / Tolak -->
+            <div class="row g-3 mb-3 pt-3 border-top border-secondary border-opacity-25 small">
+              <div class="col-md-5">
+                <label class="text-white-50 mb-1">CATATAN PANITIA (OPSIONAL)</label>
+                <input type="text" id="note-<%= r.id %>" value="<%= r.catatanPanitia || '' %>" class="form-control sthac-input" placeholder="Catatan internal..." />
+              </div>
+              <div class="col-md-4">
+                <label class="text-white-50 mb-1">ALASAN PENOLAKAN (BILA DITOLAK)</label>
+                <input type="text" id="rej-<%= r.id %>" value="<%= r.alasanPenolakan || '' %>" class="form-control sthac-input" placeholder="Alasan..." />
+              </div>
+              <div class="col-md-3 d-flex align-items-end gap-2">
+                <button onclick="verifyRiderAction(<%= r.id %>, 'Diterima')" class="btn btn-gold-pill w-50">Setujui (ACC)</button>
+                <button onclick="verifyRiderAction(<%= r.id %>, 'Ditolak')" class="btn btn-outline-warning rounded-pill w-50">Tolak</button>
+              </div>
+            </div>
+
+            <!-- Kotak Konfirmasi Ketik HAPUS (Persis Screenshot Pendaftar) -->
+            <div class="p-3 rounded-4 mt-3" style="background:rgba(0,0,0,0.28);border:1px solid rgba(217,180,92,0.2);">
+              <h6 class="font-display fw-bold text-uppercase text-white mb-1">HAPUS DATA PENDAFTARAN</h6>
+              <p class="small text-white-50 mb-2">Untuk membuang data sampah/duplikat. Ketik <strong class="text-white">HAPUS</strong> untuk mengonfirmasi — tindakan ini permanen.</p>
+              <div class="d-flex flex-wrap gap-2 align-items-center">
+                <input type="text" id="del-reg-<%= r.id %>" class="form-control sthac-input" style="max-width:280px;" placeholder="HAPUS" />
+                <button onclick="deleteRegistrantAction(<%= r.id %>)" class="btn btn-danger rounded-pill px-4 fw-bold">Hapus data</button>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- ==================== 3. TAB RIDER (admin-rider.php) ==================== -->
+    <div id="adm-sec-rider" class="admin-section" style="display:none;">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <form onsubmit="submitAdminEntity(event, '/api/register/rider')" class="sthac-card p-4">
+            <input type="hidden" name="isManualAdmin" value="true" />
+            <h4 class="font-display fw-bold text-uppercase text-white mb-3"><i class="bi bi-person-plus-fill text-warning me-2"></i>TAMBAH RIDER MANUAL</h4>
+            <div class="row g-3 small">
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA LENGKAP *</label><input name="namaLengkap" required class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA PANGGILAN</label><input name="namaPanggilan" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">KODE RIDER</label><input name="kodeRider" class="form-control sthac-input" placeholder="otomatis: R-00x" /></div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">KATEGORI</label>
+                <select name="kategori" class="form-select sthac-input"><option>U14</option><option>Terbuka</option></select>
+              </div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">JENJANG KELAS</label>
+                <select name="jenjangKelas" class="form-select sthac-input"><option>Beginner (Pemula)</option><option>Intermediate</option><option>Advanced</option></select>
+              </div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">STABLE</label>
+                <select name="asalStable" class="form-select sthac-input">
+                  <option value="-">— Belum ada —</option>
+                  <% adminBundle.stables.forEach(s => { %><option value="<%= s.namaStable %>"><%= s.namaStable %></option><% }) %>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">PELATIH</label>
+                <select name="pelatihNama" class="form-select sthac-input">
+                  <option value="-">— Belum ada —</option>
+                  <% adminBundle.pelatih.forEach(c => { %><option value="<%= c.namaLengkap %>"><%= c.namaLengkap %></option><% }) %>
+                </select>
+              </div>
+              <div class="col-md-6"><label class="text-warning mb-1">KOTA</label><input name="kotaKabupaten" class="form-control sthac-input" value="Tangerang Selatan" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">TELEPON</label><input name="noWa" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">EMAIL</label><input name="email" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">FOTO</label><input type="file" name="fotoFile" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">URL FOTO</label><input name="urlFoto" class="form-control sthac-input" /></div>
+            </div>
+            <button type="submit" class="btn btn-gold-pill mt-4 px-4 py-2">Tambah rider</button>
+          </form>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="sthac-card p-4">
+            <label class="small text-warning fw-bold mb-1">CARI NAMA / KODE</label>
+            <input type="text" id="adm-search-rider" oninput="searchAdminRider()" class="form-control sthac-input mb-3" placeholder="Ketik nama atau R-00x..." />
+            <div class="table-responsive">
+              <table class="table table-dark sthac-table mb-0 small">
+                <thead><tr><th>KODE</th><th>NAMA</th><th>KELAS</th><th>STABLE</th></tr></thead>
+                <tbody id="adm-rider-tbody">
+                  <% adminBundle.riders.forEach(r => { %>
+                    <tr>
+                      <td class="font-monospace text-warning fw-bold"><%= r.kodeRider %></td>
+                      <td class="fw-bold text-white"><%= r.namaLengkap %></td>
+                      <td><%= r.jenjangKelas %></td>
+                      <td class="text-white-50"><%= r.asalStable %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 4. TAB PELATIH (admin-pelatih.php) ==================== -->
+    <div id="adm-sec-pelatih" class="admin-section" style="display:none;">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <form onsubmit="submitAdminEntity(event, '/api/register/pelatih')" class="sthac-card p-4">
+            <input type="hidden" name="isManualAdmin" value="true" />
+            <h4 class="font-display fw-bold text-uppercase text-white mb-3">TAMBAH PELATIH</h4>
+            <div class="row g-3 small">
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA LENGKAP *</label><input name="namaLengkap" required class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA PANGGILAN</label><input name="namaPanggilan" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">KODE PELATIH</label><input name="kodePelatih" class="form-control sthac-input" placeholder="otomatis: P-00x" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">SPESIALISASI</label><input name="spesialis" value="Berkuda Memanah" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">SERTIFIKASI</label><input name="sertifikasi" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">PENGALAMAN</label><input name="pengalamanMelatih" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">TELEPON / WHATSAPP</label><input name="noWa" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">EMAIL</label><input name="email" class="form-control sthac-input" /></div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">STABLE</label>
+                <select name="stableAsal" class="form-select sthac-input">
+                  <option value="-">— Belum ada —</option>
+                  <% adminBundle.stables.forEach(s => { %><option value="<%= s.namaStable %>"><%= s.namaStable %></option><% }) %>
+                </select>
+              </div>
+              <div class="col-md-6"><label class="text-warning mb-1">STATUS</label><select name="status" class="form-select sthac-input"><option>Aktif</option><option>Nonaktif</option></select></div>
+              <div class="col-12"><label class="text-warning mb-1">BIO / PENGALAMAN MELATIH</label><textarea name="bio" rows="2" class="form-control sthac-input"></textarea></div>
+            </div>
+            <button type="submit" class="btn btn-gold-pill mt-4 px-4 py-2">Simpan Pelatih</button>
+          </form>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="sthac-card p-4">
+            <table class="table table-dark sthac-table mb-0 small">
+              <thead><tr><th>KODE</th><th>NAMA</th><th>STABLE</th><th>STATUS</th></tr></thead>
+              <tbody>
+                <% adminBundle.pelatih.forEach(c => { %>
+                  <tr>
+                    <td class="font-monospace text-warning fw-bold"><%= c.kodePelatih %></td>
+                    <td class="fw-bold text-white"><%= c.namaLengkap %></td>
+                    <td class="text-white-50"><%= c.stableAsal %></td>
+                    <td><%= c.status %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 5. TAB STABLE (admin-stable.php) ==================== -->
+    <div id="adm-sec-stable" class="admin-section" style="display:none;">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <form onsubmit="submitAdminEntity(event, '/api/register/stable')" class="sthac-card p-4">
+            <input type="hidden" name="isManualAdmin" value="true" />
+            <h4 class="font-display fw-bold text-uppercase text-white mb-3">TAMBAH STABLE</h4>
+            <div class="row g-3 small">
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA STABLE *</label><input name="namaStable" required class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">KOTA / KABUPATEN</label><input name="kotaKabupaten" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">PROVINSI</label><input name="provinsi" class="form-control sthac-input" value="Banten" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">ALAMAT</label><input name="alamat" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">KONTAK / WHATSAPP</label><input name="noWa" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">PELATIH UTAMA</label><input name="pelatihUtama" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">STATUS</label><select name="status" class="form-select sthac-input"><option>Aktif</option><option>Nonaktif</option></select></div>
+              <div class="col-md-6"><label class="text-warning mb-1">LOGO STABLE</label><input type="file" name="logoFile" class="form-control sthac-input" /></div>
+              <div class="col-12"><label class="text-warning mb-1">DESKRIPSI</label><textarea name="deskripsi" rows="2" class="form-control sthac-input"></textarea></div>
+            </div>
+            <button type="submit" class="btn btn-gold-pill mt-4 px-4 py-2">Simpan Stable</button>
+          </form>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="sthac-card p-4">
+            <table class="table table-dark sthac-table mb-0 small">
+              <thead><tr><th>NAMA</th><th>KOTA</th><th class="text-center">RIDER</th></tr></thead>
+              <tbody>
+                <% adminBundle.stables.forEach(s => { %>
+                  <tr>
+                    <td class="fw-bold text-white"><%= s.namaStable %></td>
+                    <td class="text-white-50"><%= s.kotaKabupaten %></td>
+                    <td class="text-center fw-bold text-gold"><%= s.riderCount %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 6. TAB SERI & KELAS (admin-acara.php) ==================== -->
+    <div id="adm-sec-acara" class="admin-section" style="display:none;">
+      <% const s1 = seriList[0] || {}; %>
+      <div class="row g-4 mb-4">
+        <!-- Ubah Seri -->
+        <div class="col-lg-6">
+          <form onsubmit="saveSeriForm(event, <%= s1.id || 1 %>)" class="sthac-card p-4 h-100">
+            <h4 class="font-display fw-bold text-uppercase text-white mb-3">UBAH SERI</h4>
+            <div class="row g-3 small">
+              <div class="col-md-4"><label class="text-warning mb-1">NOMOR SERI</label><input name="nomorSeri" value="<%= s1.nomorSeri || 1 %>" class="form-control sthac-input" /></div>
+              <div class="col-md-8"><label class="text-warning mb-1">NAMA SERI</label><input name="namaSeri" value="<%= s1.namaSeri || '' %>" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">TANGGAL MULAI</label><input type="date" name="tanggalMulai" value="<%= s1.tanggalMulai || '2026-11-14' %>" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">TANGGAL SELESAI</label><input type="date" name="tanggalSelesai" value="<%= s1.tanggalSelesai || '2026-11-14' %>" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">LOKASI</label><input name="tempat" value="<%= s1.tempat || 'Saiga Stable' %>" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">KOTA</label><input name="kota" value="<%= s1.kota || 'Tangerang Selatan, Banten' %>" class="form-control sthac-input" /></div>
+              <div class="col-12">
+                <label class="text-warning mb-1">STATUS</label>
+                <select name="status" class="form-select sthac-input">
+                  <option value="Pendaftaran dibuka" <%= s1.status === 'Pendaftaran dibuka' ? 'selected' : '' %>>Pendaftaran dibuka</option>
+                  <option value="Akan datang" <%= s1.status === 'Akan datang' ? 'selected' : '' %>>Akan datang</option>
+                  <option value="Selesai" <%= s1.status === 'Selesai' ? 'selected' : '' %>>Selesai</option>
+                </select>
+              </div>
+              <div class="col-12"><label class="text-warning mb-1">DESKRIPSI</label><textarea name="deskripsi" rows="3" class="form-control sthac-input"><%= s1.deskripsi || '' %></textarea></div>
+            </div>
+            <button type="submit" class="btn btn-gold-pill mt-4 px-4 py-2">Simpan perubahan</button>
+          </form>
+        </div>
+
+        <!-- Tambah Kelas -->
+        <div class="col-lg-6">
+          <form onsubmit="createKelasForm(event)" class="sthac-card p-4 h-100">
+            <h4 class="font-display fw-bold text-uppercase text-white mb-3">TAMBAH KELAS</h4>
+            <div class="row g-3 small">
+              <div class="col-md-6">
+                <label class="text-warning mb-1">SERI</label>
+                <select name="seriId" class="form-select sthac-input">
+                  <% seriList.forEach(s => { %><option value="<%= s.id %>">Seri <%= s.nomorSeri %> — <%= s.namaSeri %></option><% }) %>
+                </select>
+              </div>
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA KELAS</label><input name="namaKelas" required placeholder="Beginner (Pemula)" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA INGGRIS (LABEL JENJANG)</label><input name="labelJenjangInggris" placeholder="Beginner / Intermediate / Adv" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">KATEGORI</label><select name="kategori" class="form-select sthac-input"><option>U14</option><option>Terbuka</option></select></div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">LINTASAN</label>
+                <select name="lintasanId" class="form-select sthac-input">
+                  <% lintasanList.forEach(l => { %><option value="<%= l.id %>"><%= l.namaLintasan %> (<%= l.sistem %>)</option><% }) %>
+                </select>
+              </div>
+              <div class="col-md-6"><label class="text-warning mb-1">JUMLAH RUN DINILAI</label><input type="number" name="jumlahRun" value="4" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">BIAYA PENDAFTARAN (RP)</label><input type="number" name="biayaPendaftaran" value="0" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">KUOTA PESERTA (0 = TANPA BATAS)</label><input type="number" name="kuotaPeserta" value="20" class="form-control sthac-input" /></div>
+              <div class="col-md-4"><label class="text-warning mb-1">URUTAN TAMPIL</label><input type="number" name="urutanTampil" value="1" class="form-control sthac-input" /></div>
+              <div class="col-md-4">
+                <label class="text-warning mb-1">JURI UTAMA KELAS</label>
+                <select name="juriUtamaKelas" class="form-select sthac-input">
+                  <option value="Belum ditentukan">— Belum ditentukan —</option>
+                  <% adminBundle.panitia.forEach(p => { %><option value="<%= p.namaLengkap %>"><%= p.namaLengkap %></option><% }) %>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="text-warning mb-1">PENCATAT SKOR KELAS</label>
+                <select name="pencatatSkorKelas" class="form-select sthac-input">
+                  <option value="Belum ditentukan">— Belum ditentukan —</option>
+                  <% adminBundle.panitia.forEach(p => { %><option value="<%= p.namaLengkap %>"><%= p.namaLengkap %></option><% }) %>
+                </select>
+              </div>
+              <div class="col-12">
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="buangSkorTerendah" id="chk-drop"><label class="form-check-label text-white-50" for="chk-drop">Buang 1 skor run terendah</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="hitungPoinJuara" id="chk-poin" checked><label class="form-check-label text-white-50" for="chk-poin">Hitung untuk poin kejuaraan (juara umum)</label></div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-gold-pill mt-3 px-4 py-2">Tambah Kelas</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tabel Kelas pada Seri 1 -->
+      <div class="sthac-card p-4 mb-4">
+        <h4 class="font-display fw-bold text-uppercase text-white mb-1">KELAS PADA <%= s1.namaSeri %></h4>
+        <p class="small text-white-50 mb-3">Sabtu, 14 November 2026 · Saiga Stable</p>
+        <div class="table-responsive">
+          <table class="table table-dark sthac-table mb-0 small">
+            <thead><tr><th>URUT</th><th>KELAS</th><th>KATEGORI</th><th>LINTASAN</th><th>RUN</th><th>PESERTA</th><th>PETUGAS</th><th>STATUS</th><th class="text-end">AKSI</th></tr></thead>
+            <tbody>
+              <% kelasList.forEach(k => { %>
+                <tr>
+                  <td><%= k.urutanTampil %></td>
+                  <td class="fw-bold text-white"><%= k.namaKelas %></td>
+                  <td><%= k.kategori %></td>
+                  <td><%= k.namaLintasan %></td>
+                  <td><%= k.jumlahRun %></td>
+                  <td><%= k.pesertaTerisi %>/<%= k.kuotaPeserta %></td>
+                  <td class="text-white-50"><%= k.juriUtamaKelas %></td>
+                  <td>
+                    <span class="badge rounded-pill bg-success-subtle text-success me-1"><%= k.statusKelas %></span>
+                    <span class="badge rounded-pill bg-info-subtle text-info"><%= k.hitungPoinJuara ? 'IKUT POIN' : 'TANPA POIN' %></span>
+                  </td>
+                  <td class="text-end">
+                    <button onclick="openAdminTab('penilaian')" class="btn btn-dark-pill btn-sm py-1">Nilai</button>
+                    <button onclick="deleteKelasAction(<%= k.id %>)" class="btn btn-danger rounded-pill btn-sm py-1">Hapus</button>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Hapus Seri Ini (Konfirmasi Ketik HAPUS) -->
+      <div class="sthac-card p-4">
+        <h5 class="font-display fw-bold text-uppercase text-white mb-1">HAPUS SERI INI</h5>
+        <p class="small text-white-50 mb-2">Menghapus seri juga menghapus seluruh kelas, peserta, dan hasil run di dalamnya. Ketik <strong class="text-white">HAPUS</strong> untuk mengonfirmasi.</p>
+        <div class="d-flex gap-2 align-items-center">
+          <input type="text" id="del-seri-confirm" class="form-control sthac-input" style="max-width:260px;" placeholder="HAPUS" />
+          <button onclick="deleteSeriAction(<%= s1.id || 1 %>)" class="btn btn-danger rounded-pill px-4 fw-bold">Hapus seri</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 7. TAB LINTASAN (admin-lintasan.php) ==================== -->
+    <div id="adm-sec-lintasan" class="admin-section" style="display:none;">
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <form onsubmit="saveLintasanForm(event)" class="sthac-card p-4">
+            <h4 class="font-display fw-bold text-uppercase text-white mb-3">KONFIGURASI PARAMETER LINTASAN</h4>
+            <div class="row g-3 small">
+              <div class="col-md-4"><label class="text-warning mb-1">KODE LINTASAN *</label><input name="kodeLintasan" required placeholder="TT90" class="form-control sthac-input" /></div>
+              <div class="col-md-5"><label class="text-warning mb-1">NAMA LINTASAN *</label><input name="namaLintasan" required placeholder="Turkish Tabla 90" class="form-control sthac-input" /></div>
+              <div class="col-md-3"><label class="text-warning mb-1">SISTEM</label><select name="sistem" class="form-select sthac-input"><option>IHAA</option><option>Pordasi Berkuda Memanah</option></select></div>
+              <div class="col-md-6"><label class="text-warning mb-1">PANJANG LINTASAN (M)</label><input type="number" name="panjangMeter" value="90" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">JUMLAH TARGET / SLOT PANAH</label><input type="number" name="jumlahTarget" value="3" class="form-control sthac-input" /></div>
+              <div class="col-12"><label class="text-warning mb-1">NILAI ZONA TARGET (URUT DARI DALAM)</label><input name="nilaiZonaTarget" value="6,4,2" class="form-control sthac-input" /><small class="text-white-50">Pisahkan dengan koma, mis. 6,4,2 (Tabla) atau 5,4,3,2,1 (Korean).</small></div>
+              <div class="col-md-6"><label class="text-warning mb-1">PAR TIME (DETIK)</label><input type="number" step="0.1" name="parTime" value="0" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">BATAS WAKTU (DETIK)</label><input type="number" step="0.1" name="batasWaktu" value="0" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">BONUS WAKTU PER DETIK</label><input type="number" step="0.1" name="bonusWaktuPerDetik" value="1" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">PENALTI WAKTU PER DETIK</label><input type="number" step="0.1" name="penaltiWaktuPerDtk" value="1" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">PENGALI BONUS WAKTU</label><input name="pengaliBonusWaktu" placeholder="1:0.5, 2:1, 3:1.5" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">BONUS MENGENAI SELURUH TARGET</label><input type="number" name="bonusSapuBersih" value="0" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA BONUS SATUAN</label><input name="namaBonusSatuan" placeholder="mis. Qabaq" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">POIN PER BONUS SATUAN</label><input type="number" name="poinBonusSatuan" value="0" class="form-control sthac-input" /></div>
+            </div>
+            <button type="submit" class="btn btn-gold-pill mt-4 px-4 py-2">Simpan Lintasan</button>
+          </form>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="sthac-card p-4">
+            <div class="table-responsive">
+              <table class="table table-dark sthac-table mb-0 small">
+                <thead><tr><th>KODE</th><th>NAMA LINTASAN</th><th>SISTEM</th><th>ZONA</th></tr></thead>
+                <tbody>
+                  <% lintasanList.forEach(l => { %>
+                    <tr>
+                      <td class="font-monospace text-warning fw-bold"><%= l.kodeLintasan %></td>
+                      <td class="fw-bold text-white"><%= l.namaLintasan %></td>
+                      <td><%= l.sistem %></td>
+                      <td class="font-monospace"><%= l.nilaiZonaTarget %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 8. TAB PENILAIAN (admin-penilaian.php) ==================== -->
+    <div id="adm-sec-penilaian" class="admin-section" style="display:none;">
+      <div class="d-flex gap-2 mb-4">
+        <span class="btn btn-gold-pill btn-sm">SERI 1</span>
+        <span class="btn btn-dark-pill btn-sm">SERI 2</span>
+        <span class="btn btn-dark-pill btn-sm">SERI 3</span>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <% kelasList.forEach(k => { %>
+          <div class="col-md-6">
+            <div class="sthac-card p-4">
+              <h4 class="font-display fw-bold text-uppercase text-white mb-2"><i class="bi bi-bullseye text-warning me-2"></i><%= k.namaKelas %> · <%= k.kategori %></h4>
+              <div class="small text-white-50 vstack gap-1 mb-3">
+                <div><i class="bi bi-signpost-split text-warning me-2"></i>Lintasan: <strong class="text-white"><%= k.namaLintasan %></strong></div>
+                <div><i class="bi bi-people-fill text-warning me-2"></i>Peserta: <strong class="text-white"><%= k.pesertaTerisi %></strong></div>
+                <div><i class="bi bi-bar-chart-fill text-warning me-2"></i>Jumlah Run Dinilai: <strong class="text-white"><%= k.jumlahRun %> Run</strong></div>
+              </div>
+              <button onclick="document.getElementById('inp-score-kelas').value='<%= k.id %>';document.getElementById('sec-form-score').scrollIntoView({behavior:'smooth'});" class="btn btn-gold-pill btn-sm px-4">
+                Masukkan hasil
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+
+      <div id="sec-form-score" class="sthac-card p-4">
+        <h4 class="font-display fw-bold text-uppercase text-white mb-3"><i class="bi bi-stopwatch text-warning me-2"></i>INPUT HASIL RUN PESERTA (LIVE BROADCAST)</h4>
+        <form onsubmit="submitAdminScore(event)" class="row g-3 small">
+          <div class="col-md-4">
+            <label class="text-warning mb-1">PILIH KELAS</label>
+            <select id="inp-score-kelas" name="kelasId" class="form-select sthac-input">
+              <% kelasList.forEach(k => { %><option value="<%= k.id %>"><%= k.namaKelas %> · <%= k.kategori %></option><% }) %>
+            </select>
+          </div>
+          <div class="col-md-5">
+            <label class="text-warning mb-1">PILIH RIDER</label>
+            <select name="riderId" class="form-select sthac-input">
+              <% adminBundle.riders.forEach(r => { %><option value="<%= r.id %>"><%= r.kodeRider %> — <%= r.namaLengkap %> (<%= r.asalStable %>)</option><% }) %>
+            </select>
+          </div>
+          <div class="col-md-3"><label class="text-warning mb-1">RUN KE-</label><input type="number" name="runNumber" value="1" min="1" max="10" class="form-control sthac-input text-center fw-bold" /></div>
+          <div class="col-md-3"><label class="text-warning mb-1">TARGET 1</label><input type="number" name="target1" value="5" class="form-control sthac-input text-center" /></div>
+          <div class="col-md-3"><label class="text-warning mb-1">TARGET 2</label><input type="number" name="target2" value="5" class="form-control sthac-input text-center" /></div>
+          <div class="col-md-3"><label class="text-warning mb-1">TARGET 3</label><input type="number" name="target3" value="5" class="form-control sthac-input text-center" /></div>
+          <div class="col-md-3"><label class="text-warning mb-1">WAKTU TEMPUH (DTK)</label><input type="number" step="0.01" name="waktuTempuh" value="11.5" class="form-control sthac-input text-center" /></div>
+          <div class="col-12 mt-3">
+            <button type="submit" class="btn btn-gold-pill px-5 py-2"><i class="bi bi-broadcast me-1"></i> Simpan Hasil Run &amp; Perbarui Papan Skor Publik</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== 9. TAB POIN & JUARA (admin-poin.php) ==================== -->
+    <div id="adm-sec-poin" class="admin-section" style="display:none;">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h3 class="font-display fw-bold text-uppercase text-white mb-0">PRATINJAU JUARA UMUM</h3>
+          <small class="text-white-50">Dihitung dari seluruh seri yang sudah bertanding. <a href="/juara" class="text-warning">Buka di situs publik.</a></small>
+        </div>
+        <button onclick="window.print()" class="btn btn-dark-pill btn-sm px-3">Cetak</button>
+      </div>
+
+      <div class="sthac-card p-4 mb-4">
+        <div class="table-responsive">
+          <table class="table table-dark sthac-table mb-0 small">
+            <thead><tr><th>PERINGKAT</th><th>KODE</th><th>RIDER</th><th>STABLE</th><th class="text-end">TOTAL POIN</th></tr></thead>
+            <tbody>
+              <% standings.forEach(st => { %>
+                <tr>
+                  <td class="fw-bold text-warning">Peringkat <%= st.peringkat %></td>
+                  <td class="font-monospace"><%= st.kodeRider %></td>
+                  <td class="fw-bold text-white"><%= st.namaLengkap %></td>
+                  <td class="text-white-50"><%= st.asalStable %></td>
+                  <td class="text-end font-display fw-bold fs-5 text-gold"><%= st.totalPoints %> pts</td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sthac-card p-4">
+        <p class="small text-white-50 mb-3">Matikan untuk kelas exhibition (mis. Open Qabaq) supaya tidak memengaruhi juara umum.</p>
+        <table class="table table-dark sthac-table mb-0 small">
+          <thead><tr><th>SERI</th><th>KELAS</th><th>KATEGORI</th><th>DIHITUNG UNTUK POIN</th><th class="text-end"></th></tr></thead>
+          <tbody>
+            <% kelasList.forEach(k => { %>
+              <tr>
+                <td>Seri 1</td>
+                <td class="fw-bold text-white"><%= k.namaKelas %></td>
+                <td><%= k.kategori %></td>
+                <td><span class="badge rounded-pill <%= k.hitungPoinJuara ? 'bg-success-subtle text-success' : 'bg-secondary' %>"><%= k.hitungPoinJuara ? 'DIHITUNG' : 'DIKELUARKAN' %></span></td>
+                <td class="text-end">
+                  <button onclick="toggleKelasPoinAction(<%= k.id %>)" class="btn btn-dark-pill btn-sm py-1"><%= k.hitungPoinJuara ? 'Keluarkan' : 'Sertakan' %></button>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== 10. TAB PANITIA (admin-juri.php) ==================== -->
+    <div id="adm-sec-panitia" class="admin-section" style="display:none;">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <form onsubmit="submitAdminEntity(event, '/api/panitia/members')" class="sthac-card p-4">
+            <h4 class="font-display fw-bold text-uppercase text-white mb-3">TAMBAH PANITIA</h4>
+            <div class="row g-3 small">
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA LENGKAP *</label><input name="namaLengkap" required class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">NAMA PANGGILAN</label><input name="panggilan" class="form-control sthac-input" /></div>
+              <div class="col-md-6">
+                <label class="text-warning mb-1">PERAN</label>
+                <select name="peran" class="form-select sthac-input">
+                  <option>Juri Utama</option><option>Juri</option><option>Scorer/Pencatat</option><option>Timer</option><option>Course Designer</option><option>Starter</option><option>Tim Medis</option>
+                </select>
+              </div>
+              <div class="col-md-6"><label class="text-warning mb-1">URUTAN TAMPIL</label><input type="number" name="urutanTampil" value="8" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">SERTIFIKASI / LISENSI</label><input name="sertif" placeholder="mis. Juri Berkuda Memanah" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">KONTAK / WHATSAPP</label><input name="kontakWa" class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">EMAIL (UNTUK OTP)</label><input type="email" name="email" required class="form-control sthac-input" /></div>
+              <div class="col-md-6"><label class="text-warning mb-1">STATUS</label><select name="status" class="form-select sthac-input"><option>Aktif</option><option>Nonaktif</option></select></div>
+              <div class="col-12"><label class="text-warning mb-1">BIO / TUGAS</label><textarea name="bioTugas" rows="2" class="form-control sthac-input"></textarea></div>
+            </div>
+            <button type="submit" class="btn btn-gold-pill mt-4 px-4 py-2">Simpan</button>
+          </form>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="sthac-card p-4">
+            <div class="table-responsive">
+              <table class="table table-dark sthac-table mb-0 small">
+                <thead><tr><th>NAMA</th><th>PERAN</th><th>EMAIL OTP</th><th>STATUS</th><th class="text-end"></th></tr></thead>
+                <tbody>
+                  <% adminBundle.panitia.forEach(p => { %>
+                    <tr>
+                      <td class="fw-bold text-white"><%= p.namaLengkap %></td>
+                      <td><%= p.peran %></td>
+                      <td class="text-warning"><%= p.email %></td>
+                      <td><%= p.status %></td>
+                      <td class="text-end">
+                        <button onclick="deletePanitiaAction(<%= p.id %>)" class="btn btn-dark-pill btn-sm py-1 text-danger">Hapus</button>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 11. TAB UNDUHAN (admin-dokumen.php) ==================== -->
+    <div id="adm-sec-unduhan" class="admin-section" style="display:none;">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <form onsubmit="submitAdminEntity(event, '/api/panitia/dokumen')" class="sthac-card p-4">
+            <h4 class="font-display fw-bold text-uppercase text-white mb-3">UNGGAH DOKUMEN BARU</h4>
+            <div class="vstack gap-3 small">
+              <div><label class="text-warning mb-1">JUDUL DOKUMEN *</label><input name="judul" required class="form-control sthac-input" /></div>
+              <div><label class="text-warning mb-1">KODE BADGE (THB / RULE / FORM)</label><input name="kodeBadge" value="THB" class="form-control sthac-input" /></div>
+              <div><label class="text-warning mb-1">KATEGORI</label><input name="kategori" value="Technical Handbook" class="form-control sthac-input" /></div>
+              <div><label class="text-warning mb-1">FILE DOKUMEN (PDF)</label><input type="file" name="docFile" class="form-control sthac-input" /></div>
+              <button type="submit" class="btn btn-gold-pill py-2">Simpan Dokumen</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-lg-7">
+          <div class="sthac-card p-4">
+            <table class="table table-dark sthac-table mb-0 small">
+              <thead><tr><th>BADGE</th><th>JUDUL</th><th>STATUS</th><th class="text-end"></th></tr></thead>
+              <tbody>
+                <% dokumenList.forEach(d => { %>
+                  <tr>
+                    <td><span class="badge bg-warning text-dark"><%= d.kodeBadge %></span></td>
+                    <td class="fw-bold text-white"><%= d.judul %></td>
+                    <td><%= d.statusInfo %></td>
+                    <td class="text-end"><button onclick="deleteDocAction(<%= d.id %>)" class="btn btn-dark-pill btn-sm py-1 text-danger">Hapus</button></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 12. TAB BERITA (admin-berita.php) ==================== -->
+    <div id="adm-sec-berita" class="admin-section" style="display:none;">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <form onsubmit="submitAdminEntity(event, '/api/panitia/news')" class="sthac-card p-4">
+            <h4 class="font-display fw-bold text-uppercase text-white mb-3">TULIS BERITA / PENGUMUMAN</h4>
+            <div class="vstack gap-3 small">
+              <div><label class="text-warning mb-1">JUDUL BERITA *</label><input name="judul" required class="form-control sthac-input" /></div>
+              <div><label class="text-warning mb-1">KATEGORI</label><input name="kategori" value="PENGUMUMAN" class="form-control sthac-input" /></div>
+              <div><label class="text-warning mb-1">RINGKASAN</label><input name="ringkasan" class="form-control sthac-input" /></div>
+              <div><label class="text-warning mb-1">ISI BERITA LENGKAP *</label><textarea name="isiBerita" rows="4" required class="form-control sthac-input"></textarea></div>
+              <button type="submit" class="btn btn-gold-pill py-2">Publikasikan Berita</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-lg-7">
+          <div class="sthac-card p-4">
+            <table class="table table-dark sthac-table mb-0 small">
+              <thead><tr><th>KATEGORI</th><th>JUDUL BERITA</th><th class="text-end"></th></tr></thead>
+              <tbody>
+                <% newsList.forEach(n => { %>
+                  <tr>
+                    <td><span class="badge bg-warning text-dark"><%= n.kategori %></span></td>
+                    <td class="fw-bold text-white"><%= n.judul %></td>
+                    <td class="text-end"><button onclick="deleteNewsAction(<%= n.id %>)" class="btn btn-dark-pill btn-sm py-1 text-danger">Hapus</button></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 13. TAB SETELAN (admin-pengaturan.php) ==================== -->
+    <div id="adm-sec-setelan" class="admin-section" style="display:none;">
+      <form onsubmit="saveSiteSettingsForm(event)" class="sthac-card p-4 p-md-5">
+        <h3 class="font-display fw-bold text-uppercase text-white mb-4">PENGATURAN IDENTITAS, PENDAFTARAN &amp; KONTAK SITUS</h3>
+        <div class="row g-3 small">
+          <div class="col-md-6"><label class="text-warning mb-1">NAMA KEJUARAAN (EVENT NAME)</label><input name="eventName" value="<%= setting.eventName %>" class="form-control sthac-input" /></div>
+          <div class="col-md-3"><label class="text-warning mb-1">KODE SINGKAT</label><input name="shortCode" value="<%= setting.shortCode %>" class="form-control sthac-input" /></div>
+          <div class="col-md-3">
+            <label class="text-warning mb-1">STATUS PENDAFTARAN PUBLIK</label>
+            <select name="registrationOpen" class="form-select sthac-input">
+              <option value="true" <%= setting.registrationOpen ? 'selected' : '' %>>DIBUKA (OPEN)</option>
+              <option value="false" <%= !setting.registrationOpen ? 'selected' : '' %>>DITUTUP (CLOSED)</option>
+            </select>
+          </div>
+          <div class="col-md-6"><label class="text-warning mb-1">HEADLINE HERO</label><input name="headline" value="<%= setting.headline %>" class="form-control sthac-input" /></div>
+          <div class="col-md-6"><label class="text-warning mb-1">LOKASI UTAMA</label><input name="location" value="<%= setting.location %>" class="form-control sthac-input" /></div>
+          <div class="col-md-4"><label class="text-warning mb-1">WHATSAPP RESMI</label><input name="whatsapp" value="<%= setting.whatsapp %>" class="form-control sthac-input" /></div>
+          <div class="col-md-4"><label class="text-warning mb-1">EMAIL RESMI</label><input name="email" value="<%= setting.email %>" class="form-control sthac-input" /></div>
+          <div class="col-md-4"><label class="text-warning mb-1">INSTAGRAM</label><input name="instagram" value="<%= setting.instagram %>" class="form-control sthac-input" /></div>
+          <div class="col-md-4"><label class="text-warning mb-1">WARNA LATAR UTAMA</label><input name="bgColor" value="<%= setting.bgColor %>" class="form-control sthac-input" /></div>
+          <div class="col-md-4"><label class="text-warning mb-1">WARNA AKSEN EMAS</label><input name="goldColor" value="<%= setting.goldColor %>" class="form-control sthac-input" /></div>
+          <div class="col-md-4"><label class="text-warning mb-1">KATA SANDI PANITIA</label><input name="adminPassword" value="<%= setting.adminPassword %>" class="form-control sthac-input" /></div>
+        </div>
+        <button type="submit" class="btn btn-gold-pill mt-4 px-5 py-2">Simpan Pengaturan Situs</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let otpPurpose = 'login';
+  let activeEmailOtp = '';
+
+  function checkAdminAuth() {
+    const saved = sessionStorage.getItem('sthac_admin_session');
+    if (saved) {
+      const user = JSON.parse(saved);
+      document.getElementById('admin-auth-gate').style.display = 'none';
+      document.getElementById('admin-workspace').style.display = 'block';
+      document.getElementById('lbl-admin-user').innerText = `${user.namaLengkap} (${user.peran})`;
+      const lastTab = sessionStorage.getItem('sthac_active_adm_tab') || 'ringkasan';
+      openAdminTab(lastTab);
+    } else {
+      document.getElementById('admin-auth-gate').style.display = 'block';
+      document.getElementById('admin-workspace').style.display = 'none';
+    }
+  }
+
+  function switchAuthTab(mode) {
+    document.getElementById('form-otp-verify').style.display = 'none';
+    document.getElementById('form-auth-otp').style.display = mode === 'otp' ? 'flex' : 'none';
+    document.getElementById('form-auth-reg').style.display = mode === 'reg' ? 'flex' : 'none';
+    document.getElementById('form-auth-pass').style.display = mode === 'pass' ? 'flex' : 'none';
+    document.getElementById('tab-auth-otp').className = `btn flex-grow-1 py-2 small ${mode === 'otp' ? 'btn-gold-pill' : 'btn-dark-pill'}`;
+    document.getElementById('tab-auth-reg').className = `btn flex-grow-1 py-2 small ${mode === 'reg' ? 'btn-gold-pill' : 'btn-dark-pill'}`;
+    document.getElementById('tab-auth-pass').className = `btn flex-grow-1 py-2 small ${mode === 'pass' ? 'btn-gold-pill' : 'btn-dark-pill'}`;
+  }
+
+  async function handleReqLoginOtp(e) {
+    e.preventDefault();
+    otpPurpose = 'login';
+    const email = new FormData(e.target).get('email');
+    const res = await fetch('/api/panitia/login/request-otp', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email })
+    });
+    const out = await res.json();
+    if (out.success) {
+      activeEmailOtp = out.email;
+      document.getElementById('form-auth-otp').style.display = 'none';
+      document.getElementById('form-otp-verify').style.display = 'flex';
+      document.getElementById('lbl-otp-email').innerText = out.email;
+      
+      document.getElementById('inp-otp-code').value = '';
+    } else alert(out.error);
+  }
+
+  async function handleReqRegOtp(e) {
+    e.preventDefault();
+    otpPurpose = 'register';
+    const res = await fetch('/api/panitia/register/request-otp', { method: 'POST', body: new FormData(e.target) });
+    const out = await res.json();
+    if (out.success) {
+      activeEmailOtp = out.email;
+      document.getElementById('form-auth-reg').style.display = 'none';
+      document.getElementById('form-otp-verify').style.display = 'flex';
+      document.getElementById('lbl-otp-email').innerText = out.email;
+      
+      document.getElementById('inp-otp-code').value = '';
+    } else alert(out.error);
+  }
+
+  async function handleVerifyOtp(e) {
+    e.preventDefault();
+    const otpCode = document.getElementById('inp-otp-code').value;
+    const url = otpPurpose === 'login' ? '/api/panitia/login/verify-otp' : '/api/panitia/register/verify-otp';
+    const res = await fetch(url, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: activeEmailOtp, otpCode })
+    });
+    const out = await res.json();
+    if (out.success) {
+      sessionStorage.setItem('sthac_admin_session', JSON.stringify(out.user));
+      window.location.reload();
+    } else alert(out.error);
+  }
+
+  async function handlePassLogin(e) {
+    e.preventDefault();
+    const password = new FormData(e.target).get('password');
+    const res = await fetch('/api/panitia/login/password', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password })
+    });
+    const out = await res.json();
+    if (out.success) {
+      sessionStorage.setItem('sthac_admin_session', JSON.stringify(out.user));
+      window.location.reload();
+    } else alert(out.error);
+  }
+
+  function logoutAdmin() {
+    sessionStorage.removeItem('sthac_admin_session');
+    window.location.reload();
+  }
+
+  function openAdminTab(tabName) {
+    sessionStorage.setItem('sthac_active_adm_tab', tabName);
+    document.querySelectorAll('.admin-section').forEach(el => el.style.display = 'none');
+    const target = document.getElementById('adm-sec-' + tabName);
+    if (target) target.style.display = 'block';
+
+    // Reset semua tombol grup utama ke btn-dark-pill
+    const groups = {
+      ringkasan: ['ringkasan'],
+      peserta: ['pendaftar', 'rider', 'pelatih', 'stable'],
+      teknis: ['acara', 'lintasan', 'penilaian', 'poin'],
+      sistem: ['panitia', 'unduhan', 'berita'],
+      setelan: ['setelan']
+    };
+
+    Object.keys(groups).forEach(gKey => {
+      const btn = document.getElementById('adm-group-' + gKey);
+      if (!btn) return;
+      const isActive = groups[gKey].includes(tabName);
+      const isDropdown = btn.classList.contains('dropdown-toggle');
+      btn.className = `btn btn-sm ${isDropdown ? 'dropdown-toggle ' : ''}py-2 px-3 ${isActive ? 'btn-gold-pill' : 'btn-dark-pill'}`;
+    });
+
+    // Tandai sub-item di dalam dropdown yang sedang aktif
+    document.querySelectorAll('.adm-sub-link').forEach(link => {
+      if (link.getAttribute('data-tab') === tabName) {
+        link.classList.add('active-sub');
+      } else {
+        link.classList.remove('active-sub');
+      }
+    });
+
+    // Tutup dropdown yang sedang terbuka setelah item diklik
+    document.querySelectorAll('.dropdown-menu-sthac.show').forEach(menu => {
+      const toggleBtn = menu.previousElementSibling;
+      if (toggleBtn && window.bootstrap) {
+        const inst = bootstrap.Dropdown.getInstance(toggleBtn);
+        if (inst) inst.hide();
+      }
+    });
+  }
+
+  function filterRegistrant(status) {
+    document.querySelectorAll('.reg-card-item').forEach(card => {
+      card.style.display = (status === 'all' || card.getAttribute('data-status') === status) ? 'block' : 'none';
+    });
+  }
+
+  function searchAdminRider() {
+    const q = document.getElementById('adm-search-rider').value.toLowerCase();
+    document.querySelectorAll('#adm-rider-tbody tr').forEach(tr => {
+      tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  async function verifyRiderAction(id, statusAcc) {
+    const catatanPanitia = document.getElementById('note-' + id)?.value || '';
+    const alasanPenolakan = document.getElementById('rej-' + id)?.value || '';
+    await fetch(`/api/panitia/rider/${id}/acc`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ statusAcc, catatanPanitia, alasanPenolakan })
+    });
+    window.location.reload();
+  }
+
+  async function deleteRegistrantAction(id) {
+    const confirmWord = document.getElementById('del-reg-' + id)?.value || '';
+    const res = await fetch(`/api/panitia/rider/${id}/delete`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirmWord })
+    });
+    const out = await res.json();
+    if (out.success) window.location.reload();
+    else alert(out.error);
+  }
+
+  async function submitAdminEntity(e, url) {
+    e.preventDefault();
+    const res = await fetch(url, { method: 'POST', body: new FormData(e.target) });
+    const out = await res.json();
+    if (out.success) window.location.reload();
+    else alert(out.error);
+  }
+
+  async function saveSeriForm(e, id) {
+    e.preventDefault();
+    const payload = Object.fromEntries(new FormData(e.target).entries());
+    await fetch(`/api/panitia/seri/${id}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    });
+    window.location.reload();
+  }
+
+  async function createKelasForm(e) {
+    e.preventDefault();
+    const payload = Object.fromEntries(new FormData(e.target).entries());
+    await fetch('/api/panitia/kelas', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    });
+    window.location.reload();
+  }
+
+  async function deleteKelasAction(id) {
+    if (!confirm('Hapus kelas ini?')) return;
+    await fetch(`/api/panitia/kelas/${id}`, { method: 'DELETE' });
+    window.location.reload();
+  }
+
+  async function deleteSeriAction(id) {
+    const confirmWord = document.getElementById('del-seri-confirm').value;
+    const res = await fetch(`/api/panitia/seri/${id}/delete`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirmWord })
+    });
+    const out = await res.json();
+    if (out.success) window.location.reload();
+    else alert(out.error);
+  }
+
+  async function saveLintasanForm(e) {
+    e.preventDefault();
+    const payload = Object.fromEntries(new FormData(e.target).entries());
+    await fetch('/api/panitia/lintasan', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    });
+    window.location.reload();
+  }
+
+  async function submitAdminScore(e) {
+    e.preventDefault();
+    const payload = Object.fromEntries(new FormData(e.target).entries());
+    const res = await fetch('/api/scores', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    });
+    const out = await res.json();
+    if (out.success) {
+      alert(`Hasil Run tersimpan! Total Skor: ${out.data.totalSkor}`);
+      window.location.reload();
+    } else alert(out.error);
+  }
+
+  async function toggleKelasPoinAction(id) {
+    await fetch(`/api/panitia/kelas/${id}/toggle-poin`, { method: 'PUT' });
+    window.location.reload();
+  }
+
+  async function deletePanitiaAction(id) {
+    if (!confirm('Hapus anggota panitia ini?')) return;
+    await fetch(`/api/panitia/members/${id}`, { method: 'DELETE' });
+    window.location.reload();
+  }
+
+  async function deleteDocAction(id) {
+    await fetch(`/api/panitia/dokumen/${id}`, { method: 'DELETE' });
+    window.location.reload();
+  }
+
+  async function deleteNewsAction(id) {
+    await fetch(`/api/panitia/news/${id}`, { method: 'DELETE' });
+    window.location.reload();
+  }
+
+  async function saveSiteSettingsForm(e) {
+    e.preventDefault();
+    const payload = Object.fromEntries(new FormData(e.target).entries());
+    await fetch('/api/panitia/settings', {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    });
+    alert('Pengaturan berhasil disimpan!');
+    window.location.reload();
+  }
+
+  async function clearDemo() {
+    if (!confirm('Hapus seluruh data contoh?')) return;
+    await fetch('/api/panitia/clear-demo', { method: 'POST' });
+    window.location.reload();
+  }
+
+  checkAdminAuth();
+</script>

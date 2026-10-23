@@ -1,0 +1,47 @@
+<div class="container py-5">
+  <div class="mb-4">
+    <span class="badge-gold-outline mb-2">RANGKAIAN KEJUARAAN BERJENJANG</span>
+    <h1 class="font-display fw-bold text-uppercase text-white mb-1">SERI KEJUARAAN</h1>
+    <p class="text-white-50 mb-0">Ringkasan seri dan jumlah kelasnya pada South Tangerang Horseback Archery Cup 2026.</p>
+  </div>
+
+  <div class="sthac-card overflow-hidden mb-4">
+    <div class="table-responsive">
+      <table class="table table-dark sthac-table mb-0">
+        <thead>
+          <tr>
+            <th>SERI</th>
+            <th>TANGGAL</th>
+            <th>LOKASI</th>
+            <th class="text-center">KELAS</th>
+            <th class="text-center">PESERTA</th>
+            <th>STATUS</th>
+            <th class="text-end">PAPAN SKOR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% seriList.forEach(s => { %>
+            <tr>
+              <td>
+                <div class="fw-bold text-white">Seri <%= s.nomorSeri %> — <%= s.namaSeri %></div>
+                <small class="text-white-50"><%= s.deskripsi %></small>
+              </td>
+              <td class="text-white-50"><%= s.tanggalTampil %></td>
+              <td class="text-white-50"><%= s.tempat %></td>
+              <td class="text-center"><%= s.kelasList ? s.kelasList.length : 0 %></td>
+              <td class="text-center"><%= s.nomorSeri === 1 ? stats.diterima : 0 %></td>
+              <td>
+                <span class="badge rounded-pill px-3 py-1 <%= s.status.toLowerCase().includes('dibuka') ? 'bg-success-subtle text-success border border-success' : 'bg-info-subtle text-info border border-info' %> text-uppercase">
+                  <%= s.status %>
+                </span>
+              </td>
+              <td class="text-end">
+                <a href="/skor?seri=<%= s.id %>" class="btn btn-dark-pill btn-sm px-3">Lihat Skor</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
