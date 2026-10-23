@@ -1,77 +1,98 @@
-<section class="sthac-hero-forest py-5">
-  <div class="container py-lg-4">
+<section class="sthac-hero-glass">
+  <div class="container py-lg-3">
     <div class="row align-items-center g-5">
       <div class="col-lg-7">
-        <div class="sthac-eyebrow mb-3">
-          <i class="bi bi-bullseye me-2"></i><%= setting.headline %>
+        <div class="hero-glass-eyebrow mb-3">
+          <span class="dot-live"></span>
+          <span>SERI 1 · 14 NOVEMBER 2026 · SAIGA STABLE</span>
         </div>
-        <h1 class="font-display display-4 fw-bold text-uppercase text-white mb-3" style="letter-spacing:1px;line-height:1.08;">
+
+        <h1 class="font-display display-4 fw-bold text-uppercase mb-3" style="color:#FFFFFF !important;letter-spacing:0.8px;line-height:1.06;">
           SOUTH TANGERANG <br/>
-          <span style="color:#F2E0AC;">HORSEBACK ARCHERY CUP</span>
+          HORSEBACK ARCHERY CUP
         </h1>
-        <p class="mb-4" style="color:#E2E8F0;font-size:0.98rem;line-height:1.7;">
-          Kejuaraan berkuda memanah berjenjang (seri) di Tangerang Selatan untuk meningkatkan keterampilan setiap rider — dari kelas pemula sampai mahir — sekaligus menjaring bakat atlet daerah menuju kejuaraan nasional dan internasional. Mengacu pada sistem <strong style="color:#F2E0AC;">IHAA</strong> &amp; format nasional <strong style="color:#F2E0AC;">Pordasi Berkuda Memanah</strong>.
+
+        <p class="mb-4" style="color:rgba(255,255,255,0.92) !important;font-size:0.95rem;line-height:1.72;max-width:620px;">
+          South Tangerang Horseback Archery Cup adalah kejuaraan berkuda memanah berjenjang (seri) yang diselenggarakan di Tangerang Selatan. Tujuannya meningkatkan keterampilan setiap rider yang berlatih berkuda memanah — dari kelas pemula sampai mahir — sekaligus menjaring bakat rider untuk mewakili daerah pada kejuaraan nasional dan internasional. Penilaian pertandingan mengacu pada sistem <strong>IHAA (International Horseback Archery Alliance)</strong> &amp; format nasional <strong>Pordasi Berkuda Memanah</strong>.
         </p>
 
-        <div class="d-flex flex-wrap gap-3 small mb-4" style="color:#F2E0AC;">
-          <span><i class="bi bi-calendar3 me-1"></i> Sabtu, 14 November 2026</span>
-          <span><i class="bi bi-geo-alt-fill me-1"></i> <%= setting.location %></span>
-          <span><i class="bi bi-check-circle-fill text-warning me-1"></i> <%= setting.registrationOpen ? 'Pendaftaran dibuka' : 'Pendaftaran ditutup' %></span>
+        <div class="d-flex flex-wrap gap-3 small mb-4" style="color:rgba(255,255,255,0.9) !important;">
+          <span><i class="bi bi-calendar3 text-warning me-1"></i> Sabtu, 14 November 2026</span>
+          <span><i class="bi bi-geo-alt-fill text-warning me-1"></i> <%= setting.location %></span>
+          <span><i class="bi bi-check-circle-fill text-success me-1"></i> <%= setting.registrationOpen ? 'Pendaftaran dibuka' : 'Pendaftaran ditutup' %></span>
         </div>
 
+        <!-- Barisan Tombol Hero (Emas + Semi-Transparan) -->
         <div class="d-flex flex-wrap gap-2 mb-4">
-          <a href="/pendaftaran" class="btn btn-gold-pill px-4 py-2"><i class="bi bi-person-plus-fill me-1"></i> Daftar Sekarang</a>
-          <a href="/skor" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">Papan Skor</a>
-          <a href="/aturan" class="btn btn-outline-light rounded-pill px-4 py-2 fw-semibold">Sistem Penilaian</a>
+          <a href="/pendaftaran" class="btn btn-gold-pill px-4 py-2">
+            + Daftar Sekarang
+          </a>
+          <a href="/skor" class="btn btn-glass-pill px-3 py-2">
+            <i class="bi bi-bar-chart-fill me-1"></i> Papan Skor
+          </a>
+          <a href="#penilaian" class="btn btn-glass-pill px-3 py-2">
+            <i class="bi bi-bullseye me-1"></i> Sistem Penilaian
+          </a>
+          <a href="#unduhan" class="btn btn-glass-pill px-3 py-2">
+            <i class="bi bi-download me-1"></i> Unduhan
+          </a>
         </div>
 
+        <!-- Kotak Countdown Semi-Transparan -->
         <div class="d-flex flex-wrap gap-2 mt-4" id="sthac-countdown">
-          <div class="countdown-box"><span id="cd-days" class="cd-num">22</span><span class="cd-label">HARI</span></div>
-          <div class="countdown-box"><span id="cd-hours" class="cd-num">21</span><span class="cd-label">JAM</span></div>
-          <div class="countdown-box"><span id="cd-mins" class="cd-num">18</span><span class="cd-label">MENIT</span></div>
-          <div class="countdown-box"><span id="cd-secs" class="cd-num">52</span><span class="cd-label">DETIK</span></div>
+          <div class="countdown-glass-box"><span id="cd-days" class="cd-num">21</span><span class="cd-label">HARI</span></div>
+          <div class="countdown-glass-box"><span id="cd-hours" class="cd-num">19</span><span class="cd-label">JAM</span></div>
+          <div class="countdown-glass-box"><span id="cd-mins" class="cd-num">02</span><span class="cd-label">MENIT</span></div>
+          <div class="countdown-glass-box"><span id="cd-secs" class="cd-num">25</span><span class="cd-label">DETIK</span></div>
         </div>
       </div>
 
+      <!-- Kartu Kanan Semi-Transparan (Frosted Glass) -->
       <div class="col-lg-5 text-center">
-        <div class="hero-emblem-card mx-auto">
-          <img src="<%= setting.logoUrl %>" alt="STHAC 2026" class="img-fluid hero-emblem-img" />
+        <div class="hero-emblem-glass-card">
+          <img src="<%= setting.logoUrl %>" alt="STHAC 2026" class="img-fluid mb-3" style="max-height:190px;object-fit:contain;" />
+          <div>
+            <span class="badge-green-soft mb-2">Saiga Stable Arena</span>
+            <div class="small fw-bold text-forest" style="line-height:1.35;">
+              South Tangerang Horseback Archery Cup<br/>2026
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SISTEM PENILAIAN (2 Kartu Putih Bersih Sesuai Figma) -->
-<section class="py-5">
+<!-- SISTEM PENILAIAN IHAA & PORDASI -->
+<section id="penilaian" class="py-4">
   <div class="container">
     <div class="row g-4">
       <div class="col-lg-6">
-        <div class="sthac-card p-4 p-md-5 h-100" style="border-top:4px solid #072619;">
-          <span class="badge-gold-outline mb-2">STANDAR INTERNASIONAL</span>
-          <h3 class="font-display fw-bold text-uppercase text-forest mb-3">Sistem Penilaian IHAA</h3>
+        <div class="sthac-card p-4 p-md-5 h-100">
+          <span class="badge-green-soft mb-3">STANDAR INTERNASIONAL</span>
+          <h3 class="font-display fw-bold text-uppercase text-forest mb-2">SISTEM PENILAIAN IHAA</h3>
           <p class="small text-secondary mb-3">
-            Setiap lintasan memiliki <em>Par Time</em>, zona nilai target, perhitungan poin waktu, serta bonus standar internasional.
+            Setiap lintasan memiliki <strong>Par Time</strong> (batas waktu standar), zona nilai target, perhitungan poin waktu, serta bonus standar internasional.
           </p>
-          <ul class="small text-secondary vstack gap-2 mb-0">
-            <li><strong class="text-forest">Poin Zona Target:</strong> Dihitung dari perkenaan anak panah pada sasaran (misal <code>5,4,3,2,1</code> atau <code>6,4,2</code>).</li>
-            <li><strong class="text-forest">Poin &amp; Pengali Waktu:</strong> Selisih waktu di bawah <em>Par Time</em> menghasilkan bonus waktu.</li>
-            <li><strong class="text-forest">Bonus Sapu Bersih &amp; Qabaq:</strong> Tambahan poin khusus bila seluruh target kena dalam satu <em>Run</em>.</li>
+          <ul class="small text-secondary vstack gap-2 mb-0 ps-3">
+            <li><strong class="text-forest">Poin Zona Target:</strong> Dihitung dari perkenaan anak panah pada sasaran (misal <code>5, 4, 3, 2, 1</code> pada Korean Track atau <code>6, 4, 2</code> pada Tabla).</li>
+            <li><strong class="text-forest">Poin &amp; Pengali Waktu:</strong> Selisih waktu di bawah <em>Par Time</em> menghasilkan bonus waktu (termasuk pengali per target kena pada Tabla-4).</li>
+            <li><strong class="text-forest">Bonus Sapu Bersih &amp; Qabaq:</strong> Tambahan poin khusus bila seluruh target kena dalam satu <em>Run</em> serta bonus bidikan <em>Qabaq</em>.</li>
           </ul>
         </div>
       </div>
 
       <div class="col-lg-6">
-        <div class="sthac-card p-4 p-md-5 h-100" style="border-top:4px solid #D4AF37;">
-          <span class="badge-gold-outline mb-2">FORMAT KELAS NASIONAL</span>
-          <h3 class="font-display fw-bold text-uppercase text-forest mb-3">Pordasi Berkuda Memanah</h3>
+        <div class="sthac-card p-4 p-md-5 h-100">
+          <span class="badge-green-soft mb-3">FORMAT KELAS NASIONAL</span>
+          <h3 class="font-display fw-bold text-uppercase text-forest mb-2">PORDASI BERKUDA MEMANAH</h3>
           <p class="small text-secondary mb-3">
             Mengakomodasi nomor pertandingan nasional Pordasi Berkuda Memanah untuk pembinaan atlet daerah hingga nasional:
           </p>
-          <ul class="small text-secondary vstack gap-2 mb-0">
-            <li><strong class="text-forest">Track Lurus (Straight Track):</strong> Tembakan samping dan tembakan belakang di lintasan lurus.</li>
-            <li><strong class="text-forest">Track Circle:</strong> Lintasan melingkar di dalam arena dengan target di sisi luar.</li>
-            <li><strong class="text-forest">Fast Shooting:</strong> Melepaskan jumlah anak panah maksimal secara akurat dalam batas waktu.</li>
+          <ul class="small text-secondary vstack gap-2 mb-0 ps-3">
+            <li><strong class="text-forest">Track Lurus (Straight Track):</strong> Tembakan samping dan tembakan belakang (<em>Parthian shot</em>) di lintasan lurus.</li>
+            <li><strong class="text-forest">Track Circle (Circle 20D):</strong> Lintasan melingkar di dalam arena dengan batas waktu tempuh per <em>Run</em>.</li>
+            <li><strong class="text-forest">Fast Shooting (Archery for Horse Riding):</strong> Melepaskan jumlah anak panah maksimal secara akurat dalam batas waktu tertentu.</li>
           </ul>
         </div>
       </div>
@@ -79,15 +100,15 @@
   </div>
 </section>
 
-<!-- POIN KEJUARAAN SEMENTARA (3 Kartu Putih Sesuai Figma) -->
+<!-- POIN KEJUARAAN SEMENTARA -->
 <section class="py-4">
   <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-2">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-3 gap-2">
       <div>
-        <span class="badge-gold-outline mb-2">CHAMPIONSHIP LEADERBOARD</span>
-        <h2 class="font-display fw-bold text-uppercase text-forest mb-0">Poin Kejuaraan Sementara</h2>
+        <small class="text-secondary fw-bold text-uppercase d-block" style="font-size:0.68rem;letter-spacing:1px;">CHAMPIONSHIP LEADERBOARD</small>
+        <h2 class="font-display fw-bold text-uppercase text-forest mb-0">POIN KEJUARAAN SEMENTARA</h2>
       </div>
-      <a href="/juara" class="btn btn-dark-pill btn-sm px-3">Klasemen lengkap &rarr;</a>
+      <a href="/juara" class="small fw-bold text-decoration-none text-forest">Klasemen lengkap &rarr;</a>
     </div>
 
     <div class="row g-4">
@@ -95,18 +116,16 @@
         <div class="col-md-4">
           <div class="sthac-card p-4 h-100 d-flex flex-column justify-content-between">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <span class="badge rounded-pill px-3 py-1 fw-bold" style="background:#072619;color:#F2E0AC;">
-                Peringkat <%= idx + 1 %>
-              </span>
-              <span class="font-monospace small fw-bold text-gold"><%= st.kodeRider %></span>
+              <span class="badge-green-soft">Peringkat <%= idx + 1 %></span>
+              <span class="font-monospace small text-secondary"><%= st.kodeRider %></span>
             </div>
             <div>
-              <h4 class="font-display fw-bold text-forest mb-1"><%= st.namaLengkap %></h4>
-              <p class="small text-secondary mb-3"><i class="bi bi-shield-shaded text-gold me-1"></i><%= st.asalStable %></p>
+              <h5 class="fw-bold text-forest mb-1"><%= st.namaLengkap %></h5>
+              <p class="small text-secondary mb-3"><i class="bi bi-shield-check text-success me-1"></i><%= st.asalStable %></p>
             </div>
             <div class="pt-3 border-top d-flex justify-content-between align-items-center">
               <span class="small text-secondary">Total Poin Seri</span>
-              <span class="font-display fw-bold fs-3 text-forest"><%= st.totalPoints %> <small class="fs-6 text-gold">pts</small></span>
+              <span class="font-display fw-bold fs-4 text-forest"><%= st.totalPoints %> pts</span>
             </div>
           </div>
         </div>
@@ -116,14 +135,14 @@
 </section>
 
 <!-- UNDUHAN DOKUMEN -->
-<section class="py-4">
+<section id="unduhan" class="py-4">
   <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-2">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-3 gap-2">
       <div>
-        <span class="badge-gold-outline mb-2">BERKAS PERTANDINGAN</span>
-        <h2 class="font-display fw-bold text-uppercase text-forest mb-0">Unduhan Dokumen</h2>
+        <small class="text-secondary fw-bold text-uppercase d-block" style="font-size:0.68rem;letter-spacing:1px;">BERKAS PERTANDINGAN</small>
+        <h2 class="font-display fw-bold text-uppercase text-forest mb-0">UNDUHAN DOKUMEN</h2>
       </div>
-      <a href="/unduhan" class="btn btn-dark-pill btn-sm px-3">Semua unduhan &rarr;</a>
+      <a href="/unduhan" class="small fw-bold text-decoration-none text-forest">Semua unduhan &rarr;</a>
     </div>
 
     <div class="row g-4">
@@ -132,14 +151,14 @@
           <div class="sthac-card p-4 h-100 d-flex flex-column justify-content-between">
             <div>
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="badge bg-warning text-dark fw-bold"><%= doc.kodeBadge %></span>
+                <span class="badge-amber-soft"><%= doc.kodeBadge %></span>
                 <span class="small text-secondary"><%= doc.statusInfo %></span>
               </div>
-              <h5 class="font-display fw-bold text-forest mb-2"><%= doc.judul %></h5>
+              <h6 class="fw-bold text-forest mb-1"><%= doc.judul %></h6>
               <p class="small text-secondary mb-0">Kategori: <%= doc.kategori %></p>
             </div>
             <div class="mt-4">
-              <a href="/unduhan" class="btn btn-dark-pill btn-sm w-100">Lihat Berkas</a>
+              <a href="/unduhan" class="btn btn-soft-gray w-100">Lihat Berkas</a>
             </div>
           </div>
         </div>
@@ -148,18 +167,18 @@
   </div>
 </section>
 
-<!-- BANNER CTA HIJAU TUA (Sesuai Bagian Bawah Figma) -->
+<!-- CTA SIAP BERTANDING -->
 <section class="py-5">
   <div class="container">
     <div class="saiga-cta-banner p-4 p-md-5 text-center">
-      <h2 class="font-display fw-bold text-uppercase text-white mb-2">Siap Bertanding?</h2>
-      <p class="text-white-50 mb-4 mx-auto" style="max-width:640px;">
-        Pendaftaran dibuka untuk kelas <strong style="color:#F2E0AC;">Beginner (Walk) · U14</strong> &amp; <strong style="color:#F2E0AC;">Beginner (Trot) · Terbuka</strong> pada Seri 1 South Tangerang Horseback Archery Cup.
+      <h2 class="font-display fw-bold text-uppercase text-white mb-2">SIAP BERTANDING?</h2>
+      <p class="text-white-50 mb-4 mx-auto small" style="max-width:620px;">
+        Pendaftaran dibuka untuk kelas <strong class="text-white">Beginner (Walk) · U14</strong> &amp; <strong class="text-white">Beginner (Trot) · Terbuka</strong> pada Seri 1 South Tangerang Horseback Archery Cup.
       </p>
-      <div class="d-flex flex-wrap justify-content-center gap-3">
+      <div class="d-flex flex-wrap justify-content-center gap-2">
         <a href="/pendaftaran" class="btn btn-gold-pill px-4 py-2">Isi Formulir Pendaftaran</a>
-        <a href="/event" class="btn btn-outline-light rounded-pill px-4 py-2">Lihat Jadwal &amp; Lokasi</a>
-        <a href="/juara" class="btn btn-outline-light rounded-pill px-4 py-2">Klasemen Poin</a>
+        <a href="/event" class="btn btn-glass-pill px-4 py-2">Lihat jadwal &amp; lokasi</a>
+        <a href="/juara" class="btn btn-glass-pill px-4 py-2">Klasemen poin</a>
       </div>
     </div>
   </div>

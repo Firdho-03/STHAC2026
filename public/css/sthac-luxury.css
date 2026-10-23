@@ -540,3 +540,164 @@ main.flex-grow-1 { animation: pageFadeSlideIn 0.36s cubic-bezier(0.16, 1, 0.3, 1
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* ==================== SEMI-TRANSPARENT GLASS HERO & SEAMLESS FADE ==================== */
+.sthac-hero-glass {
+  position: relative;
+  background:
+    linear-gradient(180deg,
+      rgba(9, 32, 22, 0.78) 0%,
+      rgba(12, 40, 28, 0.62) 52%,
+      rgba(180, 192, 184, 0.55) 84%,
+      var(--bg-page) 100%
+    ),
+    url('https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=1800&q=85') center 35%/cover no-repeat;
+  padding: 4.5rem 0 5rem 0;
+  border-bottom: none !important;
+}
+
+html[data-theme="dark"] .sthac-hero-glass {
+  background:
+    linear-gradient(180deg,
+      rgba(3, 19, 12, 0.82) 0%,
+      rgba(6, 28, 19, 0.72) 58%,
+      rgba(3, 19, 12, 0.92) 88%,
+      var(--bg-page) 100%
+    ),
+    url('https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=1800&q=85') center 35%/cover no-repeat;
+}
+
+/* Eyebrow Pill Semi-Transparan */
+.hero-glass-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.38rem 0.95rem;
+  border-radius: 50rem;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #FFFFFF !important;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hero-glass-eyebrow .dot-live {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #34D399;
+  box-shadow: 0 0 8px #34D399;
+}
+
+/* Tombol Glass Semi-Transparan di Hero */
+.btn-glass-pill {
+  background: rgba(255, 255, 255, 0.18) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #FFFFFF !important;
+  border-radius: 50rem;
+  font-weight: 600;
+  font-size: 0.86rem;
+  transition: var(--transition-smooth);
+}
+
+.btn-glass-pill:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.55) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-2px);
+}
+
+/* Kotak Countdown Semi-Transparan */
+.countdown-glass-box {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 0.9rem;
+  padding: 0.8rem 1.25rem;
+  min-width: 84px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.countdown-glass-box .cd-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #FFFFFF !important;
+  display: block;
+  line-height: 1.05;
+}
+
+.countdown-glass-box .cd-label {
+  font-size: 0.62rem;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.82) !important;
+  font-weight: 700;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+/* Kartu Kanan Emblem Semi-Transparan (Frosted Card) */
+.hero-emblem-glass-card {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 1.35rem;
+  padding: 2.2rem 2rem 1.75rem 2rem;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 24px 48px rgba(7, 38, 25, 0.18);
+}
+
+html[data-theme="dark"] .hero-emblem-glass-card {
+  background: rgba(11, 41, 28, 0.72);
+  border-color: rgba(217, 180, 92, 0.38);
+}
+
+.badge-green-soft {
+  display: inline-block;
+  padding: 0.28rem 0.78rem;
+  border-radius: 50rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  background: #D1FAE5;
+  color: #065F46 !important;
+}
+
+html[data-theme="dark"] .badge-green-soft {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6EE7B7 !important;
+}
+
+.badge-amber-soft {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: #FEF3C7;
+  color: #92400E !important;
+}
+
+.btn-soft-gray {
+  background: var(--bg-table-head);
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-main);
+  border-radius: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+}
+.btn-soft-gray:hover {
+  background: #072619;
+  color: #F2E0AC !important;
+}
