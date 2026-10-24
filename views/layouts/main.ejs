@@ -19,6 +19,7 @@
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100">
+  <div id="sthac-scroll-progress"></div>
 
   <!-- NAVBAR DENGAN SAKELAR DUAL MODE (LIGHT / DARK) -->
   <nav class="navbar navbar-expand-xl navbar-sthac sticky-top py-2">
@@ -178,6 +179,70 @@
     socket.on('score_updated', () => {
       if (['/skor', '/juara', '/'].includes(window.location.pathname)) {
         window.location.reload();
+      }
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const progressBar = document.getElementById('sthac-scroll-progress');
+      const mainNavbar = document.querySelector('.navbar-sthac');
+      const heroSection = document.querySelector('.sthac-hero-glass');
+      const heroEmblem = document.querySelector('.hero-emblem-showcase');
+
+      // 1. Update Scroll Progress Bar, Sticky Navbar Shadow & Hero Parallax
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        if (progressBar && docHeight > 0) {
+          progressBar.style.width = ((scrollTop / docHeight) * 100).toFixed(2) + '%';
+        }
+        if (mainNavbar) {
+          if (scrollTop > 24) mainNavbar.classList.add('navbar-scrolled');
+          else mainNavbar.classList.remove('navbar-scrolled');
+        }
+        if (heroSection && scrollTop < 700) {
+          heroSection.style.backgroundPosition = `58% calc(38% + ${scrollTop * 0.18}px)`;
+        }
+      }, { passive: true });
+
+      // 2. Efek 3D Interactive Tilt Halus Saat Kursor Bergerak di Hero Beranda
+      if (heroSection && heroEmblem) {
+        heroSection.addEventListener('mousemove', (e) => {
+          const rect = heroSection.getBoundingClientRect();
+          const x = ((e.clientX - rect.left) / rect.width - 0.5) * 14;
+          const y = ((e.clientY - rect.top) / rect.height - 0.5) * 14;
+          heroEmblem.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+        });
+        heroSection.addEventListener('mouseleave', () => {
+          heroEmblem.style.transition = 'transform 0.45s ease';
+          heroEmblem.style.transform = 'translate3d(0, 0, 0)';
+          setTimeout(() => { heroEmblem.style.transition = ''; }, 450);
+        });
+      }
+
+      // 3. Staggered Scroll-Reveal pada Seluruh Kartu, Tabel, dan Banner Publik
+      const isPanitiaPage = window.location.pathname.includes('/panitia') || window.location.pathname.includes('/admin');
+      if (!isPanitiaPage) {
+        const revealTargets = document.querySelectorAll(
+          'main section .sthac-card, main .container .sthac-card, main .saiga-cta-banner, main .saiga-photo-banner, main section h2, main .countdown-glass-box'
+        );
+
+        revealTargets.forEach((el, index) => {
+          el.classList.add('reveal-on-scroll');
+          const delay = (index % 3) * 95;
+          el.style.setProperty('--reveal-delay', `${delay}ms`);
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        revealTargets.forEach(el => observer.observe(el));
       }
     });
   </script>

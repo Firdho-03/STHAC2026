@@ -125,7 +125,7 @@
   <div id="admin-dashboard-panel" style="display:none;">
 
     <!-- BARIS 1: TOP ADMIN NAVBAR -->
-    <div class="admin-navbar-card p-3 mb-2">
+    <div class="admin-navbar-card px-3 py-2 mb-4">
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
         <div class="d-flex align-items-center gap-3">
           <span class="badge rounded-pill px-3 py-2 fw-bold" style="background:#072619; color:#F2E0AC; font-size:0.75rem; letter-spacing:0.8px;">
@@ -184,64 +184,6 @@
             <i class="bi bi-box-arrow-right me-1"></i> Keluar
           </button>
         </div>
-      </div>
-    </div>
-
-    <!-- BARIS 2: SUB-NAVBAR KONTEKSTUAL DINAMIS (SESUAI SCREENSHOT KLIEN) -->
-    <div id="saiga-context-subbar" class="saiga-subnav-bar mb-4 d-flex flex-wrap align-items-center justify-content-between gap-2" style="display:none;">
-      <!-- Sub-menu Peserta & Klub -->
-      <div id="ctx-group-peserta" class="ctx-sub-group d-flex flex-wrap align-items-center gap-1" style="display:none;">
-        <button type="button" data-subtab="pendaftar" onclick="openAdminTab('pendaftar')" class="saiga-subtab-btn">
-          <i class="bi bi-person-check me-1"></i> Pendaftar <span class="badge rounded-pill bg-warning text-dark ms-1"><%= stats.menungguAcc %> Pending</span>
-        </button>
-        <button type="button" data-subtab="rider" onclick="openAdminTab('rider')" class="saiga-subtab-btn">
-          <i class="bi bi-person-badge me-1"></i> Data Rider
-        </button>
-        <button type="button" data-subtab="pelatih" onclick="openAdminTab('pelatih')" class="saiga-subtab-btn">
-          <i class="bi bi-person-workspace me-1"></i> Data Pelatih
-        </button>
-        <button type="button" data-subtab="stable" onclick="openAdminTab('stable')" class="saiga-subtab-btn">
-          <i class="bi bi-shield-shaded me-1"></i> Data Stable
-        </button>
-      </div>
-
-      <!-- Sub-menu Teknis & Penilaian -->
-      <div id="ctx-group-teknis" class="ctx-sub-group d-flex flex-wrap align-items-center gap-1" style="display:none;">
-        <button type="button" data-subtab="acara" onclick="openAdminTab('acara')" class="saiga-subtab-btn">
-          <i class="bi bi-calendar-range me-1"></i> Seri &amp; Kelas
-        </button>
-        <button type="button" data-subtab="lintasan" onclick="openAdminTab('lintasan')" class="saiga-subtab-btn">
-          <i class="bi bi-signpost-split me-1"></i> Master Lintasan
-        </button>
-        <button type="button" data-subtab="penilaian" onclick="openAdminTab('penilaian')" class="saiga-subtab-btn">
-          <i class="bi bi-stopwatch me-1"></i> Input Penilaian Run
-        </button>
-        <button type="button" data-subtab="poin" onclick="openAdminTab('poin')" class="saiga-subtab-btn">
-          <i class="bi bi-award me-1"></i> Poin &amp; Juara Umum
-        </button>
-      </div>
-
-      <!-- Sub-menu Sistem & Konten -->
-      <div id="ctx-group-sistem" class="ctx-sub-group d-flex flex-wrap align-items-center gap-1" style="display:none;">
-        <button type="button" data-subtab="panitia" onclick="openAdminTab('panitia')" class="saiga-subtab-btn">
-          <i class="bi bi-person-vcard me-1"></i> Panitia &amp; Juri
-        </button>
-        <button type="button" data-subtab="unduhan" onclick="openAdminTab('unduhan')" class="saiga-subtab-btn">
-          <i class="bi bi-file-earmark-arrow-down me-1"></i> Unduhan Dokumen
-        </button>
-        <button type="button" data-subtab="berita" onclick="openAdminTab('berita')" class="saiga-subtab-btn">
-          <i class="bi bi-newspaper me-1"></i> Berita &amp; Warta
-        </button>
-        <button type="button" data-subtab="setelan" onclick="openAdminTab('setelan')" class="saiga-subtab-btn">
-          <i class="bi bi-sliders me-1"></i> Pengaturan Situs
-        </button>
-      </div>
-
-      <div class="d-flex align-items-center gap-2 ms-auto small">
-        <span class="badge-green-soft"><i class="bi bi-broadcast me-1"></i> Sinkronisasi Live Aktif</span>
-        <a href="/skor" target="_blank" class="btn btn-sm btn-dark-pill py-1 px-3" style="font-size:0.75rem;">
-          <i class="bi bi-box-arrow-up-right me-1"></i> Papan Skor Publik
-        </a>
       </div>
     </div>
 
@@ -2113,17 +2055,7 @@
       btn.className = 'btn btn-sm ' + (isDropdown ? 'dropdown-toggle ' : '') + 'py-2 px-3 ' + (isActive ? 'btn-gold-pill' : 'btn-dark-pill');
     });
 
-    // Tampilkan Sub-Bar Kontekstual untuk Peserta, Teknis, atau Sistem
-    const ctxBar = document.getElementById('saiga-context-subbar');
-    document.querySelectorAll('.ctx-sub-group').forEach(g => { g.style.display = 'none'; });
-    if (activeGroupKey === 'peserta' || activeGroupKey === 'teknis' || activeGroupKey === 'sistem' || activeGroupKey === 'setelan') {
-      ctxBar.style.display = 'flex';
-      const subId = activeGroupKey === 'setelan' ? 'ctx-group-sistem' : ('ctx-group-' + activeGroupKey);
-      const grpEl = document.getElementById(subId);
-      if (grpEl) grpEl.style.display = 'flex';
-    } else {
-      ctxBar.style.display = 'none';
-    }
+
 
     document.querySelectorAll('.saiga-subtab-btn').forEach(b => {
       if (b.getAttribute('data-subtab') === tabName) b.classList.add('active');

@@ -1022,3 +1022,138 @@ html[data-theme="dark"] .saiga-filter-chip.active {
   align-items: center;
   justify-content: center;
 }
+/* ==================== SCROLL REVEAL, PARALLAX & MICRO-MOTION ==================== */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Progress Bar Emas di Tepi Atas Layar Saat Scroll */
+#sthac-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #10B981 0%, #D9B45C 55%, #F2E0AC 100%);
+  z-index: 99999;
+  transition: width 0.08s ease-out;
+  box-shadow: 0 0 10px rgba(217, 180, 92, 0.6);
+}
+
+/* Efek Navbar Saat Di-scroll */
+.navbar-sthac.navbar-scrolled {
+  padding-top: 0.35rem !important;
+  padding-bottom: 0.35rem !important;
+  box-shadow: 0 12px 32px rgba(7, 38, 25, 0.14) !important;
+}
+
+/* Animasi Elemen Muncul Saat Di-scroll (Scroll Reveal) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(28px) scale(0.985);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.reveal-left {
+  transform: translateX(-32px);
+}
+
+.reveal-on-scroll.reveal-right {
+  transform: translateX(32px);
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* Animasi Masuk Berurutan pada Elemen Hero Beranda */
+.sthac-hero-glass .hero-glass-eyebrow {
+  animation: heroItemUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+.sthac-hero-glass h1 {
+  animation: heroItemUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both;
+}
+.sthac-hero-glass p {
+  animation: heroItemUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
+}
+.sthac-hero-glass .d-flex {
+  animation: heroItemUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.34s both;
+}
+
+@keyframes heroItemUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Interaksi Kartu Konten Saat Hover & Scroll */
+main .sthac-card {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease !important;
+}
+
+main .sthac-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 38px -12px rgba(7, 38, 25, 0.14) !important;
+  border-color: rgba(217, 180, 92, 0.65) !important;
+}
+
+html[data-theme="dark"] main .sthac-card:hover {
+  box-shadow: 0 22px 42px -12px rgba(0, 0, 0, 0.85), 0 0 20px rgba(217, 180, 92, 0.12) !important;
+}
+
+/* Jangan beri transform pada kartu di sekitar navbar panitia agar dropdown tetap stabil */
+.admin-navbar-card:hover,
+#admin-dashboard-panel .sthac-card:hover {
+  transform: none !important;
+}
+
+/* Efek Kilau (Shimmer) pada Tombol Emas */
+.btn-gold-pill {
+  position: relative;
+  overflow: hidden;
+}
+.btn-gold-pill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transform: skewX(-22deg);
+  transition: left 0.65s ease;
+}
+.btn-gold-pill:hover::after {
+  left: 140%;
+}
+.btn-gold-pill:hover {
+  transform: translateY(-2px);
+}
+
+/* Animasi Hover pada Kotak Countdown */
+.countdown-glass-box {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, background-color 0.3s ease;
+}
+.countdown-glass-box:hover {
+  transform: translateY(-4px) scale(1.03);
+  background: rgba(255, 255, 255, 0.26);
+  border-color: rgba(242, 224, 172, 0.7);
+}
