@@ -182,14 +182,16 @@
       }
     });
   </script>
+  <!-- STHAC_HIGH_IMPACT_MOTION_ENGINE -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const progressBar = document.getElementById('sthac-scroll-progress');
       const mainNavbar = document.querySelector('.navbar-sthac');
       const heroSection = document.querySelector('.sthac-hero-glass');
       const heroEmblem = document.querySelector('.hero-emblem-showcase');
+      const isPanitiaPage = window.location.pathname.includes('/panitia') || window.location.pathname.includes('/admin');
 
-      // 1. Update Scroll Progress Bar, Sticky Navbar Shadow & Hero Parallax
+      // 1. PARALLAX & SCROLL PROGRESS BAR
       window.addEventListener('scroll', () => {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -197,54 +199,145 @@
           progressBar.style.width = ((scrollTop / docHeight) * 100).toFixed(2) + '%';
         }
         if (mainNavbar) {
-          if (scrollTop > 24) mainNavbar.classList.add('navbar-scrolled');
+          if (scrollTop > 20) mainNavbar.classList.add('navbar-scrolled');
           else mainNavbar.classList.remove('navbar-scrolled');
         }
-        if (heroSection && scrollTop < 700) {
-          heroSection.style.backgroundPosition = `58% calc(38% + ${scrollTop * 0.18}px)`;
+        if (heroSection && scrollTop < 850) {
+          const yOffset = (scrollTop * 0.28).toFixed(1);
+          heroSection.style.backgroundPosition = '58% calc(38% + ' + yOffset + 'px)';
         }
       }, { passive: true });
 
-      // 2. Efek 3D Interactive Tilt Halus Saat Kursor Bergerak di Hero Beranda
+      // 2. INTERACTIVE 3D HERO TILT PADA MOUSE MOVE
       if (heroSection && heroEmblem) {
         heroSection.addEventListener('mousemove', (e) => {
           const rect = heroSection.getBoundingClientRect();
-          const x = ((e.clientX - rect.left) / rect.width - 0.5) * 14;
-          const y = ((e.clientY - rect.top) / rect.height - 0.5) * 14;
-          heroEmblem.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+          const xRatio = (e.clientX - rect.left) / rect.width - 0.5;
+          const yRatio = (e.clientY - rect.top) / rect.height - 0.5;
+          const moveX = (xRatio * 28).toFixed(1);
+          const moveY = (yRatio * 22).toFixed(1);
+          const rotY = (xRatio * 18).toFixed(1);
+          const rotX = (-yRatio * 18).toFixed(1);
+          heroEmblem.style.transform = 'perspective(900px) translate3d(' + moveX + 'px, ' + moveY + 'px, 0) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
         });
         heroSection.addEventListener('mouseleave', () => {
-          heroEmblem.style.transition = 'transform 0.45s ease';
-          heroEmblem.style.transform = 'translate3d(0, 0, 0)';
-          setTimeout(() => { heroEmblem.style.transition = ''; }, 450);
+          heroEmblem.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          heroEmblem.style.transform = 'perspective(900px) translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg)';
+          setTimeout(() => { heroEmblem.style.transition = ''; }, 600);
         });
       }
 
-      // 3. Staggered Scroll-Reveal pada Seluruh Kartu, Tabel, dan Banner Publik
-      const isPanitiaPage = window.location.pathname.includes('/panitia') || window.location.pathname.includes('/admin');
-      if (!isPanitiaPage) {
-        const revealTargets = document.querySelectorAll(
-          'main section .sthac-card, main .container .sthac-card, main .saiga-cta-banner, main .saiga-photo-banner, main section h2, main .countdown-glass-box'
-        );
+      if (isPanitiaPage) return;
 
-        revealTargets.forEach((el, index) => {
-          el.classList.add('reveal-on-scroll');
-          const delay = (index % 3) * 95;
-          el.style.setProperty('--reveal-delay', `${delay}ms`);
+      // 3. PASANG DIRECTIONAL SCROLL-REVEAL (KIRI, KANAN, BAWAH, ZOOM)
+      const allCardsAndBlocks = [];
+
+      // Header setiap section meluncur dari kiri
+      document.querySelectorAll('main section h2, main .container h1').forEach((h) => {
+        h.classList.add('reveal-on-scroll', 'reveal-header');
+        allCardsAndBlocks.push(h);
+      });
+
+      // Kartu 2 Kolom (misal Sistem Penilaian IHAA vs Pordasi): Kiri masuk dari kiri, Kanan masuk dari kanan
+      document.querySelectorAll('main .row').forEach((row) => {
+        const cols2 = row.querySelectorAll(':scope > .col-lg-6 > .sthac-card');
+        if (cols2.length === 2) {
+          cols2[0].classList.add('reveal-on-scroll', 'reveal-from-left');
+          cols2[0].style.setProperty('--reveal-delay', '60ms');
+          cols2[1].classList.add('reveal-on-scroll', 'reveal-from-right');
+          cols2[1].style.setProperty('--reveal-delay', '200ms');
+          allCardsAndBlocks.push(cols2[0], cols2[1]);
+        }
+
+        // Kartu 3 Kolom (Poin Kejuaraan & Unduhan Dokumen): Staggered Cascade Bounce
+        const cols3 = row.querySelectorAll(':scope > .col-md-4 > .sthac-card, :scope > .col-lg-4 > .sthac-card');
+        cols3.forEach((card, idx) => {
+          card.classList.add('reveal-on-scroll');
+          card.style.setProperty('--reveal-delay', ((idx % 3) * 150) + 'ms');
+          allCardsAndBlocks.push(card);
+        });
+      });
+
+      // Kartu tunggal & Banner CTA
+      document.querySelectorAll('main .sthac-card, main .saiga-cta-banner, main .saiga-photo-banner').forEach((el) => {
+        if (!el.classList.contains('reveal-on-scroll')) {
+          el.classList.add('reveal-on-scroll', 'reveal-zoom-banner');
+          allCardsAndBlocks.push(el);
+        }
+      });
+
+      // Observer Dua Arah: Saat masuk viewport langsung animasi masuk, saat keluar di bawah viewport siap animasi lagi ketika di-scroll ulang
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          } else {
+            const rect = entry.target.getBoundingClientRect();
+            if (rect.top > window.innerHeight * 0.85) {
+              entry.target.classList.remove('is-visible');
+            }
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+      allCardsAndBlocks.forEach((el) => revealObserver.observe(el));
+
+      // 4. 3D MAGNETIC CARD TILT & GOLDEN SPOTLIGHT SAAT HOVER KARTU
+      document.querySelectorAll('main .sthac-card').forEach((card) => {
+        card.addEventListener('mousemove', (e) => {
+          if (!card.classList.contains('is-visible')) return;
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', x + 'px');
+          card.style.setProperty('--mouse-y', y + 'px');
+
+          const xPct = x / rect.width - 0.5;
+          const yPct = y / rect.height - 0.5;
+          const tiltX = (-yPct * 7).toFixed(2);
+          const tiltY = (xPct * 7).toFixed(2);
+          card.style.transition = 'transform 0.08s ease-out, box-shadow 0.3s ease, border-color 0.3s ease';
+          card.style.transform = 'perspective(1000px) translate3d(0, -8px, 0) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg) scale(1.015)';
         });
 
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
+        card.addEventListener('mouseleave', () => {
+          card.style.transition = 'transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease';
+          card.style.transform = 'perspective(1000px) translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1)';
+        });
+      });
+
+      // 5. ANIMATED NUMBER COUNTER UNTUK ANGKA POIN SAAT DI-SCROLL
+      document.querySelectorAll('main .sthac-card .fs-4, main .sthac-card .fs-3').forEach((numEl) => {
+        const rawText = numEl.innerText.trim();
+        const match = rawText.match(/^(\d+(?:\.\d+)?)(\s*pts)?$/i);
+        if (!match) return;
+        const targetVal = parseFloat(match[1]);
+        const suffix = match[2] || '';
+        if (isNaN(targetVal) || targetVal <= 0) return;
+
+        const counterObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-              observer.unobserve(entry.target);
+              let start = 0;
+              const duration = 900;
+              const startTime = performance.now();
+              function step(now) {
+                const progress = Math.min(1, (now - startTime) / duration);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const cur = Math.round(targetVal * eased);
+                numEl.innerText = cur + suffix;
+                if (progress < 1) requestAnimationFrame(step);
+                else numEl.innerText = targetVal + suffix;
+              }
+              requestAnimationFrame(step);
             }
           });
-        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        }, { threshold: 0.5 });
 
-        revealTargets.forEach(el => observer.observe(el));
-      }
+        counterObserver.observe(numEl);
+      });
     });
   </script>
+
 </body>
 </html>
