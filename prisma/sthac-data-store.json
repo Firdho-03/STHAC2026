@@ -1,0 +1,163 @@
+{
+  "setting": {
+    "id": 1,
+    "eventName": "South Tangerang Horseback Archery Cup",
+    "tagline": "Kejuaraan Berkuda Memanah Berjenjang",
+    "headline": "SERI 1 · 14 NOVEMBER 2026 · SAIGA STABLE",
+    "footerOrg": "Diselenggarakan Oleh : Saiga Stable",
+    "location": "Saiga Stable, Tangerang Selatan, Banten",
+    "mapUrl": "https://maps.google.com",
+    "whatsapp": "081586844344",
+    "instagram": "@sthac2026",
+    "logoUrl": "https://media.vibecoder.co.id/app-media/ilham/south-tangerang-hacup/230836bd-5988-4bad-8ea9-c1eda8d6d2c4.png",
+    "registrationOpen": true
+  },
+  "seri": [
+    {
+      "id": 1,
+      "nomorSeri": 1,
+      "namaSeri": "Seri 1 — South Tangerang Horseback Archery Cup",
+      "tanggalPelaksanaan": "14 Nov 2026",
+      "lokasi": "Saiga Stable",
+      "statusSeri": "Pendaftaran dibuka"
+    },
+    {
+      "id": 2,
+      "nomorSeri": 2,
+      "namaSeri": "Seri 2 — South Tangerang Horseback Archery Cup",
+      "tanggalPelaksanaan": "Menyusul",
+      "lokasi": "Menyusul",
+      "statusSeri": "Akan datang"
+    },
+    {
+      "id": 3,
+      "nomorSeri": 3,
+      "namaSeri": "Seri 3 — Grand Final",
+      "tanggalPelaksanaan": "Menyusul",
+      "lokasi": "Menyusul",
+      "statusSeri": "Akan datang"
+    }
+  ],
+  "pelatih": [
+    {
+      "id": 1,
+      "kodePelatih": "C-001",
+      "namaLengkap": "Coach Hendra Wijaya",
+      "asalStable": "Saiga Stable",
+      "kotaAsal": "Tangerang Selatan",
+      "provinsi": "Banten",
+      "noWhatsapp": "081586844344",
+      "lisensi": "Pordasi & IHAA Level 2"
+    },
+    {
+      "id": 2,
+      "kodePelatih": "C-002",
+      "namaLengkap": "Coach Raka Pratama",
+      "asalStable": "Winning Academy",
+      "kotaAsal": "Depok",
+      "provinsi": "Jawa Barat",
+      "noWhatsapp": "081299887766",
+      "lisensi": "Pordasi Berkuda Memanah"
+    }
+  ],
+  "stable": [
+    {
+      "id": 1,
+      "kodeStable": "S-001",
+      "namaStable": "Saiga Stable",
+      "kota": "Tangerang Selatan",
+      "provinsi": "Banten",
+      "kontakWa": "081586844344",
+      "namaPelatih": "Coach Hendra Wijaya"
+    },
+    {
+      "id": 2,
+      "kodeStable": "S-002",
+      "namaStable": "Winning Academy",
+      "kota": "Depok",
+      "provinsi": "Jawa Barat",
+      "kontakWa": "081299887766",
+      "namaPelatih": "Coach Raka Pratama"
+    }
+  ],
+  "panitia": [
+    {
+      "id": 1,
+      "kodePanitia": "P-001",
+      "namaLengkap": "Mardiansyah",
+      "email": "mardiansyah@sthac.com",
+      "jabatan": "Juri Utama",
+      "noWhatsapp": "081586844344",
+      "peranAkses": "SuperAdmin"
+    },
+    {
+      "id": 2,
+      "kodePanitia": "P-002",
+      "namaLengkap": "Andi Wijaya",
+      "email": "andi@sthac.com",
+      "jabatan": "Scorer / Pencatat",
+      "noWhatsapp": "081288776655",
+      "peranAkses": "Admin"
+    },
+    {
+      "id": 3,
+      "kodePanitia": "P-003",
+      "namaLengkap": "Firdho Aulia",
+      "email": "firdhoaulia@gmail.com",
+      "jabatan": "Ketua Panitia & Juri",
+      "noWhatsapp": "081586844344",
+      "peranAkses": "SuperAdmin"
+    }
+  ],
+  "unduhan": [
+    {
+      "id": 1,
+      "kodeBadge": "THB",
+      "judul": "Technical Handbook Seri 1 STHAC 2026",
+      "kategori": "Handbook",
+      "statusInfo": "Tersedia",
+      "fileUrl": "/aturan"
+    },
+    {
+      "id": 2,
+      "kodeBadge": "RULE",
+      "judul": "Peraturan Pertandingan IHAA & Pordasi 2026",
+      "kategori": "Regulasi",
+      "statusInfo": "Tersedia",
+      "fileUrl": "/aturan"
+    },
+    {
+      "id": 3,
+      "kodeBadge": "FORM",
+      "judul": "Formulir Pendaftaran Kontingen Stable",
+      "kategori": "Formulir",
+      "statusInfo": "Tersedia",
+      "fileUrl": "/pendaftaran"
+    }
+  ],
+  "berita": [
+    {
+      "id": 1,
+      "slug": "pembukaan-seri-1-sthac-2026",
+      "judul": "Pendaftaran Seri 1 STHAC 2026 Resmi Dibuka di Saiga Stable",
+      "kategori": "Pengumuman",
+      "tanggalTerbit": "24 Oktober 2026",
+      "ringkasan": "Seri pembuka South Tangerang Horseback Archery Cup 2026 siap digelar pada Sabtu, 14 November 2026 di Saiga Stable.",
+      "isiBerita": "Kejuaraan berkuda memanah berjenjang South Tangerang Horseback Archery Cup (STHAC) 2026 resmi membuka pendaftaran peserta untuk kategori U14 dan Terbuka."
+    },
+    {
+      "id": 2,
+      "slug": "standar-penilaian-ihaa-pordasi",
+      "judul": "Integrasi Sistem Penilaian Otomatis Berbasis IHAA & Pordasi",
+      "kategori": "Regulasi",
+      "tanggalTerbit": "24 Oktober 2026",
+      "ringkasan": "Seluruh perhitungan poin target, par time, dan klasemen juara umum diproses secara transparan dan real-time.",
+      "isiBerita": "STHAC 2026 menerapkan kalkulasi skor otomatis berbasis standar International Horseback Archery Alliance (IHAA) dan Pordasi Berkuda Memanah."
+    }
+  ],
+  "pendaftar": [],
+  "rider": [],
+  "lintasan": [],
+  "kelas": [],
+  "scoreRun": []
+}

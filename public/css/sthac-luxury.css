@@ -701,3 +701,324 @@ html[data-theme="dark"] .badge-green-soft {
   background: #072619;
   color: #F2E0AC !important;
 }
+/* ==================== FLOATING HERO EMBLEM (NO WHITE BOX, SEAMLESS BLEND) ==================== */
+.hero-emblem-showcase {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 2;
+}
+
+/* Efek Pendaran Cahaya Lembut (Ambient Aura) di Belakang Logo agar Menyatu dengan Layar */
+.hero-emblem-showcase::before {
+  content: "";
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(217, 180, 92, 0.28) 0%,
+    rgba(7, 38, 25, 0.22) 48%,
+    transparent 72%
+  );
+  filter: blur(22px);
+  z-index: -1;
+  pointer-events: none;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.hero-emblem-showcase:hover::before {
+  transform: scale(1.12);
+  opacity: 0.95;
+}
+
+/* Ukuran & Animasi Perisai Logo Melayang */
+.hero-emblem-floating {
+  width: 100%;
+  max-width: 315px;
+  height: auto;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 24px 36px rgba(0, 0, 0, 0.65))
+    drop-shadow(0 0 28px rgba(217, 180, 92, 0.22));
+  animation: floatSlow 5.5s ease-in-out infinite;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
+}
+
+.hero-emblem-floating:hover {
+  transform: translateY(-6px) scale(1.04);
+  filter:
+    drop-shadow(0 30px 44px rgba(0, 0, 0, 0.75))
+    drop-shadow(0 0 36px rgba(242, 224, 172, 0.38));
+}
+
+/* Caption Kapsul Transparan Tipis di Bawah Logo */
+.hero-emblem-caption {
+  margin-top: 1.15rem;
+  padding: 0.45rem 1.2rem;
+  border-radius: 50rem;
+  background: rgba(7, 38, 25, 0.42);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(242, 224, 172, 0.32);
+  color: #F2E0AC !important;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 991.98px) {
+  .hero-emblem-floating {
+    max-width: 240px;
+  }
+  .hero-emblem-showcase::before {
+    width: 260px;
+    height: 260px;
+  }
+}
+/* ==================== HERO ARCHER MIST PHOTO & INPUT FIX ==================== */
+.sthac-hero-glass {
+  position: relative;
+  background:
+    linear-gradient(180deg,
+      rgba(5, 22, 15, 0.35) 0%,
+      rgba(5, 22, 15, 0.12) 55%,
+      rgba(225, 232, 227, 0.78) 88%,
+      var(--bg-page) 100%
+    ),
+    linear-gradient(90deg,
+      rgba(4, 20, 13, 0.88) 0%,
+      rgba(6, 28, 19, 0.68) 38%,
+      rgba(6, 28, 19, 0.15) 68%,
+      rgba(4, 20, 13, 0.35) 100%
+    ),
+    url('/images/hero-beranda.jpg') 58% 38%/cover no-repeat !important;
+  padding: 4.8rem 0 5.5rem 0;
+  border-bottom: none !important;
+}
+
+html[data-theme="dark"] .sthac-hero-glass {
+  background:
+    linear-gradient(180deg,
+      rgba(3, 19, 12, 0.42) 0%,
+      rgba(3, 19, 12, 0.22) 55%,
+      rgba(3, 19, 12, 0.88) 88%,
+      var(--bg-page) 100%
+    ),
+    linear-gradient(90deg,
+      rgba(3, 16, 10, 0.92) 0%,
+      rgba(5, 24, 16, 0.72) 40%,
+      rgba(5, 24, 16, 0.18) 68%,
+      rgba(3, 16, 10, 0.48) 100%
+    ),
+    url('/images/hero-beranda.jpg') 58% 38%/cover no-repeat !important;
+}
+
+/* Penyesuaian posisi & ukuran logo agar pemanah berkuda di tengah tetap terekspos jelas */
+.hero-emblem-floating {
+  max-width: 255px !important;
+}
+
+/* Perbaikan kotak input & select di Panel Panitia agar angka tidak pernah terpotong */
+.sthac-input,
+select.sthac-input,
+input.sthac-input {
+  min-height: 44px !important;
+  padding: 0.55rem 0.9rem !important;
+  line-height: 1.4 !important;
+  font-size: 0.92rem !important;
+  font-weight: 600 !important;
+}
+/* ==================== SAIGA INTERACTIVE ADMIN PANEL STYLES ==================== */
+.saiga-subnav-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 0.9rem;
+  padding: 0.55rem 0.85rem;
+  box-shadow: var(--shadow-card);
+}
+
+.saiga-subtab-btn {
+  background: transparent;
+  color: var(--text-muted) !important;
+  border: 1px solid transparent;
+  border-radius: 50rem;
+  padding: 0.4rem 0.95rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+}
+.saiga-subtab-btn:hover {
+  background: var(--bg-table-head);
+  color: var(--text-main) !important;
+}
+.saiga-subtab-btn.active {
+  background: #072619;
+  color: #F2E0AC !important;
+  font-weight: 700;
+}
+html[data-theme="dark"] .saiga-subtab-btn.active {
+  background: linear-gradient(135deg, #E3C373 0%, #C69E43 100%);
+  color: #03130C !important;
+}
+
+.saiga-breadcrumb {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.saiga-kpi-mini {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 0.85rem;
+  padding: 0.65rem 1rem;
+  min-width: 110px;
+  box-shadow: var(--shadow-card);
+}
+.saiga-kpi-mini .kpi-val {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-gold-num);
+  line-height: 1.1;
+}
+.saiga-kpi-mini .kpi-lbl {
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* 8 Kartu KPI Ringkasan Gaya Saiga */
+.saiga-stat-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-top: 3px solid #072619;
+  border-radius: 1rem;
+  padding: 1.15rem 1.25rem;
+  height: 100%;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+html[data-theme="dark"] .saiga-stat-box {
+  border-top-color: #D9B45C;
+}
+.saiga-stat-box:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-card-hover);
+}
+.saiga-stat-box .stat-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.05;
+}
+.saiga-stat-box .stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 0.65rem;
+  background: var(--bg-table-head);
+  color: var(--text-gold-num);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+/* Avatar Initials Circle */
+.saiga-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #072619;
+  color: #F2E0AC !important;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Nomor Lingkaran Langkah Pengelolaan */
+.saiga-step-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #072619;
+  color: #F2E0AC !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+html[data-theme="dark"] .saiga-step-circle {
+  background: #D9B45C;
+  color: #03130C !important;
+}
+
+/* Filter Pill Kecil di Direktori */
+.saiga-filter-chip {
+  background: var(--bg-table-head);
+  color: var(--text-muted) !important;
+  border: 1px solid var(--border-main);
+  border-radius: 50rem;
+  padding: 0.28rem 0.78rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+.saiga-filter-chip.active,
+.saiga-filter-chip:hover {
+  background: #072619;
+  color: #F2E0AC !important;
+  border-color: #072619;
+}
+html[data-theme="dark"] .saiga-filter-chip.active {
+  background: #D9B45C;
+  color: #03130C !important;
+}
+
+/* Skema Visual Lintasan 90m-150m */
+.saiga-track-diagram {
+  position: relative;
+  background: var(--bg-table-head);
+  border: 1px dashed var(--border-card-hover);
+  border-radius: 0.9rem;
+  padding: 1.5rem 1.25rem;
+}
+.saiga-track-line {
+  height: 4px;
+  background: linear-gradient(90deg, #10B981 0%, #D9B45C 50%, #EF4444 100%);
+  border-radius: 4px;
+  position: relative;
+  margin: 1.4rem 0;
+}
+.saiga-track-node {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #072619;
+  border: 2px solid #D9B45C;
+  color: #F2E0AC !important;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
