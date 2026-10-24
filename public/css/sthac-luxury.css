@@ -1218,3 +1218,69 @@ html[data-theme="dark"] main .sthac-card:hover {
   border-color: #F2E0AC !important;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35) !important;
 }
+/* ==================== SINGLE-LINE SYMMETRIC ADMIN NAVBAR ==================== */
+.admin-navbar-card {
+  padding: 0.7rem 1.15rem !important;
+  border-radius: 1rem !important;
+}
+
+.admin-navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.admin-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.admin-nav-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  flex-wrap: nowrap;
+}
+
+.admin-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+  padding-left: 0.85rem;
+  border-left: 1px solid var(--border-main);
+}
+
+.admin-navbar-card .btn {
+  white-space: nowrap !important;
+  font-size: 0.81rem !important;
+  padding: 0.42rem 0.9rem !important;
+  line-height: 1.25 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 991.98px) {
+  .admin-navbar-inner {
+    flex-wrap: wrap;
+  }
+  .admin-nav-center {
+    order: 3;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--border-main);
+  }
+  .admin-nav-right {
+    border-left: none;
+    padding-left: 0;
+    margin-left: auto;
+  }
+}

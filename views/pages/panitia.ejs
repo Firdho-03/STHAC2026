@@ -124,66 +124,72 @@
   <!-- ==================== DASHBOARD INTERAKTIF PANEL PANITIA (PROJECT SAIGA) ==================== -->
   <div id="admin-dashboard-panel" style="display:none;">
 
-    <!-- BARIS 1: TOP ADMIN NAVBAR -->
-    <div class="admin-navbar-card px-3 py-2 mb-4">
-      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-        <div class="d-flex align-items-center gap-3">
-          <span class="badge rounded-pill px-3 py-2 fw-bold" style="background:#072619; color:#F2E0AC; font-size:0.75rem; letter-spacing:0.8px;">
+    <!-- BARIS 1: TOP ADMIN NAVBAR (1 BARIS SIMETRIS & RAPI) -->
+    <div class="admin-navbar-card mb-4">
+      <div class="admin-navbar-inner">
+        
+        <!-- Kiri: Identitas Panel Panitia -->
+        <div class="admin-nav-brand">
+          <img src="<%= setting.logoUrl %>" alt="Logo" style="width:34px;height:34px;object-fit:contain;" onerror="this.style.display='none'" />
+          <span class="badge rounded-pill px-3 py-2 fw-bold" style="background:#072619; color:#F2E0AC; font-size:0.74rem; letter-spacing:0.6px;">
             <i class="bi bi-shield-check me-1"></i> PANEL PANITIA · STHAC
           </span>
-          <small class="text-white-50 d-none d-md-inline" style="font-size:0.75rem;" id="lbl-active-admin-user">Super Admin · Juri Utama</small>
+          <span class="d-none" id="lbl-active-admin-user"></span>
         </div>
 
-        <div class="d-flex flex-wrap gap-2 align-items-center" id="admin-nav-pills">
-          <button type="button" id="adm-group-ringkasan" onclick="openAdminTab('ringkasan')" class="btn btn-sm btn-gold-pill py-2 px-3">
+        <!-- Tengah: 4 Menu Utama Sejajar 1 Baris -->
+        <div class="admin-nav-center" id="admin-nav-pills">
+          <button type="button" id="adm-group-ringkasan" onclick="openAdminTab('ringkasan')" class="btn btn-sm btn-gold-pill">
             <i class="bi bi-speedometer2 me-1"></i> Ringkasan
           </button>
 
           <div class="dropdown">
-            <button type="button" id="adm-group-peserta" class="btn btn-sm btn-dark-pill dropdown-toggle py-2 px-3" data-bs-toggle="dropdown">
+            <button type="button" id="adm-group-peserta" class="btn btn-sm btn-dark-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-people-fill me-1"></i> Peserta &amp; Klub
             </button>
             <ul class="dropdown-menu dropdown-menu-sthac">
-              <li><a class="dropdown-item adm-sub-link" data-tab="pendaftar" href="#" onclick="openAdminTab('pendaftar'); return false;"><i class="bi bi-person-check-fill me-2 text-warning"></i> Pendaftar (<%= stats.menungguAcc %> Pending)</a></li>
-              <li><a class="dropdown-item adm-sub-link" data-tab="rider" href="#" onclick="openAdminTab('rider'); return false;"><i class="bi bi-person-badge-fill me-2 text-warning"></i> Data Rider (<%= stats.riderAktif %>)</a></li>
-              <li><a class="dropdown-item adm-sub-link" data-tab="pelatih" href="#" onclick="openAdminTab('pelatih'); return false;"><i class="bi bi-person-workspace me-2 text-warning"></i> Data Pelatih (<%= stats.pelatih %>)</a></li>
-              <li><a class="dropdown-item adm-sub-link" data-tab="stable" href="#" onclick="openAdminTab('stable'); return false;"><i class="bi bi-shield-shaded me-2 text-warning"></i> Data Stable (<%= stats.stable %>)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="pendaftar" href="javascript:void(0)" onclick="openAdminTab('pendaftar')"><i class="bi bi-person-check-fill me-2 text-warning"></i> Pendaftar (<%= stats.menungguAcc %> Pending)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="rider" href="javascript:void(0)" onclick="openAdminTab('rider')"><i class="bi bi-person-badge-fill me-2 text-warning"></i> Data Rider (<%= stats.riderAktif %>)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="pelatih" href="javascript:void(0)" onclick="openAdminTab('pelatih')"><i class="bi bi-person-workspace me-2 text-warning"></i> Data Pelatih (<%= stats.pelatih %>)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="stable" href="javascript:void(0)" onclick="openAdminTab('stable')"><i class="bi bi-shield-shaded me-2 text-warning"></i> Data Stable (<%= stats.stable %>)</a></li>
             </ul>
           </div>
 
           <div class="dropdown">
-            <button type="button" id="adm-group-teknis" class="btn btn-sm btn-dark-pill dropdown-toggle py-2 px-3" data-bs-toggle="dropdown">
+            <button type="button" id="adm-group-teknis" class="btn btn-sm btn-dark-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-trophy-fill me-1"></i> Teknis &amp; Penilaian
             </button>
             <ul class="dropdown-menu dropdown-menu-sthac">
-              <li><a class="dropdown-item adm-sub-link" data-tab="acara" href="#" onclick="openAdminTab('acara'); return false;"><i class="bi bi-calendar-range-fill me-2 text-warning"></i> Seri &amp; Kelas (<%= stats.totalKelas %>)</a></li>
-              <li><a class="dropdown-item adm-sub-link" data-tab="lintasan" href="#" onclick="openAdminTab('lintasan'); return false;"><i class="bi bi-signpost-split-fill me-2 text-warning"></i> Master Lintasan (<%= stats.totalLintasan %>)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="acara" href="javascript:void(0)" onclick="openAdminTab('acara')"><i class="bi bi-calendar-range-fill me-2 text-warning"></i> Seri &amp; Kelas (<%= stats.totalKelas %>)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="lintasan" href="javascript:void(0)" onclick="openAdminTab('lintasan')"><i class="bi bi-signpost-split-fill me-2 text-warning"></i> Master Lintasan (<%= stats.totalLintasan %>)</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item adm-sub-link" data-tab="penilaian" href="#" onclick="openAdminTab('penilaian'); return false;"><i class="bi bi-stopwatch-fill me-2 text-danger"></i> Input Penilaian Run</a></li>
-              <li><a class="dropdown-item adm-sub-link" data-tab="poin" href="#" onclick="openAdminTab('poin'); return false;"><i class="bi bi-award-fill me-2 text-warning"></i> Poin &amp; Juara Umum</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="penilaian" href="javascript:void(0)" onclick="openAdminTab('penilaian')"><i class="bi bi-stopwatch-fill me-2 text-danger"></i> Input Penilaian Run</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="poin" href="javascript:void(0)" onclick="openAdminTab('poin')"><i class="bi bi-award-fill me-2 text-warning"></i> Poin &amp; Juara Umum</a></li>
             </ul>
           </div>
 
           <div class="dropdown">
-            <button type="button" id="adm-group-sistem" class="btn btn-sm btn-dark-pill dropdown-toggle py-2 px-3" data-bs-toggle="dropdown">
+            <button type="button" id="adm-group-sistem" class="btn btn-sm btn-dark-pill dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-sliders me-1"></i> Sistem &amp; Konten
             </button>
             <ul class="dropdown-menu dropdown-menu-sthac">
-              <li><a class="dropdown-item adm-sub-link" data-tab="panitia" href="#" onclick="openAdminTab('panitia'); return false;"><i class="bi bi-person-vcard-fill me-2 text-warning"></i> Panitia &amp; Juri (<%= stats.panitia %>)</a></li>
-              <li><a class="dropdown-item adm-sub-link" data-tab="unduhan" href="#" onclick="openAdminTab('unduhan'); return false;"><i class="bi bi-file-earmark-arrow-down-fill me-2 text-warning"></i> Unduhan Dokumen (<%= stats.dokumen %>)</a></li>
-              <li><a class="dropdown-item adm-sub-link" data-tab="berita" href="#" onclick="openAdminTab('berita'); return false;"><i class="bi bi-newspaper me-2 text-warning"></i> Berita &amp; Warta (<%= stats.berita %>)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="panitia" href="javascript:void(0)" onclick="openAdminTab('panitia')"><i class="bi bi-person-vcard-fill me-2 text-warning"></i> Panitia &amp; Juri (<%= stats.panitia %>)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="unduhan" href="javascript:void(0)" onclick="openAdminTab('unduhan')"><i class="bi bi-file-earmark-arrow-down-fill me-2 text-warning"></i> Unduhan Dokumen (<%= stats.dokumen %>)</a></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="berita" href="javascript:void(0)" onclick="openAdminTab('berita')"><i class="bi bi-newspaper me-2 text-warning"></i> Berita &amp; Warta (<%= stats.berita %>)</a></li>
             </ul>
           </div>
         </div>
 
-        <div class="d-flex align-items-center gap-2 ms-auto ms-xl-0 ps-xl-3 border-start border-secondary border-opacity-25">
-          <button type="button" id="adm-group-setelan" onclick="openAdminTab('setelan')" class="btn btn-sm btn-dark-pill py-2 px-3">
+        <!-- Kanan: Setelan & Keluar -->
+        <div class="admin-nav-right">
+          <button type="button" id="adm-group-setelan" onclick="openAdminTab('setelan')" class="btn btn-sm btn-dark-pill">
             <i class="bi bi-gear-fill text-warning me-1"></i> Setelan
           </button>
-          <button type="button" onclick="logoutAdmin()" class="btn btn-sm btn-logout-pill py-2 px-3">
+          <button type="button" onclick="logoutAdmin()" class="btn btn-sm btn-logout-pill">
             <i class="bi bi-box-arrow-right me-1"></i> Keluar
           </button>
         </div>
+
       </div>
     </div>
 
@@ -345,27 +351,27 @@
             <div class="vstack gap-3 small">
               <div class="d-flex align-items-start gap-3">
                 <span class="saiga-step-circle">1</span>
-                <div><strong class="text-white">Verifikasi pendaftar</strong> — setujui rider/pelatih/stable dari halaman <a href="#" onclick="openAdminTab('pendaftar'); return false;" class="text-warning">Pendaftar</a>.</div>
+                <div><strong class="text-white">Verifikasi pendaftar</strong> — setujui rider/pelatih/stable dari halaman <a href="javascript:void(0)" onclick="openAdminTab('pendaftar')" class="text-warning">Pendaftar</a>.</div>
               </div>
               <div class="d-flex align-items-start gap-3">
                 <span class="saiga-step-circle">2</span>
-                <div><strong class="text-white">Atur seri &amp; kelas</strong> — tanggal, lintasan, jumlah run dinilai di halaman <a href="#" onclick="openAdminTab('acara'); return false;" class="text-warning">Seri &amp; Kelas</a>.</div>
+                <div><strong class="text-white">Atur seri &amp; kelas</strong> — tanggal, lintasan, jumlah run dinilai di halaman <a href="javascript:void(0)" onclick="openAdminTab('acara')" class="text-warning">Seri &amp; Kelas</a>.</div>
               </div>
               <div class="d-flex align-items-start gap-3">
                 <span class="saiga-step-circle">3</span>
-                <div><strong class="text-white">Daftarkan peserta ke kelas</strong> — kelola direktori dari halaman <a href="#" onclick="openAdminTab('penilaian'); return false;" class="text-warning">Penilaian</a> atau <a href="#" onclick="openAdminTab('rider'); return false;" class="text-warning">Rider</a>.</div>
+                <div><strong class="text-white">Daftarkan peserta ke kelas</strong> — kelola direktori dari halaman <a href="javascript:void(0)" onclick="openAdminTab('penilaian')" class="text-warning">Penilaian</a> atau <a href="javascript:void(0)" onclick="openAdminTab('rider')" class="text-warning">Rider</a>.</div>
               </div>
               <div class="d-flex align-items-start gap-3">
                 <span class="saiga-step-circle">4</span>
-                <div><strong class="text-white">Masukkan hasil tiap run</strong> — skor dihitung otomatis di <a href="#" onclick="openAdminTab('penilaian'); return false;" class="text-warning">Input Penilaian Run</a>; papan skor publik langsung diperbarui.</div>
+                <div><strong class="text-white">Masukkan hasil tiap run</strong> — skor dihitung otomatis di <a href="javascript:void(0)" onclick="openAdminTab('penilaian')" class="text-warning">Input Penilaian Run</a>; papan skor publik langsung diperbarui.</div>
               </div>
               <div class="d-flex align-items-start gap-3">
                 <span class="saiga-step-circle">5</span>
-                <div><strong class="text-white">Periksa klasemen poin</strong> — poin juara umum dihitung otomatis di <a href="#" onclick="openAdminTab('poin'); return false;" class="text-warning">Poin &amp; Juara</a>.</div>
+                <div><strong class="text-white">Periksa klasemen poin</strong> — poin juara umum dihitung otomatis di <a href="javascript:void(0)" onclick="openAdminTab('poin')" class="text-warning">Poin &amp; Juara</a>.</div>
               </div>
               <div class="d-flex align-items-start gap-3">
                 <span class="saiga-step-circle">6</span>
-                <div><strong class="text-white">Unggah dokumen &amp; warta</strong> — Technical Handbook &amp; berkas pendukung di <a href="#" onclick="openAdminTab('unduhan'); return false;" class="text-warning">Unduhan</a> &amp; <a href="#" onclick="openAdminTab('berita'); return false;" class="text-warning">Berita</a>.</div>
+                <div><strong class="text-white">Unggah dokumen &amp; warta</strong> — Technical Handbook &amp; berkas pendukung di <a href="javascript:void(0)" onclick="openAdminTab('unduhan')" class="text-warning">Unduhan</a> &amp; <a href="javascript:void(0)" onclick="openAdminTab('berita')" class="text-warning">Berita</a>.</div>
               </div>
             </div>
           </div>
@@ -2030,13 +2036,42 @@
     }
   }
 
-  // ==================== NAVIGASI 2 TINGKAT (MAIN BAR + CONTEXT SUB-BAR) ====================
+  // ==================== NAVIGASI PANEL PANITIA (BEBAS NYANGKUT) ====================
+  window.closeAllAdminDropdowns = function(exceptToggle = null) {
+    document.querySelectorAll('#admin-nav-pills .dropdown').forEach(dropWrapper => {
+      const toggleBtn = dropWrapper.querySelector('.dropdown-toggle');
+      const menuEl = dropWrapper.querySelector('.dropdown-menu');
+      if (exceptToggle && toggleBtn === exceptToggle) return;
+
+      if (toggleBtn && window.bootstrap && bootstrap.Dropdown) {
+        const inst = bootstrap.Dropdown.getInstance(toggleBtn);
+        if (inst) {
+          try { inst.hide(); } catch (e) {}
+        }
+      }
+      if (toggleBtn) {
+        toggleBtn.classList.remove('show');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      }
+      if (menuEl) {
+        menuEl.classList.remove('show');
+        menuEl.removeAttribute('data-bs-popper');
+        menuEl.style.display = '';
+      }
+    });
+  };
+
   window.openAdminTab = function(tabName) {
+    // 1. Tutup paksa semua dropdown begitu menu dipilih
+    closeAllAdminDropdowns();
+
+    // 2. Simpan & tampilkan section yang dipilih
     sessionStorage.setItem('sthac_active_adm_tab', tabName);
     document.querySelectorAll('.admin-section').forEach(el => { el.style.display = 'none'; });
     const target = document.getElementById('adm-sec-' + tabName);
     if (target) target.style.display = 'block';
 
+    // 3. Perbarui warna tombol grup utama tanpa merusak state dropdown
     const groups = {
       ringkasan: ['ringkasan'],
       peserta: ['pendaftar', 'rider', 'pelatih', 'stable'],
@@ -2045,28 +2080,37 @@
       setelan: ['setelan']
     };
 
-    let activeGroupKey = 'ringkasan';
     Object.keys(groups).forEach(gKey => {
       const btn = document.getElementById('adm-group-' + gKey);
-      const isActive = groups[gKey].includes(tabName);
-      if (isActive) activeGroupKey = gKey;
       if (!btn) return;
-      const isDropdown = btn.classList.contains('dropdown-toggle');
-      btn.className = 'btn btn-sm ' + (isDropdown ? 'dropdown-toggle ' : '') + 'py-2 px-3 ' + (isActive ? 'btn-gold-pill' : 'btn-dark-pill');
+      const isActive = groups[gKey].includes(tabName);
+      btn.classList.remove('btn-gold-pill', 'btn-dark-pill', 'show');
+      btn.classList.add(isActive ? 'btn-gold-pill' : 'btn-dark-pill');
+      btn.setAttribute('aria-expanded', 'false');
     });
 
-
-
-    document.querySelectorAll('.saiga-subtab-btn').forEach(b => {
-      if (b.getAttribute('data-subtab') === tabName) b.classList.add('active');
-      else b.classList.remove('active');
-    });
-
+    // 4. Tandai sub-menu yang sedang aktif
     document.querySelectorAll('.adm-sub-link').forEach(link => {
       if (link.getAttribute('data-tab') === tabName) link.classList.add('active-sub');
       else link.classList.remove('active-sub');
     });
   };
+
+  // Pastikan saat 1 tombol dropdown diklik, dropdown lain yang terbuka langsung ditutup
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#admin-nav-pills .dropdown-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        closeAllAdminDropdowns(btn);
+      });
+    });
+
+    // Tutup dropdown jika user klik area kosong di luar navbar
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#admin-nav-pills')) {
+        closeAllAdminDropdowns();
+      }
+    });
+  });
 
   // ==================== FILTER & LIVE SEARCH INTERAKTIF ====================
   window.filterTableRows = function(tableId, query) {
