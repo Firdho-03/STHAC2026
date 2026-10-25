@@ -254,44 +254,190 @@ function attachUniversalCrudRoutes(app, io) {
   });
 
   // -------------------------------------------------------------------
-  // 3. PENDAFTARAN PUBLIK
+  // 3. PENDAFTARAN PUBLIK ( OTOMATIS MASUK PROFIL EKOSISTEM & CRUD PANITIA )
   // -------------------------------------------------------------------
   const registerHandler = async (req, res) => {
     try {
       const b = req.body || {};
-      const birthYear = b.tanggalLahir ? new Date(b.tanggalLahir).getFullYear() : 2010;
-      const umur = !isNaN(birthYear) ? (2026 - birthYear) : (parseInt(b.umur, 10) || 16);
+      const peran = String(b.peranPendaftar || b.peran || 'Rider').trim();
+      const namaLengkap = String(b.namaLengkap || b.namaStable || b.nama || 'Peserta Baru').trim();
+      const namaPanggilan = String(b.namaPanggilan || '').trim();
+      const gender = String(b.gender || 'Putra').trim();
+      const tanggalLahir = String(b.tanggalLahir || '2012-01-01').trim();
+
+      let umur = parseInt(b.umur, 10);
+      if (isNaN(umur)) {
+        const birthYear = new Date(tanggalLahir).getFullYear();
+        umur = !isNaN(birthYear) && birthYear > 1940 ? (2026 - birthYear) : 14;
+      }
+
+      const kategoriUmur = String(b.kategoriUmur || b.kategori || (umur <= 14 ? 'U14' : 'Terbuka')).trim();
+      const kelasPilihan = String(b.kelasPilihan || b.namaKelas || 'Beginner ( Walk )').trim();
+      const asalStable = String(b.asalStable || b.namaStable || b.stable || 'Saiga Stable').trim();
+      const namaPelatih = String(b.namaPelatih || b.pelatih || '-').trim();
+      const kotaAsal = String(b.kotaAsal || b.kota || 'Tangerang Selatan').trim();
+      const provinsi = String(b.provinsi || 'Banten').trim();
+      const noWhatsapp = String(b.noWhatsapp || b.kontakWa || b.whatsapp || '-').trim();
+      const email = String(b.email || '-').trim();
+      const pengalaman = String(b.pengalaman || b.lisensi || 'Beginner (Pemula)').trim();
+      const fotoUrl = String(b.fotoUrl || b.logoUrl || '').trim();
+      const catatan = String(b.catatan || b.deskripsi || '').trim();
+
+      let generatedCode = '';
+
+      // A. JIKA DAFTAR SEBAGAI RIDER -> LANGSUNG MASUK KE DATA RIDER & STABLE
+      if (peran.toLowerCase() === 'rider') {
+        const riders = await safeFindMany(CANDIDATES.rider);
+        generatedCode = 'R-' + String(riders.length + 1).padStart(3, '0');
+
+        await safeCreate(CANDIDATES.rider, {
+          kodeRider: generatedCode,
+          kode: generatedCode,
+          namaLengkap,
+          nama: namaLengkap,
+          namaPanggilan,
+          gender,
+          tanggalLahir,
+          umur,
+          kategoriUmur,
+          kategori: kategoriUmur,
+          jenjang: pengalaman || 'Beginner (Pemula)',
+          kelasPilihan,
+          asalStable,
+          namaStable: asalStable,
+          namaPelatih,
+          kotaAsal,
+          kota: kotaAsal,
+          provinsi,
+          noWhatsapp,
+          email,
+          pengalaman,
+          fotoUrl,
+          catatan,
+          statusAcc: 'Diterima',
+          statusVerifikasi: 'Diterima',
+          statusAktif: true
+        });
+
+        // Pastikan Stable asal juga otomatis terdaftar bila belum ada
+        if (asalStable && asalStable.toLowerCase() !== 'independen') {
+          const stables = await safeFindMany(CANDIDATES.stable);
+          const existsStable = stables.some(s => String(s.namaStable || s.nama || '').toLowerCase() === asalStable.toLowerCase());
+          if (!existsStable) {
+            const stCode = 'S-' + String(stables.length + 1).padStart(3, '0');
+            await safeCreate(CANDIDATES.stable, {
+              kodeStable: stCode,
+              kode: stCode,
+              namaStable: asalStable,
+              nama: asalStable,
+              kota: kotaAsal,
+              kotaAsal,
+              provinsi,
+              kontakWa: noWhatsapp,
+              noWhatsapp,
+              namaPelatih: namaPelatih !== '-' ? namaPelatih : 'Coach Kontingen'
+            });
+          }
+        }
+      }
+
+      // B. JIKA DAFTAR SEBAGAI PELATIH -> LANGSUNG MASUK KE DATA PELATIH & STABLE
+      else if (peran.toLowerCase() === 'pelatih') {
+        const coaches = await safeFindMany(CANDIDATES.pelatih);
+        generatedCode = 'C-' + String(coaches.length + 1).padStart(3, '0');
+
+        await safeCreate(CANDIDATES.pelatih, {
+          kodePelatih: generatedCode,
+          kode: generatedCode,
+          namaLengkap,
+          nama: namaLengkap,
+          gender,
+          umur,
+          asalStable,
+          namaStable: asalStable,
+          kotaAsal,
+          kota: kotaAsal,
+          provinsi,
+          noWhatsapp,
+          email,
+          lisensi: b.lisensi || pengalaman || 'Pordasi / IHAA',
+          fotoUrl,
+          catatan,
+          statusAcc: 'Diterima'
+        });
+      }
+
+      // C. JIKA DAFTAR SEBAGAI STABLE -> LANGSUNG MASUK KE DATA STABLE
+      else if (peran.toLowerCase() === 'stable') {
+        const stables = await safeFindMany(CANDIDATES.stable);
+        generatedCode = 'S-' + String(stables.length + 1).padStart(3, '0');
+
+        await safeCreate(CANDIDATES.stable, {
+          kodeStable: generatedCode,
+          kode: generatedCode,
+          namaStable: namaLengkap,
+          nama: namaLengkap,
+          kota: kotaAsal,
+          kotaAsal,
+          provinsi,
+          kontakWa: noWhatsapp,
+          noWhatsapp,
+          namaPelatih: namaPelatih !== '-' ? namaPelatih : (b.penanggungJawab || '-'),
+          email,
+          logoUrl: fotoUrl,
+          deskripsi: catatan,
+          statusAcc: 'Diterima'
+        });
+      }
+
+      // D. SIMPAN JUGA KE TABEL PENDAFTAR DI PANEL PANITIA UNTUK LOG & VERIFIKASI
       const rawReg = {
-        ...b,
-        peranPendaftar: b.peranPendaftar || b.peran || 'Rider',
-        peran: b.peranPendaftar || b.peran || 'Rider',
-        namaLengkap: b.namaLengkap || b.nama || 'Peserta Baru',
-        nama: b.namaLengkap || b.nama || 'Peserta Baru',
-        gender: b.gender || 'Putra',
-        tanggalLahir: b.tanggalLahir || '2010-01-01',
+        kodeRider: generatedCode || ('REG-' + Date.now().toString().slice(-4)),
+        peranPendaftar: peran,
+        peran,
+        namaLengkap,
+        nama: namaLengkap,
+        namaPanggilan,
+        gender,
+        tanggalLahir,
         umur,
-        kategoriUmur: umur <= 14 ? 'U14' : 'Terbuka',
-        asalStable: b.asalStable || b.namaStable || b.stable || 'Independen',
-        namaStable: b.asalStable || b.namaStable || b.stable || 'Independen',
-        namaPelatih: b.namaPelatih || b.pelatih || '-',
-        kotaAsal: b.kotaAsal || b.kota || 'Tangerang Selatan',
-        kota: b.kotaAsal || b.kota || 'Tangerang Selatan',
-        provinsi: b.provinsi || 'Banten',
-        noWhatsapp: b.noWhatsapp || b.whatsapp || b.noHp || '-',
-        whatsapp: b.noWhatsapp || b.whatsapp || b.noHp || '-',
-        email: b.email || '-',
-        kelasPilihan: b.kelasPilihan || b.namaKelas || 'Beginner ( Walk )',
-        namaKuda: b.namaKuda || b.kuda || '-',
+        kategoriUmur,
+        kategori: kategoriUmur,
+        asalStable: peran.toLowerCase() === 'stable' ? namaLengkap : asalStable,
+        namaStable: peran.toLowerCase() === 'stable' ? namaLengkap : asalStable,
+        namaPelatih,
+        kotaAsal,
+        kota: kotaAsal,
+        provinsi,
+        noWhatsapp,
+        whatsapp: noWhatsapp,
+        email,
+        kelasPilihan,
+        pengalaman,
+        fotoUrl,
+        catatan,
         statusVerifikasi: 'Menunggu ACC',
+        statusAcc: 'Menunggu',
         status: 'Menunggu ACC'
       };
+
       const created = await safeCreate(CANDIDATES.pendaftar, rawReg);
+      if (io) io.emit('registration_updated', { peran, namaLengkap, kode: generatedCode });
+
       if (req.headers.accept && req.headers.accept.includes('application/json')) {
-        return res.json({ ok: true, success: true, message: 'Pendaftaran berhasil dikirim!', data: created });
+        return res.json({
+          ok: true,
+          success: true,
+          kode: generatedCode,
+          peran,
+          message: `Terima kasih! Pendaftaran ${peran} atas nama <strong>${namaLengkap}</strong> dengan nomor registrasi <strong>${generatedCode}</strong> berhasil disimpan dan kini telah tampil di Direktori Profil Ekosistem STHAC 2026.`,
+          data: created
+        });
       }
       return res.redirect('/pendaftaran?success=1');
     } catch (err) {
-      return res.status(500).json({ ok: false, success: false, message: 'Gagal mendaftar: ' + err.message });
+      console.error('Error registerHandler:', err);
+      return res.status(500).json({ ok: false, success: false, message: 'Gagal memproses pendaftaran: ' + err.message });
     }
   };
   app.post(['/api/pendaftaran', '/pendaftaran'], registerHandler);

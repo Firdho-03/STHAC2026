@@ -1,100 +1,327 @@
-<div class="container py-5">
-  <div class="col-lg-8 mx-auto">
-    <div class="text-center mb-4">
-      <span class="badge-gold-outline mb-2">REGISTRASI ONLINE</span>
-      <h1 class="font-display fw-bold text-uppercase text-white mb-1">Formulir Pendaftaran STHAC 2026</h1>
-      <p class="text-white-50 mb-0">Data pendaftaran akan masuk ke antrean verifikasi panitia dan dikonfirmasi melalui WhatsApp.</p>
+<div class="saiga-page-header-dark mb-4">
+  <div class="container">
+    <span class="sthac-eyebrow">REGISTRASI RESMI · SERI 1 STHAC 2026</span>
+  </div>
+</div>
+
+<div class="container pb-5">
+  <!-- POP-UP MODAL KONFIRMASI PENDAFTARAN BERHASIL -->
+  <div id="reg-popup-backdrop" style="display:none; position:fixed; inset:0; background:rgba(3,19,12,0.78); backdrop-filter:blur(6px); z-index:99999; align-items:center; justify-content:center; padding:1rem;">
+    <div class="sthac-card p-4 p-md-5 text-center mx-auto" style="max-width:480px; width:100%; border:2px solid var(--border-dropdown);">
+      <div class="mx-auto mb-3 d-flex align-items-center justify-content-center rounded-circle" style="width:68px; height:68px; background:rgba(16,185,129,0.16); color:#10B981; font-size:2.2rem;">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <span id="reg-popup-badge" class="badge bg-warning text-dark font-monospace fs-6 px-3 py-1 mb-2">KODE: R-009</span>
+      <h3 class="font-display fw-bold text-uppercase mb-2">Pendaftaran Berhasil!</h3>
+      <p id="reg-popup-msg" class="small text-muted mb-4" style="line-height:1.65;">
+        Data pendaftaran Anda telah diterima dan langsung terdaftar pada direktori resmi <strong>Profil Ekosistem STHAC 2026</strong>.
+      </p>
+      <div class="d-flex flex-wrap justify-content-center gap-2">
+        <a href="/profile" class="btn btn-gold-pill px-4 py-2 fw-bold">
+          <i class="bi bi-people-fill me-1"></i> Lihat di Profil Ekosistem
+        </a>
+        <button type="button" onclick="closeRegPopup()" class="btn btn-dark-pill px-4 py-2">
+          Selesai / Daftar Lagi
+        </button>
+      </div>
     </div>
+  </div>
 
-    <ul class="nav nav-pills nav-fill gap-2 p-2 rounded-4 mb-4" style="background:rgba(255,255,255,0.04);border:1px solid rgba(217,180,92,0.25);" role="tablist">
-      <li class="nav-item"><button class="btn btn-gold-pill w-100 active" id="t-btn-rider" onclick="switchRegTab('rider')" type="button">Daftar sebagai Rider</button></li>
-      <li class="nav-item"><button class="btn btn-dark-pill w-100" id="t-btn-pelatih" onclick="switchRegTab('pelatih')" type="button">Daftar sebagai Pelatih</button></li>
-      <li class="nav-item"><button class="btn btn-dark-pill w-100" id="t-btn-stable" onclick="switchRegTab('stable')" type="button">Daftar sebagai Stable</button></li>
-    </ul>
+  <!-- HEADER FORMULIR PENDAFTARAN -->
+  <div class="text-center mb-4">
+    <h1 class="font-display fw-bold text-uppercase mb-1">FORMULIR PENDAFTARAN STHAC 2026</h1>
+    <p class="small text-muted mb-0">Data pendaftaran akan langsung terdata di direktori Profil Ekosistem serta masuk ke sistem manajemen Panel Panitia.</p>
+  </div>
 
-    <!-- FORM RIDER (Persis daftar.php) -->
-    <form id="reg-form-rider" onsubmit="submitPublicReg(event, '/api/register/rider')" class="sthac-card p-4 p-md-5">
-      <input type="text" name="website_hp" style="display:none;" tabindex="-1" autocomplete="off" />
-      <h4 class="font-display fw-bold text-uppercase text-white mb-4">Pendaftaran Rider</h4>
-      <div class="row g-3 small">
-        <div class="col-md-6"><label class="text-warning fw-bold mb-1">NAMA LENGKAP RIDER *</label><input name="namaLengkap" required class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">NAMA PANGGILAN</label><input name="namaPanggilan" class="form-control sthac-input" /></div>
-        <div class="col-md-6">
-          <label class="text-white-50 mb-1">KATEGORI</label>
-          <select name="kategori" class="form-select sthac-input"><option value="U14">U14</option><option value="Terbuka">Terbuka</option></select>
+  <!-- 3 TOMBOL TAB PERAN PENDAFTAR (RIDER / PELATIH / STABLE) -->
+  <div class="mx-auto mb-4 p-2 rounded-pill d-flex flex-wrap justify-content-center gap-2" style="max-width:680px; background:var(--bg-card); border:1px solid var(--border-main); box-shadow:var(--shadow-card);">
+    <button type="button" id="btn-tab-reg-rider" onclick="switchRegRoleTab('rider')" class="btn btn-gold-pill flex-fill py-2 fw-bold">
+      Daftar sebagai Rider
+    </button>
+    <button type="button" id="btn-tab-reg-pelatih" onclick="switchRegRoleTab('pelatih')" class="btn btn-dark-pill flex-fill py-2 fw-bold">
+      Daftar sebagai Pelatih
+    </button>
+    <button type="button" id="btn-tab-reg-stable" onclick="switchRegRoleTab('stable')" class="btn btn-dark-pill flex-fill py-2 fw-bold">
+      Daftar sebagai Stable
+    </button>
+  </div>
+
+  <!-- ==================== 1. FORM PENDAFTARAN RIDER ==================== -->
+  <div id="pane-reg-rider" class="mx-auto" style="max-width:680px;">
+    <div class="sthac-card p-4 p-md-5">
+      <h3 class="font-display fw-bold text-uppercase mb-4">PENDAFTARAN RIDER</h3>
+
+      <form id="form-public-rider" onsubmit="submitPublicRegistration(event, 'Rider')">
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">NAMA LENGKAP RIDER *</label>
+            <input type="text" name="namaLengkap" class="form-control sthac-input" placeholder="Masukkan nama lengkap atlet..." required />
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">NAMA PANGGILAN</label>
+            <input type="text" name="namaPanggilan" class="form-control sthac-input" placeholder="Nama panggilan" />
+          </div>
         </div>
-        <div class="col-md-6">
-          <label class="text-white-50 mb-1">KELAS PERTANDINGAN</label>
-          <select name="kelasDiikuti" class="form-select sthac-input">
-            <option value="Belum menentukan">— Belum menentukan —</option>
-            <option value="Beginner ( Walk )">Beginner (Walk) · U14</option>
-            <option value="Beginner ( Trot )">Beginner (Trot) · Terbuka</option>
-          </select>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">KATEGORI</label>
+            <select name="kategoriUmur" class="form-select sthac-input">
+              <option value="U14">U14 (Anak &amp; Junior)</option>
+              <option value="Terbuka">Terbuka (Open)</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">KELAS PERTANDINGAN</label>
+            <select name="kelasPilihan" class="form-select sthac-input">
+              <option value="Beginner ( Walk )">— Belum menentukan —</option>
+              <% kelasList.forEach(k => { %>
+                <option value="<%= k.namaKelas %> · <%= k.kategori %>"><%= k.namaKelas %> · <%= k.kategori %> (<%= k.namaLintasan %>)</option>
+              <% }) %>
+            </select>
+          </div>
         </div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">TANGGAL LAHIR</label><input type="date" name="tanggalLahir" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-warning fw-bold mb-1">ASAL STABLE *</label><input name="asalStable" required class="form-control sthac-input" placeholder="Mis. Saiga Stable" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">KOTA / KABUPATEN</label><input name="kotaKabupaten" class="form-control sthac-input" value="Tangerang Selatan" /></div>
-        <div class="col-md-6"><label class="text-warning fw-bold mb-1">NOMOR WHATSAPP *</label><input name="noWa" required class="form-control sthac-input" placeholder="0812xxxxxxxx" /></div>
-        <div class="col-12"><label class="text-warning fw-bold mb-1">EMAIL *</label><input type="email" name="email" required class="form-control sthac-input" /></div>
-        <div class="col-12"><label class="text-white-50 mb-1">PENGALAMAN BERKUDA MEMANAH</label><input name="pengalaman" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">FOTO RIDER (UPLOAD)</label><input type="file" name="fotoFile" accept="image/*" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">ATAU URL FOTO</label><input name="urlFoto" class="form-control sthac-input" placeholder="https://..." /></div>
-        <div class="col-12"><label class="text-white-50 mb-1">CATATAN TAMBAHAN</label><textarea name="catatanTambahan" rows="2" class="form-control sthac-input"></textarea></div>
-      </div>
-      <div class="p-3 rounded-3 my-4 small text-white-50" style="background:rgba(217,180,92,0.08);border:1px solid rgba(217,180,92,0.25);">
-        <i class="bi bi-info-circle text-warning me-1"></i> Dengan mengirim formulir ini, Anda menyetujui peraturan umum pertandingan serta bersedia mengikuti pemeriksaan kuda &amp; alat panah oleh panitia.
-      </div>
-      <button type="submit" class="btn btn-gold-pill w-100 py-3">Kirim Pendaftaran Rider</button>
-    </form>
 
-    <!-- FORM PELATIH -->
-    <form id="reg-form-pelatih" onsubmit="submitPublicReg(event, '/api/register/pelatih')" class="sthac-card p-4 p-md-5" style="display:none;">
-      <h4 class="font-display fw-bold text-uppercase text-white mb-4">Pendaftaran Pelatih / Trainer</h4>
-      <div class="row g-3 small">
-        <div class="col-md-6"><label class="text-warning fw-bold mb-1">NAMA LENGKAP *</label><input name="namaLengkap" required class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">NAMA PANGGILAN</label><input name="namaPanggilan" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">SPESIALISASI</label><input name="spesialis" value="Berkuda Memanah" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">ASAL STABLE</label><input name="stableAsal" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">SERTIFIKASI</label><input name="sertifikasi" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-warning fw-bold mb-1">NOMOR WHATSAPP *</label><input name="noWa" required class="form-control sthac-input" /></div>
-        <div class="col-12"><label class="text-warning fw-bold mb-1">EMAIL *</label><input type="email" name="email" required class="form-control sthac-input" /></div>
-        <div class="col-12"><label class="text-white-50 mb-1">BIO / PENGALAMAN MELATIH</label><textarea name="pengalamanMelatih" rows="2" class="form-control sthac-input"></textarea></div>
-      </div>
-      <button type="submit" class="btn btn-gold-pill w-100 py-3 mt-4">Kirim Pendaftaran Pelatih</button>
-    </form>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">TANGGAL LAHIR</label>
+            <input type="date" name="tanggalLahir" value="2012-05-10" class="form-control sthac-input" />
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">ASAL STABLE *</label>
+            <input type="text" name="asalStable" list="datalist-stables" class="form-control sthac-input" placeholder="Mis. Saiga Stable" required />
+            <datalist id="datalist-stables">
+              <% stableList.forEach(s => { %>
+                <option value="<%= s.namaStable %>"></option>
+              <% }) %>
+            </datalist>
+          </div>
+        </div>
 
-    <!-- FORM STABLE -->
-    <form id="reg-form-stable" onsubmit="submitPublicReg(event, '/api/register/stable')" class="sthac-card p-4 p-md-5" style="display:none;">
-      <h4 class="font-display fw-bold text-uppercase text-white mb-4">Pendaftaran Stable / Klub</h4>
-      <div class="row g-3 small">
-        <div class="col-md-6"><label class="text-warning fw-bold mb-1">NAMA STABLE *</label><input name="namaStable" required class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">KOTA / KABUPATEN</label><input name="kotaKabupaten" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">PROVINSI</label><input name="provinsi" value="Banten" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-white-50 mb-1">PELATIH UTAMA</label><input name="pelatihUtama" class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-warning fw-bold mb-1">KONTAK / WHATSAPP *</label><input name="noWa" required class="form-control sthac-input" /></div>
-        <div class="col-md-6"><label class="text-warning fw-bold mb-1">EMAIL *</label><input type="email" name="email" required class="form-control sthac-input" /></div>
-        <div class="col-12"><label class="text-white-50 mb-1">ALAMAT &amp; DESKRIPSI STABLE</label><textarea name="deskripsi" rows="2" class="form-control sthac-input"></textarea></div>
-      </div>
-      <button type="submit" class="btn btn-gold-pill w-100 py-3 mt-4">Kirim Pendaftaran Stable</button>
-    </form>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">KOTA / KABUPATEN</label>
+            <input type="text" name="kotaAsal" value="Tangerang Selatan" class="form-control sthac-input" />
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">NOMOR WHATSAPP *</label>
+            <input type="text" name="noWhatsapp" class="form-control sthac-input" placeholder="0812xxxxxxxx" required />
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">EMAIL *</label>
+            <input type="email" name="email" class="form-control sthac-input" placeholder="nama@email.com" required />
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">GENDER</label>
+            <select name="gender" class="form-select sthac-input">
+              <option value="Putra">Putra</option>
+              <option value="Putri">Putri</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="small fw-bold text-warning mb-1">PENGALAMAN BERKUDA MEMANAH</label>
+          <input type="text" name="pengalaman" class="form-control sthac-input" placeholder="Mis. Beginner (Pemula) / Intermediate / 1 Tahun latihan" />
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">FOTO RIDER (UPLOAD)</label>
+            <input type="file" accept="image/*" onchange="handleFilePreview(this, 'inp-foto-url-rider')" class="form-control sthac-input" />
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">ATAU URL FOTO</label>
+            <input type="text" name="fotoUrl" id="inp-foto-url-rider" class="form-control sthac-input" placeholder="https://..." />
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="small fw-bold text-warning mb-1">CATATAN TAMBAHAN</label>
+          <textarea name="catatan" rows="2" class="form-control sthac-input" placeholder="Informasi nama kuda, pelatih pendamping, atau catatan khusus..."></textarea>
+        </div>
+
+        <button type="submit" id="btn-submit-reg-rider" class="btn btn-gold-pill w-100 py-3 fw-bold fs-6">
+          <i class="bi bi-check2-circle me-1"></i> Kirim Pendaftaran Rider
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== 2. FORM PENDAFTARAN PELATIH ==================== -->
+  <div id="pane-reg-pelatih" class="mx-auto" style="max-width:680px; display:none;">
+    <div class="sthac-card p-4 p-md-5">
+      <h3 class="font-display fw-bold text-uppercase mb-4">PENDAFTARAN PELATIH RESMI</h3>
+
+      <form id="form-public-pelatih" onsubmit="submitPublicRegistration(event, 'Pelatih')">
+        <div class="row g-3 mb-3">
+          <div class="col-md-7">
+            <label class="small fw-bold text-warning mb-1">NAMA LENGKAP PELATIH *</label>
+            <input type="text" name="namaLengkap" class="form-control sthac-input" placeholder="Mis. Coach Hendra Wijaya" required />
+          </div>
+          <div class="col-md-5">
+            <label class="small fw-bold text-warning mb-1">ASAL STABLE / KLUB *</label>
+            <input type="text" name="asalStable" list="datalist-stables" class="form-control sthac-input" placeholder="Mis. Saiga Stable" required />
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">LISENSI / SERTIFIKASI</label>
+            <input type="text" name="lisensi" value="Pordasi / IHAA Level 1" class="form-control sthac-input" />
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">KOTA / KABUPATEN</label>
+            <input type="text" name="kotaAsal" value="Tangerang Selatan" class="form-control sthac-input" />
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">NOMOR WHATSAPP *</label>
+            <input type="text" name="noWhatsapp" class="form-control sthac-input" placeholder="0812xxxxxxxx" required />
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">EMAIL *</label>
+            <input type="email" name="email" class="form-control sthac-input" placeholder="coach@email.com" required />
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="small fw-bold text-warning mb-1">CATATAN KONTINGEN / ATLET BINAAN</label>
+          <textarea name="catatan" rows="2" class="form-control sthac-input" placeholder="Daftar rider yang didampingi pada Seri 1..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-gold-pill w-100 py-3 fw-bold fs-6">
+          <i class="bi bi-check2-circle me-1"></i> Kirim Pendaftaran Pelatih
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== 3. FORM PENDAFTARAN STABLE / KLUB ==================== -->
+  <div id="pane-reg-stable" class="mx-auto" style="max-width:680px; display:none;">
+    <div class="sthac-card p-4 p-md-5">
+      <h3 class="font-display fw-bold text-uppercase mb-4">PENDAFTARAN STABLE &amp; KLUB BERKUDA</h3>
+
+      <form id="form-public-stable" onsubmit="submitPublicRegistration(event, 'Stable')">
+        <div class="row g-3 mb-3">
+          <div class="col-md-7">
+            <label class="small fw-bold text-warning mb-1">NAMA STABLE / KLUB *</label>
+            <input type="text" name="namaLengkap" class="form-control sthac-input" placeholder="Mis. Nusantara Archery Stable" required />
+          </div>
+          <div class="col-md-5">
+            <label class="small fw-bold text-warning mb-1">PELATIH UTAMA / PIC *</label>
+            <input type="text" name="namaPelatih" class="form-control sthac-input" placeholder="Nama kepala pelatih / manajer" required />
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">KOTA / KABUPATEN *</label>
+            <input type="text" name="kotaAsal" value="Tangerang Selatan" class="form-control sthac-input" required />
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">PROVINSI</label>
+            <input type="text" name="provinsi" value="Banten" class="form-control sthac-input" />
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">NOMOR WHATSAPP RESMI *</label>
+            <input type="text" name="noWhatsapp" class="form-control sthac-input" placeholder="0812xxxxxxxx" required />
+          </div>
+          <div class="col-md-6">
+            <label class="small fw-bold text-warning mb-1">EMAIL STABLE *</label>
+            <input type="email" name="email" class="form-control sthac-input" placeholder="info@stable.com" required />
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="small fw-bold text-warning mb-1">ALAMAT LENGKAP &amp; PROFIL SINGKAT STABLE</label>
+          <textarea name="catatan" rows="2" class="form-control sthac-input" placeholder="Alamat arena latihan dan jumlah kontingen rider..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-gold-pill w-100 py-3 fw-bold fs-6">
+          <i class="bi bi-check2-circle me-1"></i> Kirim Pendaftaran Stable
+        </button>
+      </form>
+    </div>
   </div>
 </div>
 
 <script>
-  function switchRegTab(tab) {
-    ['rider', 'pelatih', 'stable'].forEach(t => {
-      document.getElementById('reg-form-' + t).style.display = (t === tab) ? 'block' : 'none';
-      document.getElementById('t-btn-' + t).className = (t === tab) ? 'btn btn-gold-pill w-100' : 'btn btn-dark-pill w-100';
+  window.switchRegRoleTab = function(role) {
+    ['rider', 'pelatih', 'stable'].forEach(r => {
+      const pane = document.getElementById('pane-reg-' + r);
+      const btn = document.getElementById('btn-tab-reg-' + r);
+      if (pane) pane.style.display = (r === role) ? 'block' : 'none';
+      if (btn) btn.className = 'btn flex-fill py-2 fw-bold ' + (r === role ? 'btn-gold-pill' : 'btn-dark-pill');
     });
-  }
+  };
 
-  async function submitPublicReg(e, url) {
+  window.handleFilePreview = function(fileInput, targetUrlInputId) {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      const urlInp = document.getElementById(targetUrlInputId);
+      if (urlInp && evt.target && evt.target.result) {
+        urlInp.value = evt.target.result;
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.closeRegPopup = function() {
+    document.getElementById('reg-popup-backdrop').style.display = 'none';
+  };
+
+  window.submitPublicRegistration = async function(e, peranPendaftar) {
     e.preventDefault();
-    const res = await fetch(url, { method: 'POST', body: new FormData(e.target) });
-    const out = await res.json();
-    if (out.success) {
-      alert('Terima kasih! Pendaftaran Anda telah masuk ke antrean verifikasi Panitia STHAC.');
-      window.location.href = '/profile';
-    } else alert('Gagal: ' + out.error);
-  }
+    const form = e.target;
+    const fd = new FormData(form);
+    const payload = { peranPendaftar };
+    fd.forEach((val, key) => {
+      if (typeof val === 'string') payload[key] = val;
+    });
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const origText = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses Pendaftaran...';
+    }
+
+    try {
+      const res = await fetch('/api/pendaftaran', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      const out = await res.json();
+      if (res.ok && (out.ok || out.success)) {
+        form.reset();
+        document.getElementById('reg-popup-badge').innerText = 'KODE RESMI: ' + (out.kode || 'TERDAFTAR');
+        document.getElementById('reg-popup-msg').innerHTML = out.message;
+        document.getElementById('reg-popup-backdrop').style.display = 'flex';
+      } else {
+        alert('⚠️ ' + (out.message || 'Gagal mengirim pendaftaran.'));
+      }
+    } catch (err) {
+      alert('❌ Gangguan koneksi: ' + err.message);
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origText;
+      }
+    }
+  };
 </script>

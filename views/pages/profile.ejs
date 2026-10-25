@@ -1,164 +1,269 @@
-<div class="saiga-page-header-dark mb-2"><div class="container"><span class="sthac-eyebrow">OFFICIAL STHAC 2026</span></div></div>
-<div class="container py-5">
+<div class="saiga-page-header-dark mb-4">
+  <div class="container">
+    <span class="sthac-eyebrow">OFFICIAL STHAC 2026</span>
+  </div>
+</div>
+
+<div class="container pb-5">
   <% if (riderDetail) { %>
-    <!-- TAMPILAN DETAIL INDIVIDU RIDER (rider-detail.php?id=X) -->
+    <!-- ==================== TAMPILAN DETAIL INDIVIDU RIDER ==================== -->
     <div class="mb-4">
-      <a href="/profile" class="btn btn-dark-pill btn-sm mb-3">&larr; Kembali ke Daftar Profil</a>
+      <a href="/profile" class="btn btn-dark-pill btn-sm px-3 py-2 mb-3">&larr; Kembali ke Direktori Profil Ekosistem</a>
       <div class="sthac-card p-4 p-md-5">
-        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
-          <div>
-            <span class="badge bg-warning text-dark fw-bold mb-2"><%= riderDetail.kodeRider %> · BIB #<%= riderDetail.noBib %></span>
-            <h2 class="font-display fw-bold text-uppercase text-white mb-1"><%= riderDetail.namaLengkap %></h2>
-            <p class="text-white-50 mb-0">
-              Panggilan: <strong class="text-white"><%= riderDetail.namaPanggilan %></strong> ·
-              Stable: <strong class="text-gold-bright"><%= riderDetail.asalStable %></strong> ·
-              Kategori: <strong class="text-white"><%= riderDetail.kategori %></strong>
-            </p>
+        <div class="row g-4 align-items-center">
+          <div class="col-md-3 text-center">
+            <% if (riderDetail.fotoUrl && riderDetail.fotoUrl.length > 5) { %>
+              <img src="<%= riderDetail.fotoUrl %>" alt="<%= riderDetail.namaLengkap %>" class="rounded-circle border border-warning" style="width:130px;height:130px;object-fit:cover;" />
+            <% } else { %>
+              <div class="mx-auto rounded-circle d-flex align-items-center justify-content-center font-display fw-bold fs-1" style="width:120px;height:120px;background:#072619;color:#F2E0AC;border:3px solid #D9B45C;">
+                <%= (riderDetail.namaLengkap || 'R').substring(0,2).toUpperCase() %>
+              </div>
+            <% } %>
+            <div class="mt-3">
+              <span class="badge bg-warning text-dark font-monospace fs-6 px-3 py-1"><%= riderDetail.kodeRider %></span>
+            </div>
           </div>
-          <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2"><%= riderDetail.jenjangKelas %></span>
+          <div class="col-md-9">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <span class="badge-green-soft">RIDER RESMI STHAC 2026</span>
+              <span class="badge bg-dark text-warning border border-warning"><%= riderDetail.kategoriUmur %></span>
+            </div>
+            <h2 class="font-display fw-bold text-uppercase mb-2"><%= riderDetail.namaLengkap %></h2>
+            <p class="small text-muted mb-3">Kontingen Klub: <strong><%= riderDetail.asalStable %></strong> · Kota: <%= riderDetail.kotaAsal %> · Pelatih: <%= riderDetail.namaPelatih || '-' %></p>
+
+            <div class="row g-3">
+              <div class="col-6 col-sm-3">
+                <div class="p-3 rounded-3" style="background:var(--bg-table-head);">
+                  <small class="text-muted d-block" style="font-size:0.68rem;">TOTAL POIN SERI</small>
+                  <strong class="font-display fs-4 text-gold"><%= riderDetail.totalPoints || 0 %> pts</strong>
+                </div>
+              </div>
+              <div class="col-6 col-sm-3">
+                <div class="p-3 rounded-3" style="background:var(--bg-table-head);">
+                  <small class="text-muted d-block" style="font-size:0.68rem;">TOTAL SKOR RUN</small>
+                  <strong class="font-display fs-4"><%= riderDetail.totalSkorLintasan || 0 %> Pts</strong>
+                </div>
+              </div>
+              <div class="col-6 col-sm-3">
+                <div class="p-3 rounded-3" style="background:var(--bg-table-head);">
+                  <small class="text-muted d-block" style="font-size:0.68rem;">JUMLAH RUN</small>
+                  <strong class="font-display fs-4"><%= (riderDetail.runs || []).length %> Run</strong>
+                </div>
+              </div>
+              <div class="col-6 col-sm-3">
+                <div class="p-3 rounded-3" style="background:var(--bg-table-head);">
+                  <small class="text-muted d-block" style="font-size:0.68rem;">JENJANG LEVEL</small>
+                  <strong class="small d-block mt-1"><%= riderDetail.jenjang || 'Beginner (Pemula)' %></strong>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <h5 class="font-display fw-bold text-uppercase text-warning mb-3">Riwayat Hasil Run</h5>
-        <div class="table-responsive">
-          <table class="table table-dark sthac-table mb-0">
-            <thead><tr><th>KELAS</th><th>RUN KE</th><th>TARGET (T1-T2-T3)</th><th>WAKTU TEMPUH</th><th class="text-end">TOTAL SKOR</th></tr></thead>
-            <tbody>
-              <% if (!riderDetail.runs || riderDetail.runs.length === 0) { %>
-                <tr><td colspan="5" class="text-center py-4 text-white-50">Belum ada hasil run terekam untuk rider ini.</td></tr>
-              <% } else { %>
-                <% riderDetail.runs.forEach(rn => { %>
-                  <tr>
-                    <td class="fw-bold text-white"><%= rn.kelas %></td>
-                    <td>Run #<%= rn.runNumber %></td>
-                    <td class="font-monospace text-warning"><%= rn.target1 %> - <%= rn.target2 %> - <%= rn.target3 %></td>
-                    <td><%= rn.waktuTempuh %> dtk</td>
-                    <td class="text-end font-display fw-bold text-gold"><%= rn.totalSkor %></td>
-                  </tr>
-                <% }) %>
-              <% } %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  <% } else { %>
-    <!-- DIREKTORI PROFIL EKOSISTEM (Rider, Pelatih, Stable, Panitia & Juri) -->
-    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">
-      <div>
-        <span class="badge-gold-outline mb-2">DIREKTORI PESERTA &amp; KLUB</span>
-        <h1 class="font-display fw-bold text-uppercase text-white mb-1">Profil Ekosistem STHAC</h1>
-        <p class="text-white-50 mb-0">Data resmi Rider, Pelatih, Stable terafiliasi, serta Dewan Juri &amp; Panitia.</p>
-      </div>
-
-      <ul class="nav nav-pills gap-2" role="tablist">
-        <li class="nav-item"><button class="btn btn-gold-pill btn-sm active" data-bs-toggle="pill" data-bs-target="#p-riders">Rider (<%= profiles.riders.length %>)</button></li>
-        <li class="nav-item"><button class="btn btn-dark-pill btn-sm" data-bs-toggle="pill" data-bs-target="#p-pelatih">Pelatih (<%= profiles.pelatih.length %>)</button></li>
-        <li class="nav-item"><button class="btn btn-dark-pill btn-sm" data-bs-toggle="pill" data-bs-target="#p-stable">Stable (<%= profiles.stables.length %>)</button></li>
-        <li class="nav-item"><button class="btn btn-dark-pill btn-sm" data-bs-toggle="pill" data-bs-target="#p-panitia">Panitia &amp; Juri (<%= profiles.panitia.length %>)</button></li>
-      </ul>
-    </div>
-
-    <div class="tab-content">
-      <!-- TAB RIDER -->
-      <div class="tab-pane fade show active" id="p-riders">
-        <form method="GET" action="/profile" class="sthac-card p-3 mb-4 row g-2 align-items-center mx-0">
-          <div class="col-md-4">
-            <input type="text" name="q" value="<%= query.q || '' %>" class="form-control sthac-input" placeholder="Cari nama atau kode (mis. R-001)..." />
-          </div>
-          <div class="col-md-3">
-            <select name="kategori" class="form-select sthac-input">
-              <option value="all">Semua Kategori (U14 &amp; Terbuka)</option>
-              <option value="U14" <%= query.kategori === 'U14' ? 'selected' : '' %>>U14</option>
-              <option value="Terbuka" <%= query.kategori === 'Terbuka' ? 'selected' : '' %>>Terbuka</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <select name="stable" class="form-select sthac-input">
-              <option value="all">Semua Stable</option>
-              <% profiles.stables.forEach(s => { %>
-                <option value="<%= s.namaStable %>" <%= query.stable === s.namaStable ? 'selected' : '' %>><%= s.namaStable %></option>
-              <% }) %>
-            </select>
-          </div>
-          <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-gold-pill w-100">Cari</button>
-            <a href="/profile" class="btn btn-dark-pill">Reset</a>
-          </div>
-        </form>
-
-        <div class="sthac-card overflow-hidden">
+        <hr class="my-4" style="border-color:var(--border-main);" />
+        <h5 class="font-display fw-bold text-uppercase mb-3">Riwayat Penilaian Run Atlet</h5>
+        <% if (!riderDetail.runs || riderDetail.runs.length === 0) { %>
+          <div class="text-muted small py-3">Belum ada catatan skor run untuk rider ini.</div>
+        <% } else { %>
           <div class="table-responsive">
-            <table class="table table-dark sthac-table mb-0">
-              <thead><tr><th>KODE</th><th>NAMA RIDER</th><th>JENJANG LEVEL</th><th>KATEGORI</th><th>STABLE</th><th class="text-end">PROFIL</th></tr></thead>
+            <table class="table sthac-table mb-0 small">
+              <thead>
+                <tr>
+                  <th>KELAS</th>
+                  <th class="text-center">RUN</th>
+                  <th class="text-center">TARGET (T1 · T2 · T3)</th>
+                  <th class="text-center">WAKTU</th>
+                  <th class="text-end">TOTAL SKOR</th>
+                </tr>
+              </thead>
               <tbody>
-                <% profiles.riders.forEach(r => { %>
+                <% riderDetail.runs.forEach(sr => { %>
                   <tr>
-                    <td class="font-monospace text-warning fw-bold"><%= r.kodeRider %></td>
-                    <td class="fw-bold text-white"><%= r.namaLengkap %></td>
-                    <td><%= r.jenjangKelas %></td>
-                    <td><span class="badge bg-dark text-warning border border-warning border-opacity-25"><%= r.kategori %></span></td>
-                    <td class="text-white-50"><%= r.asalStable %></td>
-                    <td class="text-end"><a href="/profile?id=<%= r.id %>" class="btn btn-dark-pill btn-sm">Detail</a></td>
+                    <td class="fw-bold"><%= sr.kelas ? sr.kelas.namaKelas : ('Kelas #' + sr.kelasId) %></td>
+                    <td class="text-center"><span class="badge bg-warning text-dark">Run #<%= sr.runNumber %></span></td>
+                    <td class="text-center font-monospace"><%= sr.target1 %> · <%= sr.target2 %> · <%= sr.target3 %></td>
+                    <td class="text-center"><%= sr.waktuTempuh %>s</td>
+                    <td class="text-end fw-bold text-gold"><%= sr.totalSkor %> Pts</td>
                   </tr>
                 <% }) %>
               </tbody>
             </table>
           </div>
-        </div>
+        <% } %>
+      </div>
+    </div>
+
+  <% } else { %>
+    <!-- ==================== TAMPILAN DIREKTORI PROFIL EKOSISTEM STHAC ==================== -->
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <span class="badge-green-soft mb-2">DIREKTORI PESERTA &amp; KLUB</span>
+        <h1 class="font-display fw-bold text-uppercase mb-1">PROFIL EKOSISTEM STHAC</h1>
+        <p class="small text-muted mb-0">Data resmi Rider, Pelatih, Stable terafiliasi, serta Dewan Juri &amp; Panitia.</p>
       </div>
 
-      <!-- TAB PELATIH -->
-      <div class="tab-pane fade" id="p-pelatih">
-        <div class="sthac-card overflow-hidden">
-          <table class="table table-dark sthac-table mb-0">
-            <thead><tr><th>KODE</th><th>NAMA PELATIH</th><th>SPESIALISASI</th><th>STABLE</th><th>STATUS</th></tr></thead>
+      <!-- 4 Tombol Tab Ekosistem -->
+      <div class="d-flex flex-wrap gap-2">
+        <button type="button" id="eco-btn-rider" onclick="switchEcoTab('rider')" class="btn btn-sm btn-gold-pill px-3 py-2 fw-bold">
+          Rider (<%= riderList.length %>)
+        </button>
+        <button type="button" id="eco-btn-pelatih" onclick="switchEcoTab('pelatih')" class="btn btn-sm btn-dark-pill px-3 py-2 fw-bold">
+          Pelatih (<%= pelatihList.length %>)
+        </button>
+        <button type="button" id="eco-btn-stable" onclick="switchEcoTab('stable')" class="btn btn-sm btn-dark-pill px-3 py-2 fw-bold">
+          Stable (<%= stableList.length %>)
+        </button>
+        <button type="button" id="eco-btn-panitia" onclick="switchEcoTab('panitia')" class="btn btn-sm btn-dark-pill px-3 py-2 fw-bold">
+          Panitia &amp; Juri (<%= panitiaList.length %>)
+        </button>
+      </div>
+    </div>
+
+    <!-- Bar Pencarian & Filter Interaktif -->
+    <div class="sthac-card p-3 mb-4">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-4">
+          <input type="text" id="eco-search-input" oninput="applyEcoFilter()" class="form-control sthac-input" placeholder="Cari nama atau kode (mis. R-001)..." />
+        </div>
+        <div class="col-md-3">
+          <select id="eco-cat-select" onchange="applyEcoFilter()" class="form-select sthac-input">
+            <option value="">Semua Kategori (U14 &amp; Terbuka)</option>
+            <option value="u14">Kategori U14</option>
+            <option value="terbuka">Kategori Terbuka</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select id="eco-stable-select" onchange="applyEcoFilter()" class="form-select sthac-input">
+            <option value="">Semua Stable</option>
+            <% stableList.forEach(s => { %>
+              <option value="<%= s.namaStable.toLowerCase() %>"><%= s.namaStable %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+          <button type="button" onclick="applyEcoFilter()" class="btn btn-gold-pill flex-fill py-2 fw-bold">Cari</button>
+          <button type="button" onclick="resetEcoFilter()" class="btn btn-dark-pill px-3 py-2">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: DIREKTORI RIDER -->
+    <div id="eco-pane-rider" class="eco-pane">
+      <div class="sthac-card p-0 overflow-hidden">
+        <div class="table-responsive">
+          <table class="table sthac-table mb-0 small align-middle" id="table-eco-rider">
+            <thead>
+              <tr>
+                <th class="ps-4">KODE</th>
+                <th>NAMA RIDER</th>
+                <th>JENJANG LEVEL</th>
+                <th>KATEGORI</th>
+                <th>STABLE</th>
+                <th class="text-end pe-4">PROFIL</th>
+              </tr>
+            </thead>
             <tbody>
-              <% profiles.pelatih.forEach(c => { %>
-                <tr>
-                  <td class="font-monospace text-warning fw-bold"><%= c.kodePelatih %></td>
-                  <td class="fw-bold text-white"><%= c.namaLengkap %></td>
-                  <td><%= c.spesialis %></td>
-                  <td class="text-white-50"><%= c.stableAsal %></td>
-                  <td><span class="badge bg-success-subtle text-success"><%= c.status %></span></td>
+              <% riderList.forEach(r => { %>
+                <tr class="eco-rider-row"
+                    data-search="<%= (r.kodeRider + ' ' + r.namaLengkap + ' ' + r.asalStable + ' ' + r.kotaAsal).toLowerCase() %>"
+                    data-cat="<%= (r.kategoriUmur || '').toLowerCase() %>"
+                    data-stable="<%= (r.asalStable || '').toLowerCase() %>">
+                  <td class="ps-4 font-monospace fw-bold"><%= r.kodeRider %></td>
+                  <td class="fw-bold"><%= r.namaLengkap %></td>
+                  <td><%= r.jenjang || r.pengalaman || 'Beginner (Pemula)' %></td>
+                  <td><span class="badge bg-dark text-warning border border-warning px-2 py-1"><%= r.kategoriUmur %></span></td>
+                  <td><%= r.asalStable %></td>
+                  <td class="text-end pe-4">
+                    <a href="/profile?id=<%= r.id %>" class="btn btn-sm btn-dark-pill px-3 py-1">Detail</a>
+                  </td>
                 </tr>
               <% }) %>
             </tbody>
           </table>
         </div>
       </div>
+    </div>
 
-      <!-- TAB STABLE -->
-      <div class="tab-pane fade" id="p-stable">
-        <div class="sthac-card overflow-hidden">
-          <table class="table table-dark sthac-table mb-0">
-            <thead><tr><th>NAMA STABLE</th><th>KOTA / KABUPATEN</th><th>PELATIH UTAMA</th><th class="text-center">JUMLAH RIDER</th></tr></thead>
+    <!-- TAB 2: DIREKTORI PELATIH -->
+    <div id="eco-pane-pelatih" class="eco-pane" style="display:none;">
+      <div class="sthac-card p-0 overflow-hidden">
+        <div class="table-responsive">
+          <table class="table sthac-table mb-0 small align-middle">
+            <thead>
+              <tr>
+                <th class="ps-4">KODE</th>
+                <th>NAMA PELATIH</th>
+                <th>ASAL STABLE</th>
+                <th>LISENSI / SERTIFIKASI</th>
+                <th class="pe-4">KOTA</th>
+              </tr>
+            </thead>
             <tbody>
-              <% profiles.stables.forEach(s => { %>
+              <% pelatihList.forEach(c => { %>
                 <tr>
-                  <td class="fw-bold text-white"><%= s.namaStable %></td>
-                  <td class="text-white-50"><%= s.kotaKabupaten %></td>
-                  <td class="text-white-50"><%= s.pelatihUtama %></td>
-                  <td class="text-center fw-bold text-gold"><%= s.riderCount %> Rider</td>
+                  <td class="ps-4 font-monospace fw-bold"><%= c.kodePelatih %></td>
+                  <td class="fw-bold"><%= c.namaLengkap %></td>
+                  <td><%= c.asalStable %></td>
+                  <td><span class="badge-green-soft"><%= c.lisensi || 'Pordasi / IHAA' %></span></td>
+                  <td class="pe-4"><%= c.kotaAsal %></td>
                 </tr>
               <% }) %>
             </tbody>
           </table>
         </div>
       </div>
+    </div>
 
-      <!-- TAB PANITIA & JURI -->
-      <div class="tab-pane fade" id="p-panitia">
-        <div class="sthac-card overflow-hidden">
-          <table class="table table-dark sthac-table mb-0">
-            <thead><tr><th>NAMA</th><th>PERAN</th><th>SERTIFIKASI / LISENSI</th><th>TUGAS</th><th>STATUS</th></tr></thead>
+    <!-- TAB 3: DIREKTORI STABLE -->
+    <div id="eco-pane-stable" class="eco-pane" style="display:none;">
+      <div class="sthac-card p-0 overflow-hidden">
+        <div class="table-responsive">
+          <table class="table sthac-table mb-0 small align-middle">
+            <thead>
+              <tr>
+                <th class="ps-4">KODE</th>
+                <th>NAMA STABLE / KLUB</th>
+                <th>KOTA &amp; PROVINSI</th>
+                <th>PELATIH / PIC</th>
+                <th class="text-center pe-4">JUMLAH RIDER</th>
+              </tr>
+            </thead>
             <tbody>
-              <% profiles.panitia.forEach(p => { %>
+              <% stableList.forEach(s => { %>
                 <tr>
-                  <td class="fw-bold text-white"><%= p.namaLengkap %></td>
-                  <td><span class="badge bg-warning text-dark"><%= p.peran %></span></td>
-                  <td class="text-white-50"><%= p.sertif %></td>
-                  <td class="text-white-50 small"><%= p.bioTugas %></td>
-                  <td><span class="badge bg-success-subtle text-success"><%= p.status %></span></td>
+                  <td class="ps-4 font-monospace fw-bold"><%= s.kodeStable %></td>
+                  <td class="fw-bold"><%= s.namaStable %></td>
+                  <td><%= s.kota %>, <%= s.provinsi %></td>
+                  <td><%= s.namaPelatih || '-' %></td>
+                  <td class="text-center pe-4"><span class="badge bg-secondary"><%= s.jumlahRider || 0 %> Rider</span></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: DIREKTORI PANITIA & DEWAN JURI -->
+    <div id="eco-pane-panitia" class="eco-pane" style="display:none;">
+      <div class="sthac-card p-0 overflow-hidden">
+        <div class="table-responsive">
+          <table class="table sthac-table mb-0 small align-middle">
+            <thead>
+              <tr>
+                <th class="ps-4">KODE</th>
+                <th>NAMA LENGKAP</th>
+                <th>JABATAN RESMI</th>
+                <th class="pe-4">STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% panitiaList.forEach(u => { %>
+                <tr>
+                  <td class="ps-4 font-monospace fw-bold"><%= u.kodePanitia %></td>
+                  <td class="fw-bold"><%= u.namaLengkap %></td>
+                  <td><%= u.jabatan %></td>
+                  <td class="pe-4"><span class="badge-green-soft">Dewan Juri &amp; Panitia Resmi</span></td>
                 </tr>
               <% }) %>
             </tbody>
@@ -168,3 +273,39 @@
     </div>
   <% } %>
 </div>
+
+<script>
+  window.switchEcoTab = function(tab) {
+    ['rider', 'pelatih', 'stable', 'panitia'].forEach(t => {
+      const pane = document.getElementById('eco-pane-' + t);
+      const btn = document.getElementById('eco-btn-' + t);
+      if (pane) pane.style.display = (t === tab) ? 'block' : 'none';
+      if (btn) btn.className = 'btn btn-sm px-3 py-2 fw-bold ' + (t === tab ? 'btn-gold-pill' : 'btn-dark-pill');
+    });
+  };
+
+  window.applyEcoFilter = function() {
+    const q = (document.getElementById('eco-search-input')?.value || '').toLowerCase().trim();
+    const cat = (document.getElementById('eco-cat-select')?.value || '').toLowerCase().trim();
+    const st = (document.getElementById('eco-stable-select')?.value || '').toLowerCase().trim();
+
+    document.querySelectorAll('.eco-rider-row').forEach(row => {
+      const rSearch = row.getAttribute('data-search') || '';
+      const rCat = row.getAttribute('data-cat') || '';
+      const rStable = row.getAttribute('data-stable') || '';
+
+      const matchQ = !q || rSearch.includes(q);
+      const matchCat = !cat || rCat === cat;
+      const matchSt = !st || rStable.includes(st);
+
+      row.style.display = (matchQ && matchCat && matchSt) ? '' : 'none';
+    });
+  };
+
+  window.resetEcoFilter = function() {
+    document.getElementById('eco-search-input').value = '';
+    document.getElementById('eco-cat-select').value = '';
+    document.getElementById('eco-stable-select').value = '';
+    applyEcoFilter();
+  };
+</script>
