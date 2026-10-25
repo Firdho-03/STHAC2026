@@ -138,9 +138,9 @@ function attachUniversalCrudRoutes(app, io) {
 
       const allRuns = await safeFindMany(CANDIDATES.scoreRun);
       const existing = allRuns.find(r =>
-        (r.kelasId === kelasId || r.classId === kelasId) &&
-        r.riderId === riderId &&
-        (r.runNumber === runNumber || r.runKe === runNumber || r.nomorRun === runNumber)
+        Number(r.kelasId || r.classId) === Number(kelasId) &&
+        Number(r.riderId) === Number(riderId) &&
+        Number(r.runNumber || r.runKe || r.nomorRun) === Number(runNumber)
       );
 
       let saved;

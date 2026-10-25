@@ -3,10 +3,9 @@ const path = require('path');
 const dbModule = require('./Database');
 const prisma = dbModule.getClient ? dbModule.getClient() : (dbModule.prisma || dbModule);
 
-const localStorePath = path.join(process.cwd(), 'prisma', 'sthac-data-store.json');
+const unifiedStorePath = path.join(process.cwd(), 'prisma', 'sthac-unified-store.json');
 
-// Data bawaan resmi STHAC 2026 jika tabel terkait di DB masih kosong
-const defaultStore = {
+const defaultSeed = {
   setting: {
     id: 1,
     eventName: 'South Tangerang Horseback Archery Cup',
@@ -25,12 +24,28 @@ const defaultStore = {
     { id: 2, nomorSeri: 2, namaSeri: 'Seri 2 — South Tangerang Horseback Archery Cup', tanggalPelaksanaan: 'Menyusul', lokasi: 'Menyusul', statusSeri: 'Akan datang' },
     { id: 3, nomorSeri: 3, namaSeri: 'Seri 3 — Grand Final', tanggalPelaksanaan: 'Menyusul', lokasi: 'Menyusul', statusSeri: 'Akan datang' }
   ],
+  lintasan: [
+    { id: 1, kodeLintasan: 'ARENA-WT', namaLintasan: 'Arena Walk-Trot', sistem: 'IHAA', panjangMeter: 50, jumlahTarget: 3, nilaiZonaTarget: '5 / 4 / 3 / 2 / 1', parTime: 12, poinPerDetikCepat: 1, penaltiPerDetikLambat: 1, bonusSapuBersih: 0, bolehSkorNegatif: false, aturanOvertime: 'Skor minimum 0' },
+    { id: 2, kodeLintasan: 'TABLA-T4', namaLintasan: 'Turkish Tabla T4', sistem: 'IHAA', panjangMeter: 90, jumlahTarget: 3, nilaiZonaTarget: '5 / 4 / 3 / 2 / 1', parTime: 12, poinPerDetikCepat: 1, penaltiPerDetikLambat: 1, bonusSapuBersih: 2, bolehSkorNegatif: false, aturanOvertime: 'Skor minimum 0' }
+  ],
+  kelas: [
+    { id: 1, seriId: 1, urutanTampil: 1, namaKelas: 'Beginner ( Walk )', kategori: 'U14', lintasanId: 1, namaLintasan: 'Arena Walk-Trot', jumlahRun: 6, kuotaPeserta: 30, statusKelas: 'Pendaftaran dibuka', hitungPoinJuara: true, buangSkorTerendah: false },
+    { id: 2, seriId: 1, urutanTampil: 2, namaKelas: 'Beginner ( Trot )', kategori: 'Terbuka', lintasanId: 1, namaLintasan: 'Arena Walk-Trot', jumlahRun: 3, kuotaPeserta: 30, statusKelas: 'Pendaftaran dibuka', hitungPoinJuara: true, buangSkorTerendah: false }
+  ],
+  rider: [
+    { id: 1, kodeRider: 'R-001', namaLengkap: 'Tristiyan Abiy Pratama', gender: 'Putra', umur: 14, kategoriUmur: 'U14', asalStable: 'SAIGA STABLE', namaPelatih: 'Coach Hendra Wijaya', kotaAsal: 'Tangerang Selatan', provinsi: 'Banten', noWhatsapp: '081586844344', statusAktif: true },
+    { id: 2, kodeRider: 'R-002', namaLengkap: 'carla cahya permata', gender: 'Putri', umur: 14, kategoriUmur: 'Terbuka', asalStable: 'SAIGA STABLE', namaPelatih: 'Coach Hendra Wijaya', kotaAsal: 'Tangerang Selatan', provinsi: 'Banten', noWhatsapp: '081586844344', statusAktif: true },
+    { id: 3, kodeRider: 'R-003', namaLengkap: 'Mileva Almahira Baihaqi', gender: 'Putri', umur: 14, kategoriUmur: 'U14', asalStable: 'SAIGA STABLE', namaPelatih: 'Coach Hendra Wijaya', kotaAsal: 'Tangerang Selatan', provinsi: 'Banten', noWhatsapp: '081586844344', statusAktif: true },
+    { id: 4, kodeRider: 'R-004', namaLengkap: 'Mileva Almahira Baihaqi (Open)', gender: 'Putri', umur: 14, kategoriUmur: 'Terbuka', asalStable: 'SAIGA STABLE', namaPelatih: 'Coach Hendra Wijaya', kotaAsal: 'Tangerang Selatan', provinsi: 'Banten', noWhatsapp: '081586844344', statusAktif: true },
+    { id: 5, kodeRider: 'R-005', namaLengkap: 'Archer abrisam', gender: 'Putra', umur: 14, kategoriUmur: 'U14', asalStable: 'Winning Academy', namaPelatih: 'Coach Raka Pratama', kotaAsal: 'Depok', provinsi: 'Jawa Barat', noWhatsapp: '081299887766', statusAktif: true },
+    { id: 6, kodeRider: 'R-006', namaLengkap: 'Archer abrisam (Open)', gender: 'Putra', umur: 14, kategoriUmur: 'Terbuka', asalStable: 'Winning Academy', namaPelatih: 'Coach Raka Pratama', kotaAsal: 'Depok', provinsi: 'Jawa Barat', noWhatsapp: '081299887766', statusAktif: true }
+  ],
   pelatih: [
-    { id: 1, kodePelatih: 'C-001', namaLengkap: 'Coach Hendra Wijaya', asalStable: 'Saiga Stable', kotaAsal: 'Tangerang Selatan', provinsi: 'Banten', noWhatsapp: '081586844344', lisensi: 'Pordasi & IHAA Level 2' },
+    { id: 1, kodePelatih: 'C-001', namaLengkap: 'Coach Hendra Wijaya', asalStable: 'SAIGA STABLE', kotaAsal: 'Tangerang Selatan', provinsi: 'Banten', noWhatsapp: '081586844344', lisensi: 'Pordasi & IHAA Level 2' },
     { id: 2, kodePelatih: 'C-002', namaLengkap: 'Coach Raka Pratama', asalStable: 'Winning Academy', kotaAsal: 'Depok', provinsi: 'Jawa Barat', noWhatsapp: '081299887766', lisensi: 'Pordasi Berkuda Memanah' }
   ],
   stable: [
-    { id: 1, kodeStable: 'S-001', namaStable: 'Saiga Stable', kota: 'Tangerang Selatan', provinsi: 'Banten', kontakWa: '081586844344', namaPelatih: 'Coach Hendra Wijaya' },
+    { id: 1, kodeStable: 'S-001', namaStable: 'SAIGA STABLE', kota: 'Tangerang Selatan', provinsi: 'Banten', kontakWa: '081586844344', namaPelatih: 'Coach Hendra Wijaya' },
     { id: 2, kodeStable: 'S-002', namaStable: 'Winning Academy', kota: 'Depok', provinsi: 'Jawa Barat', kontakWa: '081299887766', namaPelatih: 'Coach Raka Pratama' }
   ],
   panitia: [
@@ -48,64 +63,8 @@ const defaultStore = {
     { id: 2, slug: 'standar-penilaian-ihaa-pordasi', judul: 'Integrasi Sistem Penilaian Otomatis Berbasis IHAA & Pordasi', kategori: 'Regulasi', tanggalTerbit: '24 Oktober 2026', ringkasan: 'Seluruh perhitungan poin target, par time, dan klasemen juara umum diproses secara transparan dan real-time.', isiBerita: 'STHAC 2026 menerapkan kalkulasi skor otomatis berbasis standar International Horseback Archery Alliance (IHAA) dan Pordasi Berkuda Memanah.' }
   ],
   pendaftar: [],
-  rider: [],
-  lintasan: [],
-  kelas: [],
   scoreRun: []
 };
-
-function readLocalStore() {
-  if (!fs.existsSync(localStorePath)) {
-    fs.writeFileSync(localStorePath, JSON.stringify(defaultStore, null, 2), 'utf8');
-    return JSON.parse(JSON.stringify(defaultStore));
-  }
-  try {
-    const parsed = JSON.parse(fs.readFileSync(localStorePath, 'utf8'));
-    return { ...defaultStore, ...parsed };
-  } catch (e) {
-    return JSON.parse(JSON.stringify(defaultStore));
-  }
-}
-
-function writeLocalStore(data) {
-  fs.writeFileSync(localStorePath, JSON.stringify(data, null, 2), 'utf8');
-}
-
-function loadSchemaMetadata() {
-  const schemaPath = path.join(process.cwd(), 'prisma', 'schema.prisma');
-  const meta = {};
-  if (!fs.existsSync(schemaPath)) return meta;
-
-  const content = fs.readFileSync(schemaPath, 'utf8');
-  const modelRegex = /model\s+(\w+)\s*\{([\s\S]*?)\}/g;
-  let match;
-  while ((match = modelRegex.exec(content)) !== null) {
-    const modelName = match[1];
-    const delegateName = modelName.charAt(0).toLowerCase() + modelName.slice(1);
-    const fields = {};
-
-    match[2].split(/\r?\n/).forEach(line => {
-      const clean = line.trim();
-      if (!clean || clean.startsWith('//') || clean.startsWith('@@')) return;
-      const parts = clean.split(/\s+/);
-      if (parts.length >= 2) {
-        const fName = parts[0];
-        const rawType = parts[1];
-        const baseType = rawType.replace('?', '').replace('[]', '');
-        if (['String', 'Int', 'Float', 'Boolean', 'DateTime'].includes(baseType)) {
-          fields[fName] = {
-            type: baseType,
-            optional: rawType.endsWith('?') || clean.includes('@default')
-          };
-        }
-      }
-    });
-    meta[delegateName] = { modelName, delegateName, fields };
-  }
-  return meta;
-}
-
-const schemaMeta = loadSchemaMetadata();
 
 function resolveDelegate(candidates) {
   if (!prisma) return null;
@@ -114,19 +73,34 @@ function resolveDelegate(candidates) {
 
   for (const c of list) {
     if (prisma[c] && typeof prisma[c].findMany === 'function') {
-      return { delegate: prisma[c], name: c, meta: schemaMeta[c] };
+      return { delegate: prisma[c], name: c };
     }
   }
   for (const c of list) {
     const found = allKeys.find(k => k.toLowerCase() === c.toLowerCase());
     if (found && prisma[found] && typeof prisma[found].findMany === 'function') {
-      return { delegate: prisma[found], name: found, meta: schemaMeta[found] };
+      return { delegate: prisma[found], name: found };
     }
   }
   return null;
 }
 
-// Pemetaan otomatis sinonim field Indonesia <-> Inggris agar cocok dengan schema.prisma mana pun
+function getStoreKey(candidates) {
+  const first = (Array.isArray(candidates) ? candidates[0] : candidates).toLowerCase();
+  if (first.includes('seri')) return 'seri';
+  if (first.includes('pelatih') || first.includes('coach')) return 'pelatih';
+  if (first.includes('stable') || first.includes('club')) return 'stable';
+  if (first.includes('panitia') || first.includes('user')) return 'panitia';
+  if (first.includes('dokumen') || first.includes('unduhan')) return 'unduhan';
+  if (first.includes('berita') || first.includes('news')) return 'berita';
+  if (first.includes('pendaftar') || first.includes('reg')) return 'pendaftar';
+  if (first.includes('rider')) return 'rider';
+  if (first.includes('lintasan') || first.includes('track')) return 'lintasan';
+  if (first.includes('kelas') || first.includes('class')) return 'kelas';
+  if (first.includes('score') || first.includes('run')) return 'scoreRun';
+  return first;
+}
+
 function expandSynonyms(raw) {
   const d = { ...raw };
   const pairs = [
@@ -153,9 +127,13 @@ function expandSynonyms(raw) {
     ['jabatan', 'role'], ['jabatan', 'position'],
     ['fileUrl', 'url'], ['kodeBadge', 'badge'], ['kodeBadge', 'code'],
     ['statusVerifikasi', 'status'], ['statusKelas', 'status'], ['statusSeri', 'status'],
-    ['kelasId', 'classId'], ['waktuTempuh', 'timeSeconds'],
-    ['poinTarget', 'targetPoints'], ['poinWaktu', 'timePoints'],
-    ['bonusTambahan', 'bonusPoints'], ['totalSkor', 'finalScore'], ['totalSkor', 'totalScore']
+    ['kelasId', 'classId'], ['waktuTempuh', 'timeSeconds'], ['waktuTempuh', 'waktu'],
+    ['poinTarget', 'targetPoints'], ['poinTarget', 'skorTarget'],
+    ['poinWaktu', 'timePoints'], ['poinWaktu', 'skorWaktu'],
+    ['bonusTambahan', 'bonusPoints'], ['bonusTambahan', 'poinBonus'],
+    ['totalSkor', 'finalScore'], ['totalSkor', 'totalScore'], ['totalSkor', 'skorAkhir'], ['totalSkor', 'totalRun'],
+    ['runNumber', 'runKe'], ['runNumber', 'nomorRun'],
+    ['target1', 't1'], ['target2', 't2'], ['target3', 't3'], ['target4', 't4'], ['target5', 't5']
   ];
   pairs.forEach(([a, b]) => {
     if (d[a] !== undefined && d[b] === undefined) d[b] = d[a];
@@ -164,166 +142,247 @@ function expandSynonyms(raw) {
   return d;
 }
 
-function sanitizeData(delegateInfo, rawPayload, isUpdate = false) {
-  const expanded = expandSynonyms(rawPayload);
-  if (!delegateInfo || !delegateInfo.meta || !delegateInfo.meta.fields) {
-    const copy = { ...expanded };
-    delete copy.id;
-    return copy;
-  }
+let memoryStore = null;
+let initPromise = null;
 
-  const fields = delegateInfo.meta.fields;
-  const clean = {};
+async function ensureStoreInitialized() {
+  if (memoryStore) return memoryStore;
+  if (initPromise) return await initPromise;
 
-  for (const [fName, fInfo] of Object.entries(fields)) {
-    if (fName === 'id' || fName === 'createdAt' || fName === 'updatedAt') continue;
-
-    if (expanded[fName] !== undefined) {
-      const val = expanded[fName];
-      if (fInfo.type === 'Int') clean[fName] = parseInt(val, 10) || 0;
-      else if (fInfo.type === 'Float') clean[fName] = parseFloat(val) || 0;
-      else if (fInfo.type === 'Boolean') clean[fName] = val === true || val === 'true' || val === '1' || val === 1 || val === 'on';
-      else if (fInfo.type === 'DateTime') clean[fName] = val ? new Date(val) : new Date();
-      else clean[fName] = String(val ?? '').trim();
-    } else if (!isUpdate && !fInfo.optional) {
-      if (fInfo.type === 'Int' || fInfo.type === 'Float') clean[fName] = 0;
-      else if (fInfo.type === 'Boolean') clean[fName] = false;
-      else if (fInfo.type === 'DateTime') clean[fName] = new Date();
-      else clean[fName] = '-';
-    }
-  }
-  return clean;
-}
-
-function getStoreKey(candidates) {
-  const first = (Array.isArray(candidates) ? candidates[0] : candidates).toLowerCase();
-  if (first.includes('seri')) return 'seri';
-  if (first.includes('pelatih') || first.includes('coach')) return 'pelatih';
-  if (first.includes('stable') || first.includes('club')) return 'stable';
-  if (first.includes('panitia') || first.includes('user')) return 'panitia';
-  if (first.includes('dokumen') || first.includes('unduhan')) return 'unduhan';
-  if (first.includes('berita') || first.includes('news')) return 'berita';
-  if (first.includes('pendaftar') || first.includes('reg')) return 'pendaftar';
-  if (first.includes('rider')) return 'rider';
-  if (first.includes('lintasan') || first.includes('track')) return 'lintasan';
-  if (first.includes('kelas') || first.includes('class')) return 'kelas';
-  if (first.includes('score') || first.includes('run')) return 'scoreRun';
-  return first;
-}
-
-async function safeFindMany(candidates, options = {}) {
-  const info = resolveDelegate(candidates);
-  const storeKey = getStoreKey(candidates);
-  const store = readLocalStore();
-  const localArr = Array.isArray(store[storeKey]) ? store[storeKey] : [];
-
-  if (info) {
-    try {
-      const dbRows = await info.delegate.findMany(options);
-      if (dbRows && dbRows.length > 0) return dbRows;
-    } catch (e) {
+  initPromise = (async () => {
+    if (fs.existsSync(unifiedStorePath)) {
       try {
-        const dbRows2 = await info.delegate.findMany();
-        if (dbRows2 && dbRows2.length > 0) return dbRows2;
-      } catch (e2) {}
+        const parsed = JSON.parse(fs.readFileSync(unifiedStorePath, 'utf8'));
+        if (parsed && parsed._initialized) {
+          memoryStore = { ...defaultSeed, ...parsed };
+          return memoryStore;
+        }
+      } catch (e) {}
     }
-  }
-  return localArr;
+
+    // Inisialisasi pertama kali: Tarik seluruh data yang ada di SQLite agar tidak ada data yang hilang
+    const store = JSON.parse(JSON.stringify(defaultSeed));
+    const tableMap = {
+      seri: ['seriKejuaraan', 'seri', 'series'],
+      lintasan: ['lintasan', 'track', 'masterLintasan'],
+      kelas: ['kelasPertandingan', 'kelas', 'competitionClass'],
+      rider: ['rider', 'pesertaRider', 'atlet'],
+      pelatih: ['pelatih', 'coach'],
+      stable: ['stable', 'klub', 'club'],
+      panitia: ['panitiaUser', 'panitia', 'adminUser', 'user'],
+      unduhan: ['dokumenUnduhan', 'dokumen', 'unduhan'],
+      berita: ['berita', 'news', 'warta'],
+      pendaftar: ['pendaftaran', 'registration', 'pendaftar'],
+      scoreRun: ['scoreRun', 'runScore', 'penilaian', 'skorRun']
+    };
+
+    for (const [key, cands] of Object.entries(tableMap)) {
+      const info = resolveDelegate(cands);
+      if (info) {
+        try {
+          const rows = await info.delegate.findMany();
+          if (rows && rows.length > 0) {
+            store[key] = rows.map(r => expandSynonyms(r));
+          }
+        } catch (e) {}
+      }
+    }
+
+    // Normalisasi ScoreRun dari SQLite agar kelasId, riderId, runNumber, target1..3 pasti berupa angka valid
+    const riderById = new Map((store.rider || []).map(r => [Number(r.id), r]));
+    const kelasList = store.kelas || [];
+    const kelasU14 = kelasList.find(k => String(k.kategori || '').toUpperCase().includes('U14')) || kelasList[0] || { id: 1 };
+    const kelasOpen = kelasList.find(k => !String(k.kategori || '').toUpperCase().includes('U14')) || kelasList[1] || kelasList[0] || { id: 2 };
+
+    store.scoreRun = (store.scoreRun || []).map((sr, idx) => {
+      const rId = Number(sr.riderId || sr.pesertaRiderId || 1);
+      const rObj = riderById.get(rId);
+      let kId = Number(sr.kelasId || sr.classId || sr.kelasPertandinganId || 0);
+      if (!kId) {
+        const isU14 = rObj && String(rObj.kategoriUmur || rObj.kategori || '').toUpperCase().includes('U14');
+        kId = isU14 ? Number(kelasU14.id) : Number(kelasOpen.id);
+      }
+      const runNo = Number(sr.runNumber || sr.runKe || sr.nomorRun || ((idx % 6) + 1));
+
+      let t1 = Number(sr.target1 ?? sr.t1 ?? 0);
+      let t2 = Number(sr.target2 ?? sr.t2 ?? 0);
+      let t3 = Number(sr.target3 ?? sr.t3 ?? 0);
+      if (t1 === 0 && t2 === 0 && t3 === 0 && sr.targetScoresJson) {
+        try {
+          const arr = JSON.parse(sr.targetScoresJson);
+          if (Array.isArray(arr)) {
+            t1 = Number(arr[0] || 0);
+            t2 = Number(arr[1] || 0);
+            t3 = Number(arr[2] || 0);
+          }
+        } catch (e) {}
+      }
+
+      const poinTarget = Number(sr.poinTarget ?? sr.skorTarget ?? sr.targetPoints ?? (t1 + t2 + t3));
+      const waktuTempuh = Number(sr.waktuTempuh ?? sr.waktu ?? sr.timeSeconds ?? 0);
+      const poinWaktu = Number(sr.poinWaktu ?? sr.skorWaktu ?? sr.timePoints ?? 0);
+      const bonusTambahan = Number(sr.bonusTambahan ?? sr.poinBonus ?? sr.bonusPoints ?? 0);
+      const totalSkor = Number(sr.totalSkor ?? sr.skorAkhir ?? sr.totalRun ?? sr.finalScore ?? (poinTarget + poinWaktu + bonusTambahan));
+
+      return {
+        ...sr,
+        id: Number(sr.id || (idx + 1)),
+        kelasId: kId,
+        classId: kId,
+        riderId: rId,
+        runNumber: runNo,
+        runKe: runNo,
+        target1: t1,
+        target2: t2,
+        target3: t3,
+        t1,
+        t2,
+        t3,
+        poinTarget,
+        waktuTempuh,
+        poinWaktu,
+        bonusTambahan,
+        totalSkor,
+        updatedAt: sr.updatedAt || new Date(Date.now() - (1000 * (100 - idx))).toISOString()
+      };
+    });
+
+    store._initialized = true;
+    memoryStore = store;
+    fs.writeFileSync(unifiedStorePath, JSON.stringify(memoryStore, null, 2), 'utf8');
+    return memoryStore;
+  })();
+
+  return await initPromise;
 }
 
-async function safeFindFirst(candidates, options = {}) {
-  const rows = await safeFindMany(candidates, options);
+function persistStore() {
+  if (!memoryStore) return;
+  try {
+    fs.writeFileSync(unifiedStorePath, JSON.stringify(memoryStore, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Gagal menulis unified store:', e.message);
+  }
+}
+
+// Sinkronisasi latar belakang ke SQLite jika model & kolom cocok
+async function trySyncToPrisma(candidates, action, id, payload) {
+  const info = resolveDelegate(candidates);
+  if (!info) return;
+  try {
+    const sample = await info.delegate.findFirst().catch(() => null);
+    if (!sample && action !== 'deleteMany') return;
+    const allowedKeys = sample ? Object.keys(sample).filter(k => k !== 'id' && k !== 'createdAt' && k !== 'updatedAt') : [];
+    const cleanData = {};
+    allowedKeys.forEach(k => {
+      if (payload && payload[k] !== undefined) {
+        const sampleVal = sample[k];
+        if (typeof sampleVal === 'number') {
+          cleanData[k] = Number(payload[k]) || 0;
+        } else if (typeof sampleVal === 'boolean') {
+          cleanData[k] = Boolean(payload[k]);
+        } else {
+          cleanData[k] = String(payload[k] ?? '');
+        }
+      }
+    });
+
+    if (action === 'create' && Object.keys(cleanData).length > 0) {
+      await info.delegate.create({ data: cleanData }).catch(() => {});
+    } else if (action === 'update' && id && Object.keys(cleanData).length > 0) {
+      await info.delegate.update({ where: { id: Number(id) }, data: cleanData }).catch(() => {});
+    } else if (action === 'delete' && id) {
+      await info.delegate.delete({ where: { id: Number(id) } }).catch(() => {});
+    } else if (action === 'deleteMany') {
+      await info.delegate.deleteMany({ where: payload || {} }).catch(() => {});
+    }
+  } catch (e) {}
+}
+
+async function safeFindMany(candidates) {
+  const store = await ensureStoreInitialized();
+  const key = getStoreKey(candidates);
+  return Array.isArray(store[key]) ? [...store[key]] : [];
+}
+
+async function safeFindFirst(candidates) {
+  const rows = await safeFindMany(candidates);
   return rows.length > 0 ? rows[0] : null;
 }
 
 async function safeCreate(candidates, rawData) {
-  const info = resolveDelegate(candidates);
-  const storeKey = getStoreKey(candidates);
+  const store = await ensureStoreInitialized();
+  const key = getStoreKey(candidates);
+  if (!Array.isArray(store[key])) store[key] = [];
+
   const expanded = expandSynonyms(rawData);
+  const nextId = store[key].reduce((max, item) => Math.max(max, Number(item.id) || 0), 0) + 1;
+  const nowIso = new Date().toISOString();
+  const newItem = {
+    ...expanded,
+    id: nextId,
+    createdAt: nowIso,
+    updatedAt: nowIso
+  };
 
-  if (info) {
-    try {
-      const data = sanitizeData(info, expanded, false);
-      const created = await info.delegate.create({ data });
-      return created;
-    } catch (e) {}
-  }
-
-  // Simpan ke localStore jika model tidak ada di Prisma atau gagal karena constraint
-  const store = readLocalStore();
-  if (!Array.isArray(store[storeKey])) store[storeKey] = [];
-  const nextId = store[storeKey].reduce((max, item) => Math.max(max, Number(item.id) || 0), 0) + 1;
-  const newItem = { id: nextId, ...expanded, createdAt: new Date().toISOString() };
-  store[storeKey].push(newItem);
-  writeLocalStore(store);
+  store[key].push(newItem);
+  persistStore();
+  await trySyncToPrisma(candidates, 'create', nextId, newItem);
   return newItem;
 }
 
 async function safeUpdate(candidates, id, rawData) {
+  const store = await ensureStoreInitialized();
+  const key = getStoreKey(candidates);
+  if (!Array.isArray(store[key])) store[key] = [];
+
   const numId = Number(id);
-  const info = resolveDelegate(candidates);
-  const storeKey = getStoreKey(candidates);
   const expanded = expandSynonyms(rawData);
+  const nowIso = new Date().toISOString();
+  const idx = store[key].findIndex(item => Number(item.id) === numId);
 
-  if (info) {
-    try {
-      const data = sanitizeData(info, expanded, true);
-      const updated = await info.delegate.update({ where: { id: numId }, data });
-      return updated;
-    } catch (e) {}
-  }
-
-  const store = readLocalStore();
-  if (!Array.isArray(store[storeKey])) store[storeKey] = [];
-  const idx = store[storeKey].findIndex(item => Number(item.id) === numId);
   if (idx !== -1) {
-    store[storeKey][idx] = { ...store[storeKey][idx], ...expanded, id: numId };
-    writeLocalStore(store);
-    return store[storeKey][idx];
+    store[key][idx] = {
+      ...store[key][idx],
+      ...expanded,
+      id: numId,
+      updatedAt: nowIso
+    };
+    persistStore();
+    await trySyncToPrisma(candidates, 'update', numId, store[key][idx]);
+    return store[key][idx];
+  } else {
+    // Jika ID belum ada di store, buat baru agar tidak pernah gagal
+    return await safeCreate(candidates, { ...expanded, id: numId });
   }
-  return null;
 }
 
 async function safeDelete(candidates, id) {
+  const store = await ensureStoreInitialized();
+  const key = getStoreKey(candidates);
   const numId = Number(id);
-  const info = resolveDelegate(candidates);
-  const storeKey = getStoreKey(candidates);
-
-  if (info) {
-    try {
-      await info.delegate.delete({ where: { id: numId } });
-    } catch (e) {}
+  if (Array.isArray(store[key])) {
+    store[key] = store[key].filter(item => Number(item.id) !== numId);
+    persistStore();
   }
-
-  const store = readLocalStore();
-  if (Array.isArray(store[storeKey])) {
-    store[storeKey] = store[storeKey].filter(item => Number(item.id) !== numId);
-    writeLocalStore(store);
-  }
+  await trySyncToPrisma(candidates, 'delete', numId, null);
   return { deleted: true };
 }
 
 async function safeDeleteMany(candidates, where = {}) {
-  const info = resolveDelegate(candidates);
-  const storeKey = getStoreKey(candidates);
-
-  if (info) {
-    try {
-      await info.delegate.deleteMany({ where });
-    } catch (e) {}
-  }
-
-  const store = readLocalStore();
-  if (Array.isArray(store[storeKey])) {
+  const store = await ensureStoreInitialized();
+  const key = getStoreKey(candidates);
+  if (Array.isArray(store[key])) {
     if (!where || Object.keys(where).length === 0) {
-      store[storeKey] = [];
+      store[key] = [];
     } else {
-      store[storeKey] = store[storeKey].filter(item => {
+      store[key] = store[key].filter(item => {
         return !Object.entries(where).every(([k, v]) => Number(item[k]) === Number(v));
       });
     }
-    writeLocalStore(store);
+    persistStore();
   }
+  await trySyncToPrisma(candidates, 'deleteMany', null, where);
   return { deleted: true };
 }
 
@@ -333,19 +392,12 @@ async function safeCount(candidates) {
 }
 
 async function getSiteSettings() {
-  const store = readLocalStore();
-  const info = resolveDelegate(['setting', 'siteSetting', 'appSetting', 'pengaturan', 'setelan']);
-  if (info) {
-    try {
-      const row = await info.delegate.findFirst();
-      if (row) return { ...defaultStore.setting, ...store.setting, ...row };
-    } catch (e) {}
-  }
-  return { ...defaultStore.setting, ...(store.setting || {}) };
+  const store = await ensureStoreInitialized();
+  return { ...defaultSeed.setting, ...(store.setting || {}) };
 }
 
 async function saveSiteSettings(newSettings) {
-  const store = readLocalStore();
+  const store = await ensureStoreInitialized();
   const cleanPayload = { ...newSettings };
   cleanPayload.registrationOpen =
     newSettings.registrationOpen === true ||
@@ -353,27 +405,14 @@ async function saveSiteSettings(newSettings) {
     newSettings.registrationOpen === '1' ||
     newSettings.registrationOpen === 'on';
 
-  store.setting = { ...defaultStore.setting, ...(store.setting || {}), ...cleanPayload };
-  writeLocalStore(store);
-
-  const info = resolveDelegate(['setting', 'siteSetting', 'appSetting', 'pengaturan', 'setelan']);
-  if (info) {
-    try {
-      const existing = await info.delegate.findFirst();
-      if (existing) {
-        await safeUpdate(['setting', 'siteSetting'], existing.id, cleanPayload);
-      } else {
-        await safeCreate(['setting', 'siteSetting'], cleanPayload);
-      }
-    } catch (e) {}
-  }
+  store.setting = { ...defaultSeed.setting, ...(store.setting || {}), ...cleanPayload };
+  persistStore();
   return store.setting;
 }
 
 module.exports = {
   prisma,
   resolveDelegate,
-  sanitizeData,
   safeFindMany,
   safeFindFirst,
   safeCreate,

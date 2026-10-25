@@ -1,108 +1,124 @@
-<div class="saiga-page-header-dark mb-2"><div class="container"><span class="sthac-eyebrow">OFFICIAL STHAC 2026</span></div></div>
-<div class="container py-5">
-  <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">
+<div class="saiga-page-header-dark mb-4">
+  <div class="container">
+    <span class="sthac-eyebrow">OFFICIAL STHAC 2026</span>
+  </div>
+</div>
+
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
     <div>
-      <span class="badge-gold-outline mb-2"><i class="bi bi-broadcast text-danger me-1"></i> LIVE SCOREBOARD</span>
-      <h1 class="font-display fw-bold text-uppercase text-white mb-1">Papan Skor Pertandingan</h1>
-      <p class="text-white-50 mb-0">Filter berdasarkan seri kejuaraan. Skor diperbarui secara langsung saat juri menyimpan hasil run.</p>
+      <span class="badge-green-soft mb-2"><i class="bi bi-broadcast me-1 text-danger"></i> LIVE SCOREBOARD</span>
+      <h1 class="font-display fw-bold text-uppercase mb-1">PAPAN SKOR PERTANDINGAN</h1>
+      <p class="small text-muted mb-0">Filter berdasarkan seri kejuaraan. Skor diperbarui secara langsung saat juri menyimpan hasil run.</p>
     </div>
 
     <div class="d-flex flex-wrap align-items-center gap-2">
       <% seriList.forEach(s => { %>
-        <a href="/skor?seri=<%= s.id %>" class="btn <%= selectedSeriId === s.id ? 'btn-gold-pill' : 'btn-dark-pill' %> btn-sm px-3">
+        <a href="/skor?seri=<%= s.id %>" class="btn <%= Number(selectedSeriId) === Number(s.id) ? 'btn-gold-pill' : 'btn-dark-pill' %> btn-sm px-3 py-2">
           SERI <%= s.nomorSeri %>
         </a>
       <% }) %>
-      <button id="btn-autoreload" onclick="toggleAutoReload()" class="btn btn-dark-pill btn-sm px-3">
-        <i class="bi bi-arrow-repeat me-1 text-warning"></i> Auto-Reload (60s): <span id="ar-state">AKTIF</span>
+      <button type="button" onclick="window.location.reload()" class="btn btn-dark-pill btn-sm px-3 py-2">
+        <i class="bi bi-arrow-repeat me-1 text-warning"></i> Auto-Reload (Live): AKTIF
       </button>
     </div>
   </div>
 
-  <% if (classScoreboards.length === 0) { %>
-    <div class="sthac-card p-5 text-center text-white-50">
-      Belum ada kelas yang dipertandingkan pada Seri ini.
+  <% const classesToShow = (selectedSeri && selectedSeri.kelas && selectedSeri.kelas.length > 0) ? selectedSeri.kelas : (Number(selectedSeriId) === 1 ? kelasList : []); %>
+
+  <% if (classesToShow.length === 0) { %>
+    <div class="sthac-card p-5 text-center">
+      <i class="bi bi-calendar2-x fs-2 text-warning d-block mb-2"></i>
+      <h5 class="font-display fw-bold text-uppercase mb-1">Belum Ada Kelas yang Dipertandingkan pada Seri Ini</h5>
+      <p class="small text-muted mb-3">Silakan pilih <strong>SERI 1</strong> untuk melihat papan skor pertandingan aktif atau tambahkan kelas melalui Panel Panitia.</p>
+      <a href="/skor?seri=1" class="btn btn-gold-pill btn-sm px-4 py-2">Lihat Papan Skor Seri 1</a>
     </div>
   <% } else { %>
-    <% classScoreboards.forEach(board => { %>
-      <div class="sthac-card p-4 mb-4">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-3 border-bottom border-secondary border-opacity-25">
-          <div>
-            <span class="badge bg-warning text-dark fw-bold me-2"><%= board.kelas.kategori %></span>
-            <span class="text-white-50 small"><i class="bi bi-signpost-split me-1"></i><%= board.kelas.namaLintasan %> · <%= board.kelas.jumlahRun %> runs</span>
-            <h3 class="font-display fw-bold text-uppercase text-white mt-1 mb-0">
-              Class: <%= board.kelas.namaKelas %> · <%= board.kelas.kategori %>
-            </h3>
-          </div>
-        </div>
-
-        <!-- Podium Top 3 Display -->
-        <div class="row g-3 mb-4">
-          <% board.standings.slice(0, 3).forEach((p, idx) => { %>
-            <div class="col-md-4">
-              <div class="p-3 rounded-4 h-100 d-flex justify-content-between align-items-center" style="background:rgba(217,180,92,0.07);border:1px solid rgba(217,180,92,0.25);">
-                <div>
-                  <small class="text-warning fw-bold d-block">PODIUM #<%= p.rank %></small>
-                  <a href="/profile?id=<%= p.riderId %>" class="fw-bold text-white text-decoration-none"><%= p.namaLengkap %></a>
-                  <small class="d-block text-white-50"><%= p.asalStable %> · Bib #<%= p.noBib %></small>
-                </div>
-                <div class="text-end">
-                  <span class="font-display fw-bold fs-4 text-gold"><%= p.total %></span>
-                  <small class="d-block text-white-50">Total</small>
-                </div>
+    <div class="vstack gap-4">
+      <% classesToShow.forEach(k => { %>
+        <div class="sthac-card p-4">
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 pb-3 mb-3 border-bottom" style="border-color:var(--border-main) !important;">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge-green-soft"><%= k.kategori %></span>
+                <span class="badge-gold-outline"><i class="bi bi-signpost-split me-1"></i> <%= k.namaLintasan %></span>
+                <span class="small text-muted">· <%= k.jumlahRun %> Run Dinilai</span>
               </div>
+              <h3 class="font-display fw-bold text-uppercase mb-0"><%= k.namaKelas %> · <%= k.kategori %></h3>
             </div>
-          <% }) %>
-        </div>
+            <div class="text-md-end small">
+              <div class="fw-bold">Zona Target: <span class="text-warning"><%= k.lintasan ? k.lintasan.nilaiZonaTarget : '5 / 4 / 3 / 2 / 1' %></span></div>
+              <div class="text-muted">Peserta Tercatat: <strong><%= (k.leaderboard || []).length %> Rider</strong></div>
+            </div>
+          </div>
 
-        <!-- Tabel Lengkap Skor Kelas -->
-        <div class="table-responsive">
-          <table class="table table-dark sthac-table mb-0">
-            <thead>
-              <tr>
-                <th>RANK</th>
-                <th>BIB</th>
-                <th>RIDER</th>
-                <th>STABLE</th>
-                <th class="text-center">RUNS</th>
-                <th class="text-center">PTS</th>
-                <th class="text-center">BEST</th>
-                <th class="text-end">TOTAL</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% board.standings.forEach(row => { %>
-                <tr>
-                  <td class="fw-bold text-warning">#<%= row.rank %></td>
-                  <td><span class="badge bg-secondary bg-opacity-25 text-white"><%= row.noBib %></span></td>
-                  <td>
-                    <a href="/profile?id=<%= row.riderId %>" class="fw-bold text-white text-decoration-none hover-gold">
-                      <%= row.namaLengkap %>
-                    </a>
-                    <small class="text-white-50 ms-1">(<%= row.kodeRider %>)</small>
-                  </td>
-                  <td class="text-white-50"><%= row.asalStable %></td>
-                  <td class="text-center"><%= row.runsLabel %></td>
-                  <td class="text-center"><%= row.targetPoints %></td>
-                  <td class="text-center"><%= row.bestRun %></td>
-                  <td class="text-end font-display fw-bold fs-5 text-gold"><%= row.total %></td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
+          <% if (!k.leaderboard || k.leaderboard.length === 0) { %>
+            <div class="text-center py-4 text-muted small">Belum ada hasil run yang diinput untuk kelas ini.</div>
+          <% } else { %>
+            <div class="table-responsive">
+              <table class="table sthac-table mb-0 small align-middle">
+                <thead>
+                  <tr>
+                    <th style="width:70px;">POS</th>
+                    <th>RIDER &amp; STABLE</th>
+                    <% for (let rNo = 1; rNo <= k.jumlahRun; rNo++) { %>
+                      <th class="text-center">RUN #<%= rNo %></th>
+                    <% } %>
+                    <th class="text-center">TARGET</th>
+                    <th class="text-center">WAKTU</th>
+                    <th class="text-end">TOTAL SKOR</th>
+                    <th class="text-end">POIN SERI</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% k.leaderboard.forEach(row => { %>
+                    <tr>
+                      <td>
+                        <span class="badge <%= row.peringkat === 1 ? 'bg-warning text-dark' : (row.peringkat <= 3 ? 'bg-success' : 'bg-secondary') %> px-2 py-1">
+                          #<%= row.peringkat %>
+                        </span>
+                      </td>
+                      <td>
+                        <div class="fw-bold"><%= row.namaLengkap %></div>
+                        <small class="text-muted font-monospace" style="font-size:0.72rem;"><%= row.kodeRider %> · <%= row.asalStable %></small>
+                      </td>
+                      <% for (let rNo = 1; rNo <= k.jumlahRun; rNo++) { %>
+                        <% const runObj = row.runsByNumber ? row.runsByNumber[rNo] : null; %>
+                        <td class="text-center">
+                          <% if (runObj) { %>
+                            <div class="fw-bold text-gold"><%= runObj.totalSkor %> pts</div>
+                            <small class="text-muted font-monospace d-block" style="font-size:0.68rem;">
+                              (<%= runObj.target1 %>·<%= runObj.target2 %>·<%= runObj.target3 %> | <%= runObj.waktuTempuh %>s)
+                            </small>
+                          <% } else { %>
+                            <span class="text-muted">-</span>
+                          <% } %>
+                        </td>
+                      <% } %>
+                      <td class="text-center fw-semibold"><%= row.totalTarget %></td>
+                      <td class="text-center"><%= row.totalWaktu %></td>
+                      <td class="text-end">
+                        <span class="badge-green-soft fs-6 fw-bold"><%= row.totalSkor %> Pts</span>
+                      </td>
+                      <td class="text-end fw-bold text-gold fs-6">+<%= row.poinKejuaraan %> pts</td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
         </div>
-      </div>
-    <% }) %>
+      <% }) %>
+    </div>
   <% } %>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script>
-  let arTimer = setInterval(() => window.location.reload(), 60000);
-  let arEnabled = true;
-  function toggleAutoReload() {
-    arEnabled = !arEnabled;
-    document.getElementById('ar-state').innerText = arEnabled ? 'AKTIF' : 'MATI';
-    if (arEnabled) arTimer = setInterval(() => window.location.reload(), 60000);
-    else clearInterval(arTimer);
-  }
+  try {
+    const socket = io();
+    socket.on('score_updated', () => {
+      window.location.reload();
+    });
+  } catch (e) {}
 </script>

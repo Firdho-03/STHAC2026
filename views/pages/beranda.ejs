@@ -202,3 +202,12 @@
     setInterval(tick, 1000);
   })();
 </script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  try {
+    const socket = io();
+    socket.on('score_updated', () => {
+      window.location.reload();
+    });
+  } catch (e) {}
+</script>

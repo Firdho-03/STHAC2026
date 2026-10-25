@@ -274,13 +274,13 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
     peranAkses: u.peranAkses || 'Admin'
   }));
 
-  // 4. Perhitungan Skor Run & Klasemen
+  // 4. Perhitungan Skor Run & Klasemen (Diurutkan dari Input/Update Terbaru)
   const scoreRunList = scoreRunRaw.map(sr => {
-    const kId = sr.kelasId || sr.classId || 1;
-    const rId = sr.riderId || 1;
-    const runNo = sr.runNumber || sr.runKe || sr.nomorRun || 1;
-    const rObj = riderList.find(r => r.id === rId) || { id: rId, kodeRider: `R-00${rId}`, namaLengkap: `Rider #${rId}`, asalStable: '-', kategoriUmur: 'Terbuka' };
-    const kObj = kelasRaw.find(k => k.id === kId) || { id: kId, namaKelas: `Kelas #${kId}`, kategori: 'Terbuka', seriId: 1 };
+    const kId = Number(sr.kelasId || sr.classId || 1);
+    const rId = Number(sr.riderId || 1);
+    const runNo = Number(sr.runNumber || sr.runKe || sr.nomorRun || 1);
+    const rObj = riderList.find(r => Number(r.id) === rId) || { id: rId, kodeRider: 'R-00' + rId, namaLengkap: 'Rider #' + rId, asalStable: '-', kategoriUmur: 'Terbuka' };
+    const kObj = kelasRaw.find(k => Number(k.id) === kId) || { id: kId, namaKelas: 'Kelas #' + kId, kategori: 'Terbuka', seriId: 1 };
 
     const t1 = Number(sr.target1 ?? sr.t1 ?? 0);
     const t2 = Number(sr.target2 ?? sr.t2 ?? 0);
@@ -305,10 +305,11 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
       poinWaktu: Number(sr.poinWaktu ?? sr.skorWaktu ?? sr.timePoints ?? 0),
       bonusTambahan: Number(sr.bonusTambahan ?? sr.poinBonus ?? sr.bonusPoints ?? 0),
       totalSkor: Number(sr.totalSkor ?? sr.skorAkhir ?? sr.totalRun ?? sr.finalScore ?? 0),
+      updatedAt: sr.updatedAt || '2026-10-25T00:00:00.000Z',
       rider: rObj,
       kelas: kObj
     };
-  });
+  }).sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)) || (Number(b.id) - Number(a.id)));
 
   const scoreboardByKelas = {};
   const riderChampMap = new Map();
@@ -343,7 +344,7 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
       parTime: 0
     };
 
-    const runsInClass = scoreRunList.filter(sr => sr.kelasId === k.id);
+    const runsInClass = scoreRunList.filter(sr => Number(sr.kelasId) === Number(k.id));
     const byRider = new Map();
 
     runsInClass.forEach(sr => {
@@ -455,7 +456,12 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
     };
   });
 
-  const filteredKelasBySeri = kelasList.filter(k => !k.seriId || k.seriId === selectedSeriId);
+  const filteredKelasBySeri = kelasList.filter(k => Number(k.seriId || 1) === Number(selectedSeriId));
+  if (selectedSeri) {
+    selectedSeri.kelas = filteredKelasBySeri;
+    selectedSeri.classes = filteredKelasBySeri;
+    selectedSeri.kelasList = filteredKelasBySeri;
+  }
   const activeKelasList = filteredKelasBySeri.length > 0 ? filteredKelasBySeri : kelasList;
   const selectedKelasId = req.query && req.query.kelas ? parseInt(req.query.kelas, 10) : (activeKelasList[0] ? activeKelasList[0].id : 1);
   const selectedKelas = activeKelasList.find(k => k.id === selectedKelasId) || activeKelasList[0] || null;

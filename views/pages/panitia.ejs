@@ -1273,7 +1273,7 @@
           <div class="row g-3 mb-3">
             <div class="col-md-5">
               <label class="small fw-bold text-warning mb-1">PILIH KELAS</label>
-              <select id="inp-score-kelas" name="kelasId" onchange="recalcLiveScorePreview()" class="form-select sthac-input" required>
+              <select id="inp-score-kelas" name="kelasId" onchange="syncExistingRunToForm()" class="form-select sthac-input" required>
                 <% kelasList.forEach(k => { %>
                   <option value="<%= k.id %>" data-maxrun="<%= k.jumlahRun %>" data-partime="<%= k.lintasan ? k.lintasan.parTime : 0 %>" data-bonus="<%= k.lintasan ? k.lintasan.bonusSapuBersih : 0 %>">
                     <%= k.namaKelas %> · <%= k.kategori %> (<%= k.namaLintasan %>)
@@ -1283,7 +1283,7 @@
             </div>
             <div class="col-md-5">
               <label class="small fw-bold text-warning mb-1">PILIH RIDER</label>
-              <select id="inp-score-rider" name="riderId" class="form-select sthac-input" required>
+              <select id="inp-score-rider" name="riderId" onchange="syncExistingRunToForm()" class="form-select sthac-input" required>
                 <% riderList.forEach(r => { %>
                   <option value="<%= r.id %>"><%= r.kodeRider %> — <%= r.namaLengkap %> (<%= r.asalStable %>)</option>
                 <% }) %>
@@ -1293,7 +1293,7 @@
               <label class="small fw-bold text-warning mb-1">RUN KE-</label>
               <div class="input-group">
                 <button type="button" onclick="stepRunNumber(-1)" class="btn btn-dark-pill px-2">-</button>
-                <input type="number" id="inp-score-run" name="runNumber" value="1" min="1" max="10" class="form-control sthac-input text-center" required />
+                <input type="number" id="inp-score-run" name="runNumber" value="1" min="1" max="10" oninput="syncExistingRunToForm()" class="form-control sthac-input text-center" required />
                 <button type="button" onclick="stepRunNumber(1)" class="btn btn-dark-pill px-2">+</button>
               </div>
             </div>
@@ -1304,15 +1304,15 @@
             <div class="row g-3 align-items-end">
               <div class="col-4 col-md-3">
                 <label class="small fw-bold text-warning mb-1">TARGET 1</label>
-                <input type="number" id="inp-score-t1" name="t1" value="5" min="0" max="6" oninput="recalcLiveScorePreview()" class="form-control sthac-input text-center fs-5 fw-bold" required />
+                <input type="number" id="inp-score-t1" name="t1" value="5" min="0" max="20" oninput="recalcLiveScorePreview()" class="form-control sthac-input text-center fs-5 fw-bold" required />
               </div>
               <div class="col-4 col-md-3">
                 <label class="small fw-bold text-warning mb-1">TARGET 2</label>
-                <input type="number" id="inp-score-t2" name="t2" value="5" min="0" max="6" oninput="recalcLiveScorePreview()" class="form-control sthac-input text-center fs-5 fw-bold" required />
+                <input type="number" id="inp-score-t2" name="t2" value="5" min="0" max="20" oninput="recalcLiveScorePreview()" class="form-control sthac-input text-center fs-5 fw-bold" required />
               </div>
               <div class="col-4 col-md-3">
                 <label class="small fw-bold text-warning mb-1">TARGET 3</label>
-                <input type="number" id="inp-score-t3" name="t3" value="5" min="0" max="6" oninput="recalcLiveScorePreview()" class="form-control sthac-input text-center fs-5 fw-bold" required />
+                <input type="number" id="inp-score-t3" name="t3" value="5" min="0" max="20" oninput="recalcLiveScorePreview()" class="form-control sthac-input text-center fs-5 fw-bold" required />
               </div>
               <div class="col-12 col-md-3">
                 <label class="small fw-bold text-warning mb-1">WAKTU TEMPUH (DETIK)</label>
@@ -2029,7 +2029,7 @@
       } catch (e) {}
       const savedTab = sessionStorage.getItem('sthac_active_adm_tab') || 'ringkasan';
       openAdminTab(savedTab);
-      recalcLiveScorePreview();
+      syncExistingRunToForm();
     } else {
       if (gate) gate.style.display = 'block';
       if (panel) panel.style.display = 'none';
@@ -2151,11 +2151,28 @@
   };
 
   // ==================== KALKULATOR LIVE PREVIEW SKOR RUN ====================
+  const existingRunsData = <%- JSON.stringify(scoreRunList.map(r => ({ id: r.id, kelasId: r.kelasId, riderId: r.riderId, runNumber: r.runNumber, t1: r.target1, t2: r.target2, t3: r.target3, waktu: r.waktuTempuh, totalSkor: r.totalSkor }))) %>;
+
+  window.syncExistingRunToForm = function() {
+    const kId = Number(document.getElementById('inp-score-kelas')?.value || 0);
+    const rId = Number(document.getElementById('inp-score-rider')?.value || 0);
+    const runNo = Number(document.getElementById('inp-score-run')?.value || 1);
+    const match = existingRunsData.find(x => Number(x.kelasId) === kId && Number(x.riderId) === rId && Number(x.runNumber) === runNo);
+    if (match) {
+      document.getElementById('inp-score-t1').value = match.t1;
+      document.getElementById('inp-score-t2').value = match.t2;
+      document.getElementById('inp-score-t3').value = match.t3;
+      document.getElementById('inp-score-waktu').value = match.waktu;
+    }
+    recalcLiveScorePreview();
+  };
+
   window.stepRunNumber = function(delta) {
     const inp = document.getElementById('inp-score-run');
     if (!inp) return;
     const next = Math.max(1, Math.min(10, (parseInt(inp.value, 10) || 1) + delta));
     inp.value = next;
+    syncExistingRunToForm();
   };
 
   window.recalcLiveScorePreview = function() {
