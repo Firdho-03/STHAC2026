@@ -1284,3 +1284,121 @@ html[data-theme="dark"] main .sthac-card:hover {
     margin-left: auto;
   }
 }
+/* ==================== DESAIN LINTASAN SHOWCASE (BERANDA) ==================== */
+.sthac-track-showcase-card {
+  border-radius: 1.15rem;
+  overflow: hidden;
+  border: 1px solid var(--border-main);
+  box-shadow: var(--shadow-card);
+  background: #062015;
+}
+
+.sthac-track-blueprint-pane {
+  background-color: #F8F7F2;
+  background-image:
+    linear-gradient(to right, rgba(7, 38, 25, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(7, 38, 25, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  padding: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 380px;
+}
+
+.sthac-track-blueprint-pane img {
+  max-width: 100%;
+  max-height: 430px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15);
+  cursor: zoom-in;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sthac-track-blueprint-pane img:hover {
+  transform: scale(1.025);
+}
+
+.sthac-track-info-pane {
+  background: linear-gradient(165deg, #072317 0%, #04150E 100%);
+  color: #F3F6F4 !important;
+  padding: 2.2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 1px solid rgba(217, 180, 92, 0.22);
+}
+
+.badge-track-ihaa {
+  background: rgba(217, 180, 92, 0.14);
+  color: #E5C158 !important;
+  border: 1px solid rgba(217, 180, 92, 0.4);
+  border-radius: 50rem;
+  padding: 0.28rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.badge-track-circle {
+  background: rgba(56, 189, 248, 0.12);
+  color: #7DD3FC !important;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 50rem;
+  padding: 0.28rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.sthac-track-specs-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(217, 180, 92, 0.24);
+  border-radius: 0.85rem;
+  padding: 1rem 1.25rem;
+}
+
+.sthac-track-specs-box .spec-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #C8B273 !important;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.sthac-track-specs-box .spec-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #FFFFFF !important;
+}
+
+.btn-track-action {
+  background: rgba(255, 255, 255, 0.05);
+  color: #F3F6F4 !important;
+  border: 1px solid rgba(217, 180, 92, 0.3);
+  border-radius: 50rem;
+  padding: 0.5rem 1.15rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.btn-track-action:hover {
+  background: #D9B45C;
+  color: #04150E !important;
+  border-color: #D9B45C;
+}
+/* Pastikan Kartu Desain Lintasan selalu terlihat jelas 100% */
+#desain-lintasan,
+.sthac-track-showcase-card {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  visibility: visible !important;
+}

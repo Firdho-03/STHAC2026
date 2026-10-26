@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 840" width="100%" height="100%">
+  <rect width="800" height="840" fill="#E6E6E6"/>
+  <!-- Judul Atas -->
+  <text x="400" y="34" font-family="Arial, sans-serif" font-size="25" font-weight="bold" fill="#111" text-anchor="middle">MODIFIKASI LINTASAN 30M DALAM PADDOCK 20m x 20m</text>
+  <text x="400" y="68" font-family="Arial, sans-serif" font-size="25" fill="#111" text-anchor="middle">(Target Menghadap ke Lintasan)</text>
+
+  <!-- Garis Dimensi Atas 20m -->
+  <line x1="55" y1="102" x2="355" y2="102" stroke="#222" stroke-width="2.5"/>
+  <line x1="445" y1="102" x2="745" y2="102" stroke="#222" stroke-width="2.5"/>
+  <line x1="55" y1="90" x2="55" y2="114" stroke="#222" stroke-width="2.5"/>
+  <line x1="745" y1="90" x2="745" y2="114" stroke="#222" stroke-width="2.5"/>
+  <text x="400" y="110" font-family="Arial, sans-serif" font-size="26" fill="#111" text-anchor="middle">20m</text>
+
+  <!-- Garis Dimensi Kiri 20m -->
+  <line x1="25" y1="140" x2="25" y2="415" stroke="#222" stroke-width="2.5"/>
+  <line x1="25" y1="505" x2="25" y2="780" stroke="#222" stroke-width="2.5"/>
+  <line x1="14" y1="140" x2="36" y2="140" stroke="#222" stroke-width="2.5"/>
+  <line x1="14" y1="780" x2="36" y2="780" stroke="#222" stroke-width="2.5"/>
+  <text x="28" y="460" font-family="Arial, sans-serif" font-size="26" fill="#111" text-anchor="middle" transform="rotate(-90 28 460)">20m</text>
+
+  <!-- Area Paddock Cokelat 20m x 20m -->
+  <rect x="55" y="135" width="690" height="650" fill="#C6A477" stroke="#5A3E28" stroke-width="14"/>
+
+  <!-- Jalur Lintasan Melengkung (Krem) -->
+  <path d="M 115 690 L 115 470 A 285 265 0 0 1 685 470 L 685 690" fill="none" stroke="#EDE0C4" stroke-width="82" stroke-linecap="butt"/>
+
+  <!-- Highlight Hijau Mint Sesuai Gambar -->
+  <path d="M 118 465 A 282 255 0 0 1 682 475" fill="none" stroke="#39F398" stroke-width="38" stroke-linecap="round"/>
+  <line x1="82" y1="496" x2="138" y2="492" stroke="#39F398" stroke-width="38" stroke-linecap="round"/>
+  <line x1="658" y1="528" x2="732" y2="528" stroke="#39F398" stroke-width="40" stroke-linecap="round"/>
+
+  <!-- Pagar Kayu Keliling Paddock -->
+  <g fill="#8B6343" stroke="#3B2313" stroke-width="2">
+    <rect x="48" y="128" width="16" height="28"/><rect x="190" y="126" width="10" height="26"/><rect x="330" y="126" width="10" height="26"/><rect x="465" y="126" width="10" height="26"/><rect x="605" y="126" width="10" height="26"/><rect x="736" y="128" width="16" height="28"/>
+    <rect x="48" y="768" width="16" height="28"/><rect x="220" y="772" width="10" height="24"/><rect x="310" y="772" width="10" height="24"/><rect x="400" y="772" width="10" height="24"/><rect x="490" y="772" width="10" height="24"/><rect x="580" y="772" width="10" height="24"/><rect x="736" y="768" width="16" height="28"/>
+    <rect x="45" y="250" width="24" height="10"/><rect x="45" y="350" width="24" height="10"/><rect x="45" y="450" width="24" height="10"/><rect x="45" y="550" width="24" height="10"/><rect x="45" y="650" width="24" height="10"/>
+    <rect x="733" y="250" width="24" height="10"/><rect x="733" y="350" width="24" height="10"/><rect x="733" y="450" width="24" height="10"/><rect x="733" y="550" width="24" height="10"/><rect x="733" y="650" width="24" height="10"/>
+  </g>
+
+  <!-- 3 Target Panahan & Arah Panah Menghadap Lintasan -->
+  <!-- Target Kiri -->
+  <g transform="translate(275, 405)">
+    <line x1="-10" y1="-35" x2="-48" y2="-72" stroke="#111" stroke-width="2.5"/>
+    <polygon points="-53,-77 -38,-72 -47,-62" fill="#111"/>
+    <text x="-22" y="-52" font-family="Arial, sans-serif" font-size="22" fill="#111">7m</text>
+    <line x1="-22" y1="-70" x2="-8" y2="-82" stroke="#39F398" stroke-width="11" stroke-linecap="round"/>
+    <line x1="-15" y1="25" x2="-28" y2="48" stroke="#3B2313" stroke-width="5"/>
+    <line x1="15" y1="25" x2="28" y2="48" stroke="#3B2313" stroke-width="5"/>
+    <line x1="-5" y1="30" x2="-5" y2="62" stroke="#3B2313" stroke-width="6"/>
+    <ellipse cx="0" cy="0" rx="28" ry="38" fill="#FFF" stroke="#222" stroke-width="2.5" transform="rotate(24)"/>
+    <ellipse cx="0" cy="0" rx="21" ry="29" fill="#2B6CB0" transform="rotate(24)"/>
+    <ellipse cx="0" cy="0" rx="13" ry="18" fill="#C53030" transform="rotate(24)"/>
+    <ellipse cx="0" cy="0" rx="6" ry="8" fill="#ECC94B" transform="rotate(24)"/>
+  </g>
+
+  <!-- Target Tengah -->
+  <g transform="translate(402, 355)">
+    <line x1="0" y1="-44" x2="0" y2="-96" stroke="#111" stroke-width="2.5"/>
+    <polygon points="0,-104 -7,-90 7,-90" fill="#111"/>
+    <text x="8" y="-62" font-family="Arial, sans-serif" font-size="22" fill="#111">5m</text>
+    <line x1="6" y1="-76" x2="54" y2="-80" stroke="#39F398" stroke-width="13" stroke-linecap="round"/>
+    <line x1="-22" y1="28" x2="-32" y2="54" stroke="#3B2313" stroke-width="6"/>
+    <line x1="22" y1="28" x2="32" y2="54" stroke="#3B2313" stroke-width="6"/>
+    <circle cx="0" cy="0" r="38" fill="#FFF" stroke="#222" stroke-width="2.5"/>
+    <circle cx="0" cy="0" r="28" fill="#2B6CB0"/>
+    <circle cx="0" cy="0" r="18" fill="#C53030"/>
+    <circle cx="0" cy="0" r="8" fill="#ECC94B"/>
+  </g>
+
+  <!-- Target Kanan -->
+  <g transform="translate(532, 405)">
+    <line x1="12" y1="-35" x2="48" y2="-72" stroke="#111" stroke-width="2.5"/>
+    <polygon points="53,-77 38,-72 47,-62" fill="#111"/>
+    <text x="32" y="-36" font-family="Arial, sans-serif" font-size="22" fill="#111">5m</text>
+    <line x1="35" y1="-32" x2="52" y2="-42" stroke="#39F398" stroke-width="12" stroke-linecap="round"/>
+    <line x1="-15" y1="25" x2="-28" y2="48" stroke="#3B2313" stroke-width="5"/>
+    <line x1="15" y1="25" x2="28" y2="48" stroke="#3B2313" stroke-width="5"/>
+    <line x1="5" y1="30" x2="5" y2="62" stroke="#3B2313" stroke-width="6"/>
+    <ellipse cx="0" cy="0" rx="28" ry="38" fill="#FFF" stroke="#222" stroke-width="2.5" transform="rotate(-24)"/>
+    <ellipse cx="0" cy="0" rx="21" ry="29" fill="#2B6CB0" transform="rotate(-24)"/>
+    <ellipse cx="0" cy="0" rx="13" ry="18" fill="#C53030" transform="rotate(-24)"/>
+    <ellipse cx="0" cy="0" rx="6" ry="8" fill="#ECC94B" transform="rotate(-24)"/>
+  </g>
+
+  <!-- Teks Tengah Area Target Panah -->
+  <text x="402" y="502" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#111" text-anchor="middle">SANGAT PENTING:</text>
+  <text x="402" y="530" font-family="Arial, sans-serif" font-size="24" fill="#111" text-anchor="middle">Area Target Panah</text>
+
+  <text x="402" y="632" font-family="Arial, sans-serif" font-size="25" fill="#111" text-anchor="middle">Lintasan Melengkung</text>
+  <text x="402" y="662" font-family="Arial, sans-serif" font-size="25" fill="#111" text-anchor="middle">(Horseback Archery)</text>
+
+  <!-- Start (0m) & Finish (30m) -->
+  <!-- Bendera Merah & Siluet Berkuda di Start -->
+  <line x1="78" y1="612" x2="78" y2="690" stroke="#111" stroke-width="2.5"/>
+  <path d="M 78 612 L 106 618 L 78 632 Z" fill="#E53E3E"/>
+  <g transform="translate(85, 636)" fill="#111">
+    <rect x="6" y="22" width="38" height="12" rx="5"/>
+    <path d="M 38 24 L 50 10 L 58 14 L 46 30 Z"/>
+    <line x1="10" y1="32" x2="8" y2="54" stroke="#111" stroke-width="4"/>
+    <line x1="18" y1="32" x2="22" y2="54" stroke="#111" stroke-width="4"/>
+    <line x1="36" y1="32" x2="34" y2="54" stroke="#111" stroke-width="4"/>
+    <line x1="42" y1="32" x2="46" y2="54" stroke="#111" stroke-width="4"/>
+    <circle cx="26" cy="4" r="4.5"/>
+    <rect x="22" y="10" width="8" height="15" rx="3"/>
+  </g>
+
+  <!-- Bendera Merah di Finish -->
+  <line x1="698" y1="640" x2="698" y2="690" stroke="#111" stroke-width="2.5"/>
+  <path d="M 698 640 L 724 646 L 698 658 Z" fill="#E53E3E"/>
+
+  <text x="115" y="724" font-family="Arial, sans-serif" font-size="26" fill="#111" text-anchor="middle">Start</text>
+  <text x="115" y="754" font-family="Arial, sans-serif" font-size="26" fill="#111" text-anchor="middle">(0m)</text>
+
+  <text x="695" y="724" font-family="Arial, sans-serif" font-size="26" fill="#111" text-anchor="middle">Finish</text>
+  <text x="695" y="754" font-family="Arial, sans-serif" font-size="26" fill="#111" text-anchor="middle">(30m)</text>
+
+  <!-- Garis Putus-Putus Panjang Lintasan ~30m -->
+  <path d="M 155 692 Q 400 742 650 692" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="7,5"/>
+  <path d="M 155 692 Q 210 732 255 742" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="7,5"/>
+  <path d="M 650 692 Q 595 732 550 742" fill="none" stroke="#222" stroke-width="2" stroke-dasharray="7,5"/>
+  <text x="402" y="752" font-family="Arial, sans-serif" font-size="26" fill="#111" text-anchor="middle">Panjang Lintasan ~30m</text>
+
+  <!-- Label Bawah 20m x 20m Paddock -->
+  <text x="402" y="828" font-family="Arial, sans-serif" font-size="26" fill="#111" text-anchor="middle">20m x 20m Paddock</text>
+</svg>

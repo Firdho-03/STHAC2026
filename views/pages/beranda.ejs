@@ -60,6 +60,103 @@
   </div>
 </section>
 
+<!-- ==================== DESAIN LINTASAN BERANDA ==================== -->
+<section class="pt-5 pb-3" id="desain-lintasan">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+      <div>
+        <h2 class="font-display fw-bold text-uppercase mb-1">DESAIN LINTASAN</h2>
+        <p class="small text-muted mb-0">Denah tata letak target dan ukuran lintasan yang dipakai pada seri ini — diunggah langsung oleh panitia.</p>
+      </div>
+      <a href="/aturan" class="btn btn-sm btn-dark-pill px-3 py-2">Aturan penilaian</a>
+    </div>
+
+    <div class="sthac-track-showcase-card">
+      <div class="row g-0">
+        <!-- Kiri: Gambar Denah Modifikasi Lintasan 30m dalam Paddock 20m x 20m -->
+        <div class="col-lg-7 sthac-track-blueprint-pane">
+          <img
+            id="beranda-track-img"
+            src="/images/desain-lintasan.jpg"
+            onerror="this.onerror=null; this.src='/images/desain-lintasan-30m.svg';"
+            alt="Modifikasi Lintasan 30m Dalam Paddock 20m x 20m"
+            onclick="openTrackLightbox(this.src)"
+          />
+        </div>
+
+        <!-- Kanan: Detail Spesifikasi Arena Walk-Trot -->
+        <div class="col-lg-5 sthac-track-info-pane">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="badge-track-ihaa">IHAA</span>
+            <span class="badge-track-circle">CIRCLE</span>
+          </div>
+
+          <h3 class="font-display fw-bold text-uppercase text-white mb-3" style="letter-spacing: 0.5px;">ARENA WALK-TROT</h3>
+
+          <div class="sthac-track-specs-box mb-4">
+            <div class="row g-2 text-start">
+              <div class="col-4">
+                <div class="spec-label">PANJANG</div>
+                <div class="spec-value">30 m</div>
+              </div>
+              <div class="col-4">
+                <div class="spec-label">TARGET</div>
+                <div class="spec-value">3</div>
+              </div>
+              <div class="col-4">
+                <div class="spec-label">WAKTU</div>
+                <div class="spec-value">Tanpa waktu</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.8px; color: #C8B273 !important;">DIPAKAI PADA</div>
+            <div class="fw-semibold" style="color: #E2E8F0 !important;">Beginner ( Walk )</div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2">
+            <button type="button" onclick="openTrackLightbox(document.getElementById('beranda-track-img').src)" class="btn-track-action">
+              Buka gambar penuh
+            </button>
+            <a href="/aturan" class="btn-track-action">
+              Aturan penilaian
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal Lightbox Gambar Penuh -->
+<div id="track-lightbox-modal" onclick="closeTrackLightbox()" style="display:none; position:fixed; inset:0; background:rgba(3,15,10,0.88); backdrop-filter:blur(6px); z-index:99999; align-items:center; justify-content:center; padding:1.5rem; cursor:zoom-out;">
+  <div class="position-relative text-center" style="max-width:92vw; max-height:90vh;">
+    <button type="button" onclick="closeTrackLightbox()" class="btn btn-gold-pill btn-sm px-3 py-1 mb-2">
+      <i class="bi bi-x-lg me-1"></i> Tutup Gambar Penuh
+    </button>
+    <div>
+      <img id="track-lightbox-img" src="/images/desain-lintasan.jpg" alt="Desain Lintasan Penuh" style="max-width:100%; max-height:82vh; background:#F8F7F2; border-radius:0.75rem; border:2px solid #D9B45C; box-shadow:0 24px 60px rgba(0,0,0,0.65);" />
+    </div>
+  </div>
+</div>
+
+<script>
+  window.openTrackLightbox = function(src) {
+    const modal = document.getElementById('track-lightbox-modal');
+    const img = document.getElementById('track-lightbox-img');
+    if (img && src) img.src = src;
+    if (modal) modal.style.display = 'flex';
+  };
+  window.closeTrackLightbox = function() {
+    const modal = document.getElementById('track-lightbox-modal');
+    if (modal) modal.style.display = 'none';
+  };
+</script>
+<!-- ==================== END DESAIN LINTASAN BERANDA ==================== -->
+
+
+
 <!-- SISTEM PENILAIAN IHAA & PORDASI -->
 <section id="penilaian" class="py-4">
   <div class="container">
@@ -96,6 +193,9 @@
     </div>
   </div>
 </section>
+
+
+
 
 <!-- POIN KEJUARAAN SEMENTARA -->
 <section class="py-4">
