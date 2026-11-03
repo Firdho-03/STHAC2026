@@ -2131,5 +2131,61 @@
       "updatedAt": "2026-10-25T09:25:50.851Z"
     }
   ],
-  "_initialized": true
+  "_initialized": true,
+  "sponsor": [
+    {
+      "id": 1,
+      "slotNumber": 1,
+      "namaSponsor": "Saiga Stable Official",
+      "kategori": "Main Partner",
+      "fotoUrl": "",
+      "websiteUrl": "#",
+      "statusAktif": true
+    },
+    {
+      "id": 2,
+      "slotNumber": 2,
+      "namaSponsor": "Slot Sponsor 2",
+      "kategori": "Main Partner",
+      "fotoUrl": "",
+      "websiteUrl": "#",
+      "statusAktif": true
+    },
+    {
+      "id": 3,
+      "slotNumber": 3,
+      "namaSponsor": "Slot Sponsor 3",
+      "kategori": "Official Sponsor",
+      "fotoUrl": "",
+      "websiteUrl": "#",
+      "statusAktif": true
+    },
+    {
+      "id": 4,
+      "slotNumber": 4,
+      "namaSponsor": "Slot Sponsor 4",
+      "kategori": "Official Sponsor",
+      "fotoUrl": "",
+      "websiteUrl": "#",
+      "statusAktif": true
+    },
+    {
+      "id": 5,
+      "slotNumber": 5,
+      "namaSponsor": "Slot Sponsor 5",
+      "kategori": "Official Sponsor",
+      "fotoUrl": "",
+      "websiteUrl": "#",
+      "statusAktif": true
+    },
+    {
+      "id": 6,
+      "slotNumber": 6,
+      "namaSponsor": "Slot Sponsor 6",
+      "kategori": "Official Sponsor",
+      "fotoUrl": "",
+      "websiteUrl": "#",
+      "statusAktif": true
+    }
+  ]
 }

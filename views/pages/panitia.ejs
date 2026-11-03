@@ -176,6 +176,8 @@
               <li><a class="dropdown-item adm-sub-link" data-tab="panitia" href="javascript:void(0)" onclick="openAdminTab('panitia')"><i class="bi bi-person-vcard-fill me-2 text-warning"></i> Panitia &amp; Juri (<%= stats.panitia %>)</a></li>
               <li><a class="dropdown-item adm-sub-link" data-tab="unduhan" href="javascript:void(0)" onclick="openAdminTab('unduhan')"><i class="bi bi-file-earmark-arrow-down-fill me-2 text-warning"></i> Unduhan Dokumen (<%= stats.dokumen %>)</a></li>
               <li><a class="dropdown-item adm-sub-link" data-tab="berita" href="javascript:void(0)" onclick="openAdminTab('berita')"><i class="bi bi-newspaper me-2 text-warning"></i> Berita &amp; Warta (<%= stats.berita %>)</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item adm-sub-link" data-tab="sponsor" href="javascript:void(0)" onclick="openAdminTab('sponsor')"><i class="bi bi-patch-check-fill me-2 text-warning"></i> Sponsor &amp; Mitra (6 Slot)</a></li>
             </ul>
           </div>
         </div>
@@ -1777,7 +1779,161 @@
       </div>
     </div>
 
-    <!-- ==================== 13. TAB SETELAN SITUS ==================== -->
+        <!-- ==================== 12B. TAB SPONSOR & MITRA (6 KOTAK FOTO SPONSOR BERANDA) ==================== -->
+    <div id="adm-sec-sponsor" class="admin-section" style="display:none;">
+      <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">
+        <div>
+          <div class="saiga-breadcrumb mb-1">PANEL PANITIA &rsaquo; SISTEM &amp; KONTEN &rsaquo; SPONSOR &amp; MITRA</div>
+          <h2 class="font-display fw-bold text-white mb-1">Kelola 6 Kotak Foto Sponsor &amp; Mitra Beranda</h2>
+          <p class="small text-white-50 mb-0">Unggah foto/logo sponsor untuk masing-masing dari 6 kotak slot yang tampil di bagian bawah halaman Beranda.</p>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <div class="saiga-kpi-mini text-center">
+            <div class="kpi-val"><%= (sponsorList || []).filter(s => s.terisi).length %> / 6</div>
+            <div class="kpi-lbl">Slot Terisi</div>
+          </div>
+          <a href="/#sponsor-mitra" target="_blank" class="btn btn-sm btn-dark-pill px-3 py-2">
+            <i class="bi bi-box-arrow-up-right me-1 text-warning"></i> Lihat di Beranda
+          </a>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Kiri: Form Upload & Edit Slot Sponsor (1 - 6) -->
+        <div class="col-lg-5">
+          <div class="sthac-card p-4 h-100" id="card-form-sponsor">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <span class="saiga-avatar"><i class="bi bi-image-fill"></i></span>
+                <div>
+                  <h6 class="font-display fw-bold text-uppercase text-white mb-0" id="title-form-sponsor">UNGGAH FOTO SPONSOR</h6>
+                  <small class="text-white-50" style="font-size:0.7rem;">Pilih Slot 1 s/d 6 &amp; Upload Gambar</small>
+                </div>
+              </div>
+              <span class="badge-green-soft" id="badge-slot-sponsor">SLOT #1</span>
+            </div>
+
+            <form id="form-crud-sponsor" onsubmit="submitSponsorForm(event)">
+              <div class="mb-3">
+                <label class="small fw-bold text-warning mb-1">PILIH NOMOR KOTAK SLOT (1 – 6) *</label>
+                <select name="slotNumber" id="inp-sponsor-slot" onchange="onSelectSponsorSlot(this.value)" class="form-select sthac-input fw-bold" required>
+                  <% (sponsorList || []).forEach(sp => { %>
+                    <option value="<%= sp.slotNumber %>">Kotak Slot #<%= sp.slotNumber %> — <%= sp.namaSponsor %> (<%= sp.terisi ? 'Sudah Ada Foto' : 'Belum Ada Foto' %>)</option>
+                  <% }) %>
+                </select>
+              </div>
+
+              <div class="row g-2 mb-3">
+                <div class="col-7">
+                  <label class="small fw-bold text-warning mb-1">NAMA SPONSOR / MITRA *</label>
+                  <input type="text" name="namaSponsor" id="inp-sponsor-nama" class="form-control sthac-input" placeholder="Contoh: Bank Syariah / Brand..." required />
+                </div>
+                <div class="col-5">
+                  <label class="small fw-bold text-warning mb-1">KATEGORI / TIER</label>
+                  <select name="kategori" id="inp-sponsor-kategori" class="form-select sthac-input">
+                    <option value="Main Sponsor">Main Sponsor</option>
+                    <option value="Official Partner">Official Partner</option>
+                    <option value="Supporting Partner">Supporting Partner</option>
+                    <option value="Media Partner">Media Partner</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="small fw-bold text-warning mb-1">UPLOAD FILE FOTO / LOGO DARI KOMPUTER *</label>
+                <input type="file" id="inp-sponsor-file" accept="image/*" onchange="previewSponsorFile(this)" class="form-control sthac-input" />
+                <small class="text-white-50 d-block mt-1" style="font-size:0.7rem;">Mendukung format JPG, PNG, WEBP, atau SVG. Otomatis menyesuaikan ukuran kotak.</small>
+              </div>
+
+              <div class="mb-3">
+                <label class="small fw-bold text-warning mb-1">ATAU TEMPEL URL GAMBAR</label>
+                <input type="text" name="fotoUrl" id="inp-sponsor-foto" oninput="updateSponsorPreviewBox(this.value)" class="form-control sthac-input" placeholder="https://... atau hasil upload otomatis" />
+              </div>
+
+              <!-- Kotak Pratinjau Gambar Sebelum Disimpan -->
+              <div class="p-3 rounded-3 mb-3 text-center" style="background:var(--bg-table-head); border:1px dashed var(--border-card-hover);">
+                <div class="small text-white-50 mb-2" style="font-size:0.7rem;">PRATINJAU GAMBAR SLOT:</div>
+                <div id="sponsor-preview-wrap" class="mx-auto d-flex align-items-center justify-content-center rounded-3" style="height:110px; max-width:240px; background:#FFFFFF; padding:0.5rem;">
+                  <img id="img-sponsor-preview" src="" alt="Preview" style="max-height:95px; max-width:100%; object-fit:contain; display:none;" />
+                  <span id="txt-sponsor-nopreview" class="small text-muted">Belum ada gambar dipilih</span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="small fw-bold text-warning mb-1">TAUTAN WEBSITE / INSTAGRAM (OPSIONAL)</label>
+                <input type="text" name="websiteUrl" id="inp-sponsor-web" value="#" class="form-control sthac-input" placeholder="https://instagram.com/..." />
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold">
+                  <i class="bi bi-cloud-check-fill me-1"></i> Simpan ke Kotak Slot
+                </button>
+                <button type="button" onclick="clearSponsorSlot()" class="btn btn-logout-pill px-3 py-2" title="Kosongkan Foto Slot Ini">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Kanan: Visualisasi 6 Kotak Slot Sponsor (Klik untuk Edit Cepat) -->
+        <div class="col-lg-7">
+          <div class="sthac-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h6 class="font-display fw-bold text-uppercase text-white mb-0">6 KOTAK SLOT SPONSOR BERANDA</h6>
+                <small class="text-white-50">Klik tombol <strong>Pilih / Ganti Foto</strong> pada salah satu kotak di bawah untuk mengunggah foto.</small>
+              </div>
+              <span class="badge-gold-outline">6 Slot Aktif</span>
+            </div>
+
+            <div class="row g-3">
+              <% (sponsorList || []).forEach(sp => { %>
+                <div class="col-sm-6 col-md-4">
+                  <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background:var(--bg-table-head); border:1px solid var(--border-main);">
+                    <div>
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-warning text-dark fw-bold">SLOT #<%= sp.slotNumber %></span>
+                        <span class="badge <%= sp.terisi ? 'bg-success-subtle text-success' : 'bg-secondary' %>" style="font-size:0.65rem;">
+                          <%= sp.terisi ? 'Terisi' : 'Kosong' %>
+                        </span>
+                      </div>
+
+                      <div class="rounded-3 mb-2 d-flex align-items-center justify-content-center overflow-hidden" style="height:105px; background:<%= sp.terisi ? '#FFFFFF' : 'rgba(15,41,30,0.08)' %>; border:1px solid var(--border-main); padding:0.5rem;">
+                        <% if (sp.terisi) { %>
+                          <img src="<%= sp.fotoUrl %>" alt="<%= sp.namaSponsor %>" style="max-height:90px; max-width:100%; object-fit:contain;" />
+                        <% } else { %>
+                          <div class="text-center text-white-50 small">
+                            <i class="bi bi-image fs-4 d-block mb-1"></i>
+                            <span style="font-size:0.7rem;">Belum ada foto</span>
+                          </div>
+                        <% } %>
+                      </div>
+
+                      <div class="fw-bold text-white text-truncate small"><%= sp.namaSponsor %></div>
+                      <div class="text-white-50" style="font-size:0.68rem;"><%= sp.kategori %></div>
+                    </div>
+
+                    <div class="d-flex gap-1 mt-3 pt-2 border-top" style="border-color:var(--border-main) !important;">
+                      <button type="button" onclick="onSelectSponsorSlot(<%= sp.slotNumber %>, true)" class="btn btn-sm btn-gold-pill flex-grow-1 py-1" style="font-size:0.74rem;">
+                        <i class="bi bi-upload me-1"></i> <%= sp.terisi ? 'Ganti Foto' : 'Upload Foto' %>
+                      </button>
+                      <% if (sp.terisi) { %>
+                        <button type="button" onclick="clearSponsorSlot(<%= sp.slotNumber %>)" class="btn btn-sm btn-logout-pill px-2 py-1" title="Hapus Foto">
+                          <i class="bi bi-x-lg"></i>
+                        </button>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- ==================== 13. TAB SETELAN SITUS ==================== -->
     <div id="adm-sec-setelan" class="admin-section" style="display:none;">
       <div class="mb-4">
         <div class="saiga-breadcrumb mb-1">PANEL PANITIA &rsaquo; SISTEM &amp; KONTEN &rsaquo; PENGATURAN SITUS</div>
@@ -2076,7 +2232,7 @@
       ringkasan: ['ringkasan'],
       peserta: ['pendaftar', 'rider', 'pelatih', 'stable'],
       teknis: ['acara', 'lintasan', 'penilaian', 'poin'],
-      sistem: ['panitia', 'unduhan', 'berita'],
+      sistem: ['panitia', 'unduhan', 'berita', 'sponsor'],
       setelan: ['setelan']
     };
 
@@ -2425,5 +2581,82 @@
     });
   };
 
-  document.addEventListener('DOMContentLoaded', renderAdminSessionState);
+  
+  // ==================== MANAJEMEN 6 SLOT FOTO SPONSOR ====================
+  const sponsorSlotsData = <%- JSON.stringify(sponsorList || []) %>;
+
+  window.updateSponsorPreviewBox = function(src) {
+    const img = document.getElementById('img-sponsor-preview');
+    const txt = document.getElementById('txt-sponsor-nopreview');
+    if (src && src.trim().length > 4) {
+      img.src = src;
+      img.style.display = 'block';
+      txt.style.display = 'none';
+    } else {
+      img.src = '';
+      img.style.display = 'none';
+      txt.style.display = 'inline';
+    }
+  };
+
+  window.previewSponsorFile = function(fileInp) {
+    const file = fileInp.files && fileInp.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      const dataUrl = evt.target.result;
+      document.getElementById('inp-sponsor-foto').value = dataUrl;
+      updateSponsorPreviewBox(dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.onSelectSponsorSlot = function(slotNo, scrollToForm = false) {
+    const num = Number(slotNo);
+    const sel = document.getElementById('inp-sponsor-slot');
+    if (sel) sel.value = String(num);
+    const badge = document.getElementById('badge-slot-sponsor');
+    if (badge) badge.innerText = 'SLOT #' + num;
+
+    const found = sponsorSlotsData.find(s => Number(s.slotNumber) === num);
+    if (found) {
+      document.getElementById('inp-sponsor-nama').value = found.namaSponsor || ('Sponsor #' + num);
+      document.getElementById('inp-sponsor-kategori').value = found.kategori || 'Official Partner';
+      document.getElementById('inp-sponsor-foto').value = found.fotoUrl || '';
+      document.getElementById('inp-sponsor-web').value = found.websiteUrl || '#';
+      updateSponsorPreviewBox(found.fotoUrl || '');
+    }
+    if (scrollToForm) {
+      document.getElementById('card-form-sponsor').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  window.submitSponsorForm = function(e) {
+    e.preventDefault();
+    const slotNumber = parseInt(document.getElementById('inp-sponsor-slot').value, 10) || 1;
+    const payload = {
+      slotNumber,
+      namaSponsor: document.getElementById('inp-sponsor-nama').value.trim(),
+      kategori: document.getElementById('inp-sponsor-kategori').value,
+      fotoUrl: document.getElementById('inp-sponsor-foto').value.trim(),
+      websiteUrl: document.getElementById('inp-sponsor-web').value.trim() || '#'
+    };
+    sessionStorage.setItem('sthac_active_adm_tab', 'sponsor');
+    apiPanitiaCrud('sponsor', 'update', slotNumber, payload);
+  };
+
+  window.clearSponsorSlot = function(slotParam) {
+    const slotNumber = slotParam || parseInt(document.getElementById('inp-sponsor-slot').value, 10) || 1;
+    showSthacPopup(
+      'Kosongkan Foto Slot #' + slotNumber + '?',
+      'Foto sponsor pada Slot #' + slotNumber + ' akan dihapus dan dikembalikan ke status kosong.',
+      'confirm',
+      () => {
+        sessionStorage.setItem('sthac_active_adm_tab', 'sponsor');
+        apiPanitiaCrud('sponsor', 'delete', slotNumber, { slotNumber });
+      }
+    );
+  };
+
+  document.addEventListener('DOMContentLoaded', () => { renderAdminSessionState(); onSelectSponsorSlot(1); });
 </script>

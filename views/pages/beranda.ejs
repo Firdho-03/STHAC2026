@@ -65,63 +65,73 @@
   <div class="container">
     <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
       <div>
+        <span class="badge-green-soft mb-2"><i class="bi bi-compass me-1"></i> DENAH RESMI SERI 1</span>
         <h2 class="font-display fw-bold text-uppercase mb-1">DESAIN LINTASAN</h2>
-        <p class="small text-muted mb-0">Denah tata letak target dan ukuran lintasan yang dipakai pada seri ini — diunggah langsung oleh panitia.</p>
+        <p class="track-section-subtitle mb-0">Denah tata letak target dan ukuran lintasan yang dipakai pada seri ini — diunggah langsung oleh panitia.</p>
       </div>
-      <a href="/aturan" class="btn btn-sm btn-dark-pill px-3 py-2">Aturan penilaian</a>
+      <a href="/aturan" class="btn btn-sm btn-dark-pill px-3 py-2">
+        <i class="bi bi-journal-check me-1 text-warning"></i> Aturan penilaian
+      </a>
     </div>
 
     <div class="sthac-track-showcase-card">
-      <div class="row g-0">
-        <!-- Kiri: Gambar Denah Modifikasi Lintasan 30m dalam Paddock 20m x 20m -->
-        <div class="col-lg-7 sthac-track-blueprint-pane">
-          <img
-            id="beranda-track-img"
-            src="/images/desain-lintasan.jpg"
-            onerror="this.onerror=null; this.src='/images/desain-lintasan-30m.svg';"
-            alt="Modifikasi Lintasan 30m Dalam Paddock 20m x 20m"
-            onclick="openTrackLightbox(this.src)"
-          />
+      <div class="row g-0 align-items-center">
+        <div class="col-lg-6">
+          <div class="sthac-track-blueprint-pane">
+            <img
+              id="beranda-track-img"
+              src="/images/desain-lintasan-30m.svg"
+              alt="Modifikasi Lintasan 30m Dalam Paddock 20m x 20m"
+              onclick="openTrackLightbox(this.src)"
+            />
+          </div>
         </div>
 
-        <!-- Kanan: Detail Spesifikasi Arena Walk-Trot -->
-        <div class="col-lg-5 sthac-track-info-pane">
-          <div class="d-flex align-items-center gap-2 mb-3">
-            <span class="badge-track-ihaa">IHAA</span>
-            <span class="badge-track-circle">CIRCLE</span>
-          </div>
+        <div class="col-lg-6">
+          <div class="sthac-track-info-pane">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="badge-track-ihaa">IHAA</span>
+              <span class="badge-track-circle">CIRCLE</span>
+            </div>
 
-          <h3 class="font-display fw-bold text-uppercase text-white mb-3" style="letter-spacing: 0.5px;">ARENA WALK-TROT</h3>
+            <div class="track-arena-title">ARENA WALK-TROT</div>
 
-          <div class="sthac-track-specs-box mb-4">
-            <div class="row g-2 text-start">
-              <div class="col-4">
-                <div class="spec-label">PANJANG</div>
-                <div class="spec-value">30 m</div>
-              </div>
-              <div class="col-4">
-                <div class="spec-label">TARGET</div>
-                <div class="spec-value">3</div>
-              </div>
-              <div class="col-4">
-                <div class="spec-label">WAKTU</div>
-                <div class="spec-value">Tanpa waktu</div>
+            <p class="small mb-3" style="color: #B4C6BC !important; line-height: 1.6;">
+              Modifikasi lintasan melengkung sepanjang 30 meter di dalam area <em>Paddock</em> 20m &times; 20m dengan 3 titik target panahan yang menghadap langsung ke jalur kuda.
+            </p>
+
+            <div class="sthac-track-specs-box mb-4">
+              <div class="row g-3 text-start">
+                <div class="col-4 border-end" style="border-color: rgba(217, 180, 92, 0.2) !important;">
+                  <div class="spec-label">PANJANG</div>
+                  <div class="spec-value">30 m</div>
+                </div>
+                <div class="col-4 border-end" style="border-color: rgba(217, 180, 92, 0.2) !important;">
+                  <div class="spec-label">TARGET</div>
+                  <div class="spec-value">3 Sasaran</div>
+                </div>
+                <div class="col-4">
+                  <div class="spec-label">WAKTU</div>
+                  <div class="spec-value">Tanpa waktu</div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="mb-4">
-            <div class="small fw-bold text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.8px; color: #C8B273 !important;">DIPAKAI PADA</div>
-            <div class="fw-semibold" style="color: #E2E8F0 !important;">Beginner ( Walk )</div>
-          </div>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pt-2">
+              <div>
+                <div class="small fw-bold text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.85px; color: #D9B45C !important;">DIPAKAI PADA KELAS</div>
+                <div class="fw-bold" style="color: #FFFFFF !important; font-size: 0.98rem;">Beginner ( Walk ) &amp; Beginner ( Trot )</div>
+              </div>
 
-          <div class="d-flex flex-wrap gap-2">
-            <button type="button" onclick="openTrackLightbox(document.getElementById('beranda-track-img').src)" class="btn-track-action">
-              Buka gambar penuh
-            </button>
-            <a href="/aturan" class="btn-track-action">
-              Aturan penilaian
-            </a>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" onclick="openTrackLightbox(document.getElementById('beranda-track-img').src)" class="btn-track-action">
+                  <i class="bi bi-arrows-fullscreen text-warning"></i> Buka gambar penuh
+                </button>
+                <a href="/aturan" class="btn-track-action">
+                  <i class="bi bi-book text-warning"></i> Aturan penilaian
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -129,14 +139,13 @@
   </div>
 </section>
 
-<!-- Modal Lightbox Gambar Penuh -->
 <div id="track-lightbox-modal" onclick="closeTrackLightbox()" style="display:none; position:fixed; inset:0; background:rgba(3,15,10,0.88); backdrop-filter:blur(6px); z-index:99999; align-items:center; justify-content:center; padding:1.5rem; cursor:zoom-out;">
   <div class="position-relative text-center" style="max-width:92vw; max-height:90vh;">
     <button type="button" onclick="closeTrackLightbox()" class="btn btn-gold-pill btn-sm px-3 py-1 mb-2">
       <i class="bi bi-x-lg me-1"></i> Tutup Gambar Penuh
     </button>
     <div>
-      <img id="track-lightbox-img" src="/images/desain-lintasan.jpg" alt="Desain Lintasan Penuh" style="max-width:100%; max-height:82vh; background:#F8F7F2; border-radius:0.75rem; border:2px solid #D9B45C; box-shadow:0 24px 60px rgba(0,0,0,0.65);" />
+      <img id="track-lightbox-img" src="/images/desain-lintasan-30m.svg" alt="Desain Lintasan Penuh" style="max-width:100%; max-height:82vh; background:#F4F1EA; padding:1rem; border-radius:0.9rem; border:2px solid #D9B45C; box-shadow:0 24px 60px rgba(0,0,0,0.65);" />
     </div>
   </div>
 </div>
@@ -232,54 +241,43 @@
 </section>
 
 <!-- UNDUHAN DOKUMEN -->
-<section id="unduhan" class="py-4">
-  <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-end mb-3 gap-2">
-      <div>
-        <small class="text-secondary fw-bold text-uppercase d-block" style="font-size:0.68rem;letter-spacing:1px;">BERKAS PERTANDINGAN</small>
-        <h2 class="font-display fw-bold text-uppercase text-forest mb-0">UNDUHAN DOKUMEN</h2>
-      </div>
-      <a href="/unduhan" class="small fw-bold text-decoration-none text-forest">Semua unduhan &rarr;</a>
-    </div>
 
-    <div class="row g-4">
-      <% dokumenList.slice(0, 3).forEach(doc => { %>
-        <div class="col-md-4">
-          <div class="sthac-card p-4 h-100 d-flex flex-column justify-content-between">
-            <div>
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="badge-amber-soft"><%= doc.kodeBadge %></span>
-                <span class="small text-secondary"><%= doc.statusInfo %></span>
-              </div>
-              <h6 class="fw-bold text-forest mb-1"><%= doc.judul %></h6>
-              <p class="small text-secondary mb-0">Kategori: <%= doc.kategori %></p>
-            </div>
-            <div class="mt-4">
-              <a href="/unduhan" class="btn btn-soft-gray w-100">Lihat Berkas</a>
-            </div>
+<!-- ==================== KOTAK 6 FOTO SPONSOR & MITRA RESMI ==================== -->
+<section class="py-4 mb-3" id="sponsor-mitra">
+  <div class="container">
+    <div class="sthac-sponsor-showcase">
+      <div class="text-center mb-4">
+        <span class="badge-track-ihaa d-inline-block mb-2"><i class="bi bi-stars me-1"></i> OFFICIAL SPONSOR &amp; MITRA KEJUARAAN</span>
+        <h2 class="font-display fw-bold text-uppercase text-white mb-1" style="letter-spacing: 0.8px;">DIDUKUNG OLEH MITRA &amp; SPONSOR RESMI</h2>
+        <p class="small mb-0" style="color: #B4C6BC !important;">Apresiasi setinggi-tingginya kepada para sponsor dan mitra pendukung penyelenggaraan South Tangerang Horseback Archery Cup 2026.</p>
+      </div>
+
+      <div class="row g-3 justify-content-center">
+        <% (sponsorList || []).slice(0, 6).forEach((sp, idx) => { %>
+          <div class="col-6 col-md-4 col-lg-2">
+            <a href="<%= sp.websiteUrl && sp.websiteUrl !== '#' ? sp.websiteUrl : 'javascript:void(0)' %>"
+               <%= sp.websiteUrl && sp.websiteUrl !== '#' ? 'target="_blank" rel="noopener"' : '' %>
+               class="sthac-sponsor-slot <%= sp.fotoUrl ? 'has-photo' : '' %>"
+               title="<%= sp.namaSponsor %> (<%= sp.kategori %>)">
+              <% if (sp.fotoUrl && sp.fotoUrl.length > 4) { %>
+                <img src="<%= sp.fotoUrl %>" alt="<%= sp.namaSponsor %>" />
+                <div class="sponsor-caption-overlay">
+                  <div class="text-truncate"><%= sp.namaSponsor %></div>
+                </div>
+              <% } else { %>
+                <span class="sthac-sponsor-placeholder-num">0<%= sp.slotNumber || (idx + 1) %></span>
+                <div class="fw-bold text-center text-truncate w-100" style="color: #FFFFFF !important; font-size: 0.8rem;"><%= sp.namaSponsor %></div>
+                <small class="text-uppercase" style="color: #C8B273 !important; font-size: 0.63rem; letter-spacing: 0.6px;"><%= sp.kategori %></small>
+              <% } %>
+            </a>
           </div>
-        </div>
-      <% }) %>
-    </div>
-  </div>
-</section>
-
-<!-- CTA SIAP BERTANDING -->
-<section class="py-5">
-  <div class="container">
-    <div class="saiga-cta-banner p-4 p-md-5 text-center">
-      <h2 class="font-display fw-bold text-uppercase text-white mb-2">SIAP BERTANDING?</h2>
-      <p class="text-white-50 mb-4 mx-auto small" style="max-width:620px;">
-        Pendaftaran dibuka untuk kelas <strong class="text-white">Beginner (Walk) · U14</strong> &amp; <strong class="text-white">Beginner (Trot) · Terbuka</strong> pada Seri 1 South Tangerang Horseback Archery Cup.
-      </p>
-      <div class="d-flex flex-wrap justify-content-center gap-2">
-        <a href="/pendaftaran" class="btn btn-gold-pill px-4 py-2">Isi Formulir Pendaftaran</a>
-        <a href="/event" class="btn btn-glass-pill px-4 py-2">Lihat jadwal &amp; lokasi</a>
-        <a href="/juara" class="btn btn-glass-pill px-4 py-2">Klasemen poin</a>
+        <% }) %>
       </div>
     </div>
   </div>
 </section>
+<!-- ==================== END KOTAK 6 FOTO SPONSOR ==================== -->
+
 
 <script>
   (function initCountdown() {

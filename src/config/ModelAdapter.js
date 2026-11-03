@@ -62,6 +62,14 @@ const defaultSeed = {
     { id: 1, slug: 'pembukaan-seri-1-sthac-2026', judul: 'Pendaftaran Seri 1 STHAC 2026 Resmi Dibuka di Saiga Stable', kategori: 'Pengumuman', tanggalTerbit: '24 Oktober 2026', ringkasan: 'Seri pembuka South Tangerang Horseback Archery Cup 2026 siap digelar pada Sabtu, 14 November 2026 di Saiga Stable.', isiBerita: 'Kejuaraan berkuda memanah berjenjang South Tangerang Horseback Archery Cup (STHAC) 2026 resmi membuka pendaftaran peserta untuk kategori U14 dan Terbuka.' },
     { id: 2, slug: 'standar-penilaian-ihaa-pordasi', judul: 'Integrasi Sistem Penilaian Otomatis Berbasis IHAA & Pordasi', kategori: 'Regulasi', tanggalTerbit: '24 Oktober 2026', ringkasan: 'Seluruh perhitungan poin target, par time, dan klasemen juara umum diproses secara transparan dan real-time.', isiBerita: 'STHAC 2026 menerapkan kalkulasi skor otomatis berbasis standar International Horseback Archery Alliance (IHAA) dan Pordasi Berkuda Memanah.' }
   ],
+  sponsor: [
+    { id: 1, slotNumber: 1, namaSponsor: 'Saiga Stable Official', kategori: 'Main Host', fotoUrl: '', websiteUrl: '#', statusAktif: true },
+    { id: 2, slotNumber: 2, namaSponsor: 'Slot Sponsor 2', kategori: 'Official Partner', fotoUrl: '', websiteUrl: '#', statusAktif: true },
+    { id: 3, slotNumber: 3, namaSponsor: 'Slot Sponsor 3', kategori: 'Official Partner', fotoUrl: '', websiteUrl: '#', statusAktif: true },
+    { id: 4, slotNumber: 4, namaSponsor: 'Slot Sponsor 4', kategori: 'Supporting Partner', fotoUrl: '', websiteUrl: '#', statusAktif: true },
+    { id: 5, slotNumber: 5, namaSponsor: 'Slot Sponsor 5', kategori: 'Supporting Partner', fotoUrl: '', websiteUrl: '#', statusAktif: true },
+    { id: 6, slotNumber: 6, namaSponsor: 'Slot Sponsor 6', kategori: 'Media Partner', fotoUrl: '', websiteUrl: '#', statusAktif: true }
+  ],
   pendaftar: [],
   scoreRun: []
 };
@@ -93,6 +101,7 @@ function getStoreKey(candidates) {
   if (first.includes('panitia') || first.includes('user')) return 'panitia';
   if (first.includes('dokumen') || first.includes('unduhan')) return 'unduhan';
   if (first.includes('berita') || first.includes('news')) return 'berita';
+  if (first.includes('sponsor') || first.includes('mitra')) return 'sponsor';
   if (first.includes('pendaftar') || first.includes('reg')) return 'pendaftar';
   if (first.includes('rider')) return 'rider';
   if (first.includes('lintasan') || first.includes('track')) return 'lintasan';

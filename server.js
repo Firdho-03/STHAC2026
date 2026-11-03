@@ -22,8 +22,8 @@ app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 
 // Middleware Body Parser & Static Files
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '30mb' }));
+app.use(express.urlencoded({ extended: true, limit: '30mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Pasang rute CRUD & Penilaian Universal terlebih dahulu

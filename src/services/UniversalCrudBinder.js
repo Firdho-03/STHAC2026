@@ -28,6 +28,7 @@ const CANDIDATES = {
   panitia: ['panitiaUser', 'panitia', 'adminUser', 'user', 'committee'],
   unduhan: ['dokumenUnduhan', 'dokumen', 'unduhan', 'document', 'download'],
   berita: ['berita', 'news', 'warta', 'artikel', 'post'],
+  sponsor: ['sponsor', 'mitra', 'partner'],
   otp: ['otpToken', 'otp', 'emailOtp']
 };
 
@@ -459,6 +460,43 @@ function attachUniversalCrudRoutes(app, io) {
         return res.json({ ok: true, success: true, message: 'Data contoh berhasil dibersihkan!' });
       }
 
+            if (entity === 'sponsor') {
+        const slotNo = parseInt(payload.slotNumber || numId || 1, 10);
+        const allSponsors = await safeFindMany(CANDIDATES.sponsor);
+        const existingSlot = allSponsors.find(s => Number(s.slotNumber || s.id) === slotNo);
+        if (action === 'delete' || action === 'clear') {
+          const clearedData = {
+            slotNumber: slotNo,
+            namaSponsor: 'Slot Sponsor ' + slotNo,
+            kategori: 'Official Sponsor',
+            fotoUrl: '',
+            websiteUrl: '#',
+            statusAktif: false
+          };
+          if (existingSlot) {
+            await safeUpdate(CANDIDATES.sponsor, existingSlot.id, clearedData);
+          }
+          return res.json({ ok: true, success: true, message: 'Foto pada Slot Sponsor #' + slotNo + ' berhasil dikosongkan.' });
+        }
+
+        const savePayload = {
+          slotNumber: slotNo,
+          namaSponsor: payload.namaSponsor || ('Sponsor #' + slotNo),
+          kategori: payload.kategori || 'Official Sponsor',
+          fotoUrl: payload.fotoUrl !== undefined ? payload.fotoUrl : (existingSlot ? existingSlot.fotoUrl : ''),
+          websiteUrl: payload.websiteUrl || '#',
+          statusAktif: true
+        };
+
+        let savedSponsor;
+        if (existingSlot) {
+          savedSponsor = await safeUpdate(CANDIDATES.sponsor, existingSlot.id, savePayload);
+        } else {
+          savedSponsor = await safeCreate(CANDIDATES.sponsor, { id: slotNo, ...savePayload });
+        }
+        return res.json({ ok: true, success: true, message: 'Foto & data Slot Sponsor #' + slotNo + ' (' + savePayload.namaSponsor + ') berhasil disimpan!', data: savedSponsor });
+      }
+
       if (entity === 'setelan' || entity === 'setting') {
         const saved = await saveSiteSettings(payload);
         return res.json({ ok: true, success: true, message: 'Pengaturan situs berhasil disimpan!', data: saved });
@@ -564,7 +602,8 @@ function attachUniversalCrudRoutes(app, io) {
         unduhan: { c: CANDIDATES.unduhan },
         dokumen: { c: CANDIDATES.unduhan },
         berita: { c: CANDIDATES.berita },
-        news: { c: CANDIDATES.berita }
+        news: { c: CANDIDATES.berita },
+        sponsor: { c: CANDIDATES.sponsor }
       };
 
       const target = entityMap[entity];

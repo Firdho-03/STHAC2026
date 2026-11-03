@@ -63,7 +63,8 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
     scoreRunRaw,
     panitiaRaw,
     dokumenRaw,
-    beritaRaw
+    beritaRaw,
+    sponsorRaw
   ] = await Promise.all([
     getSiteSettings(),
     safeFindMany(CANDIDATES.seri),
@@ -76,7 +77,8 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
     safeFindMany(CANDIDATES.scoreRun),
     safeFindMany(CANDIDATES.panitia),
     safeFindMany(CANDIDATES.unduhan),
-    safeFindMany(CANDIDATES.berita)
+    safeFindMany(CANDIDATES.berita),
+    safeFindMany(CANDIDATES.sponsor)
   ]);
 
   // 1. Seri Kejuaraan
@@ -259,6 +261,20 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
     tanggal: b.tanggalTerbit || b.tanggal || 'Oktober 2026',
     penulis: b.penulis || 'Panitia STHAC'
   }));
+
+
+  const sponsorList = [1, 2, 3, 4, 5, 6].map(slotNo => {
+    const found = (sponsorRaw || []).find(s => Number(s.slotNumber || s.id) === slotNo) || {};
+    return {
+      id: found.id || slotNo,
+      slotNumber: slotNo,
+      namaSponsor: found.namaSponsor || ('Slot Sponsor ' + slotNo),
+      kategori: found.kategori || 'Official Sponsor',
+      fotoUrl: found.fotoUrl || '',
+      websiteUrl: found.websiteUrl || '#',
+      terisi: Boolean(found.fotoUrl && String(found.fotoUrl).trim().length > 0)
+    };
+  });
 
   const panitiaList = panitiaRaw.map((u, i) => ({
     ...u,
@@ -539,7 +555,9 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
     unduhan: dokumenList.length,
     documents: dokumenList.length,
     totalBerita: beritaList.length,
-    berita: beritaList.length
+    berita: beritaList.length,
+    totalSponsor: sponsorList.filter(s => s.terisi).length,
+    sponsor: 6
   };
 
   // 7. OBJEK PROFILES (Untuk views/pages/profile.ejs)
@@ -669,6 +687,8 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
     documents: dokumenList,
     beritaList,
     newsList: beritaList,
+    sponsorList,
+    sponsors: sponsorList,
     beritaDetail: null,
     newsDetail: null
   };
