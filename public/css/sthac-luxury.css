@@ -1285,42 +1285,41 @@ html[data-theme="dark"] main .sthac-card:hover {
   }
 }
 
+
 /* ==================== DESAIN LINTASAN SHOWCASE (SEAMLESS & UNIFIED) ==================== */
-#desain-lintasan {
+#desain-lintasan,
+#sponsor-mitra {
   opacity: 1 !important;
   visibility: visible !important;
 }
 
 #desain-lintasan .track-section-subtitle {
-  color: var(--text-muted) !important;
+  color: #52635A !important;
   font-size: 0.92rem;
 }
 
-html[data-theme="dark"] #desain-lintasan .track-section-subtitle {
-  color: #B4C6BC !important;
-}
-
+/* --- MODE TERANG (DEFAULT): KARTU PUTIH BERSIH & TEKS KONTRAS --- */
 .sthac-track-showcase-card {
   opacity: 1 !important;
   filter: none !important;
   transform: none !important;
   visibility: visible !important;
-  background: linear-gradient(155deg, #072317 0%, #04150E 100%) !important;
-  border: 1px solid rgba(217, 180, 92, 0.35) !important;
+  background: #FFFFFF !important;
+  border: 1px solid rgba(7, 38, 25, 0.12) !important;
   border-radius: 1.25rem !important;
-  padding: 1.15rem !important;
-  box-shadow: 0 20px 44px -12px rgba(4, 21, 14, 0.32) !important;
+  padding: 1.25rem !important;
+  box-shadow: 0 12px 32px -10px rgba(7, 38, 25, 0.08) !important;
 }
 
 .sthac-track-blueprint-pane {
-  background-color: #F4F1EA;
+  background-color: #F7F5F0;
   background-image:
-    linear-gradient(to right, rgba(7, 38, 25, 0.065) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(7, 38, 25, 0.065) 1px, transparent 1px);
+    linear-gradient(to right, rgba(7, 38, 25, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(7, 38, 25, 0.055) 1px, transparent 1px);
   background-size: 24px 24px;
-  border-radius: 0.9rem;
-  border: 1px solid rgba(217, 180, 92, 0.32);
-  padding: 1.1rem 1.4rem;
+  border-radius: 0.95rem;
+  border: 1px solid rgba(7, 38, 25, 0.1);
+  padding: 1.15rem 1.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1348,8 +1347,8 @@ html[data-theme="dark"] #desain-lintasan .track-section-subtitle {
 
 .sthac-track-info-pane {
   background: transparent !important;
-  color: #F3F6F4 !important;
-  padding: 1.5rem 1.75rem 1.5rem 2.1rem;
+  color: #072619 !important;
+  padding: 1.4rem 1.5rem 1.4rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1360,45 +1359,55 @@ html[data-theme="dark"] #desain-lintasan .track-section-subtitle {
   font-size: 1.85rem;
   font-weight: 700;
   letter-spacing: 0.6px;
-  color: #FFFFFF !important;
-  margin-bottom: 1rem;
+  color: #072619 !important;
+  margin-bottom: 0.75rem;
   text-transform: uppercase;
 }
 
+.sthac-track-info-pane .track-arena-desc {
+  color: #4A5D52 !important;
+  line-height: 1.65;
+}
+
 .badge-track-ihaa {
-  background: rgba(217, 180, 92, 0.16);
-  color: #F2D078 !important;
-  border: 1px solid rgba(217, 180, 92, 0.45);
+  background: rgba(217, 180, 92, 0.18);
+  color: #8C6514 !important;
+  border: 1px solid rgba(217, 180, 92, 0.55);
   border-radius: 50rem;
-  padding: 0.3rem 0.9rem;
+  padding: 0.28rem 0.85rem;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.7px;
 }
 
 .badge-track-circle {
-  background: rgba(56, 189, 248, 0.14);
-  color: #7DD3FC !important;
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  background: rgba(16, 185, 129, 0.12);
+  color: #0D7A52 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35);
   border-radius: 50rem;
-  padding: 0.3rem 0.9rem;
+  padding: 0.28rem 0.85rem;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.7px;
 }
 
 .sthac-track-specs-box {
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(217, 180, 92, 0.28);
+  background: #F6F8F6;
+  border: 1px solid rgba(7, 38, 25, 0.1);
   border-radius: 0.9rem;
-  padding: 1.15rem 1.35rem;
+  padding: 1.1rem 1.35rem;
 }
 
-.sthac-track-specs-box .spec-label {
+.sthac-track-specs-box .spec-col-divider {
+  border-right: 1px solid rgba(7, 38, 25, 0.12) !important;
+}
+
+.sthac-track-specs-box .spec-label,
+.track-used-label {
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.85px;
-  color: #D9B45C !important;
+  color: #9A721C !important;
   text-transform: uppercase;
   margin-bottom: 0.25rem;
 }
@@ -1407,13 +1416,19 @@ html[data-theme="dark"] #desain-lintasan .track-section-subtitle {
   font-family: 'Oswald', sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
-  color: #FFFFFF !important;
+  color: #072619 !important;
+}
+
+.track-used-value {
+  color: #072619 !important;
+  font-size: 0.98rem;
+  font-weight: 700;
 }
 
 .btn-track-action {
-  background: rgba(255, 255, 255, 0.07);
-  color: #FFFFFF !important;
-  border: 1px solid rgba(217, 180, 92, 0.38);
+  background: #F4F7F5;
+  color: #072619 !important;
+  border: 1px solid rgba(7, 38, 25, 0.18);
   border-radius: 50rem;
   padding: 0.55rem 1.25rem;
   font-size: 0.84rem;
@@ -1421,8 +1436,12 @@ html[data-theme="dark"] #desain-lintasan .track-section-subtitle {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   transition: all 0.25s ease;
+}
+
+.btn-track-action i {
+  color: #B78727 !important;
 }
 
 .btn-track-action:hover {
@@ -1432,26 +1451,39 @@ html[data-theme="dark"] #desain-lintasan .track-section-subtitle {
   transform: translateY(-2px);
 }
 
-@media (max-width: 991.98px) {
-  .sthac-track-info-pane {
-    padding: 1.5rem 0.75rem 0.75rem 0.75rem;
-  }
+.btn-track-action:hover i {
+  color: #04150E !important;
 }
-/* ==================== KOTAK 6 FOTO SPONSOR & MITRA (BERANDA & PANITIA) ==================== */
+
+/* ==================== KOTAK 6 FOTO SPONSOR & MITRA (MODE TERANG PUTIH RAPI) ==================== */
 .sthac-sponsor-showcase {
-  background: linear-gradient(160deg, #072317 0%, #04150E 100%) !important;
-  border: 1px solid rgba(217, 180, 92, 0.38) !important;
+  background: #FFFFFF !important;
+  border: 1px solid rgba(7, 38, 25, 0.12) !important;
   border-radius: 1.35rem !important;
   padding: 2.5rem 2rem !important;
-  box-shadow: 0 22px 48px -12px rgba(4, 21, 14, 0.35) !important;
+  box-shadow: 0 12px 32px -10px rgba(7, 38, 25, 0.08) !important;
+}
+
+.sthac-sponsor-showcase .sponsor-main-title {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #072619 !important;
+  margin-bottom: 0.35rem;
+}
+
+.sthac-sponsor-showcase .sponsor-main-subtitle {
+  color: #52635A !important;
+  font-size: 0.9rem;
 }
 
 .sthac-sponsor-slot {
   position: relative;
   height: 155px;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(217, 180, 92, 0.28);
+  background: #F7F9F7;
+  border: 1px dashed rgba(7, 38, 25, 0.22);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1464,18 +1496,16 @@ html[data-theme="dark"] #desain-lintasan .track-section-subtitle {
 
 .sthac-sponsor-slot:hover {
   transform: translateY(-5px) scale(1.02);
-  border-color: #E3C373;
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(217, 180, 92, 0.2);
+  border-style: solid;
+  border-color: #D9B45C;
+  background: #FFFFFF;
+  box-shadow: 0 14px 28px rgba(7, 38, 25, 0.1);
 }
 
 .sthac-sponsor-slot.has-photo {
   background: #FFFFFF;
-  padding: 0.65rem;
-}
-
-html[data-theme="dark"] .sthac-sponsor-slot.has-photo {
-  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(7, 38, 25, 0.14);
+  padding: 0.6rem;
 }
 
 .sthac-sponsor-slot img {
@@ -1490,15 +1520,45 @@ html[data-theme="dark"] .sthac-sponsor-slot.has-photo {
   transform: scale(1.05);
 }
 
+.sthac-sponsor-slot .sponsor-slot-name {
+  color: #072619 !important;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.sthac-sponsor-slot .sponsor-slot-tier {
+  color: #9A721C !important;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.sthac-sponsor-placeholder-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(217, 180, 92, 0.18);
+  border: 1px dashed rgba(154, 114, 28, 0.55);
+  color: #8C6514 !important;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.45rem;
+}
+
 .sthac-sponsor-slot .sponsor-caption-overlay {
   position: absolute;
   inset: auto 0 0 0;
-  background: linear-gradient(0deg, rgba(4, 21, 14, 0.92) 0%, rgba(4, 21, 14, 0.75) 70%, transparent 100%);
+  background: linear-gradient(0deg, rgba(7, 38, 25, 0.92) 0%, rgba(7, 38, 25, 0.75) 75%, transparent 100%);
   color: #F2E0AC !important;
   font-size: 0.72rem;
   font-weight: 700;
   text-align: center;
-  padding: 0.9rem 0.5rem 0.4rem 0.5rem;
+  padding: 0.85rem 0.5rem 0.4rem 0.5rem;
   opacity: 0;
   transition: opacity 0.25s ease;
 }
@@ -1507,18 +1567,75 @@ html[data-theme="dark"] .sthac-sponsor-slot.has-photo {
   opacity: 1;
 }
 
-.sthac-sponsor-placeholder-num {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(217, 180, 92, 0.14);
-  border: 1px dashed rgba(217, 180, 92, 0.55);
+/* ==================== PENYESUAIAN OTOMATIS SAAT MODE GELAP (DARK MODE) ==================== */
+html[data-theme="dark"] #desain-lintasan .track-section-subtitle {
+  color: #B4C6BC !important;
+}
+
+html[data-theme="dark"] .sthac-track-showcase-card,
+html[data-theme="dark"] .sthac-sponsor-showcase {
+  background: linear-gradient(155deg, #072317 0%, #04150E 100%) !important;
+  border-color: rgba(217, 180, 92, 0.35) !important;
+  box-shadow: 0 20px 44px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+html[data-theme="dark"] .sthac-track-info-pane .track-arena-title,
+html[data-theme="dark"] .sthac-track-specs-box .spec-value,
+html[data-theme="dark"] .track-used-value,
+html[data-theme="dark"] .sthac-sponsor-showcase .sponsor-main-title,
+html[data-theme="dark"] .sthac-sponsor-slot .sponsor-slot-name {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .sthac-track-info-pane .track-arena-desc,
+html[data-theme="dark"] .sthac-sponsor-showcase .sponsor-main-subtitle {
+  color: #B4C6BC !important;
+}
+
+html[data-theme="dark"] .sthac-track-specs-box {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(217, 180, 92, 0.28);
+}
+
+html[data-theme="dark"] .sthac-track-specs-box .spec-col-divider {
+  border-right-color: rgba(217, 180, 92, 0.2) !important;
+}
+
+html[data-theme="dark"] .sthac-track-specs-box .spec-label,
+html[data-theme="dark"] .track-used-label,
+html[data-theme="dark"] .sthac-sponsor-slot .sponsor-slot-tier,
+html[data-theme="dark"] .badge-track-ihaa,
+html[data-theme="dark"] .sthac-sponsor-placeholder-num {
   color: #E3C373 !important;
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.45rem;
+}
+
+html[data-theme="dark"] .badge-track-circle {
+  background: rgba(56, 189, 248, 0.14);
+  color: #7DD3FC !important;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+html[data-theme="dark"] .btn-track-action {
+  background: rgba(255, 255, 255, 0.07);
+  color: #FFFFFF !important;
+  border-color: rgba(217, 180, 92, 0.38);
+}
+
+html[data-theme="dark"] .btn-track-action i {
+  color: #E3C373 !important;
+}
+
+html[data-theme="dark"] .sthac-sponsor-slot {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(217, 180, 92, 0.28);
+}
+
+html[data-theme="dark"] .sthac-sponsor-slot.has-photo {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+@media (max-width: 991.98px) {
+  .sthac-track-info-pane {
+    padding: 1.5rem 0.75rem 0.75rem 0.75rem;
+  }
 }

@@ -96,17 +96,17 @@
 
             <div class="track-arena-title">ARENA WALK-TROT</div>
 
-            <p class="small mb-3" style="color: #B4C6BC !important; line-height: 1.6;">
+            <p class="small mb-3 track-arena-desc">
               Modifikasi lintasan melengkung sepanjang 30 meter di dalam area <em>Paddock</em> 20m &times; 20m dengan 3 titik target panahan yang menghadap langsung ke jalur kuda.
             </p>
 
             <div class="sthac-track-specs-box mb-4">
               <div class="row g-3 text-start">
-                <div class="col-4 border-end" style="border-color: rgba(217, 180, 92, 0.2) !important;">
+                <div class="col-4 spec-col-divider">
                   <div class="spec-label">PANJANG</div>
                   <div class="spec-value">30 m</div>
                 </div>
-                <div class="col-4 border-end" style="border-color: rgba(217, 180, 92, 0.2) !important;">
+                <div class="col-4 spec-col-divider">
                   <div class="spec-label">TARGET</div>
                   <div class="spec-value">3 Sasaran</div>
                 </div>
@@ -119,16 +119,16 @@
 
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pt-2">
               <div>
-                <div class="small fw-bold text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.85px; color: #D9B45C !important;">DIPAKAI PADA KELAS</div>
-                <div class="fw-bold" style="color: #FFFFFF !important; font-size: 0.98rem;">Beginner ( Walk ) &amp; Beginner ( Trot )</div>
+                <div class="track-used-label">DIPAKAI PADA KELAS</div>
+                <div class="track-used-value">Beginner ( Walk ) &amp; Beginner ( Trot )</div>
               </div>
 
               <div class="d-flex flex-wrap gap-2">
                 <button type="button" onclick="openTrackLightbox(document.getElementById('beranda-track-img').src)" class="btn-track-action">
-                  <i class="bi bi-arrows-fullscreen text-warning"></i> Buka gambar penuh
+                  <i class="bi bi-arrows-fullscreen"></i> Buka gambar penuh
                 </button>
                 <a href="/aturan" class="btn-track-action">
-                  <i class="bi bi-book text-warning"></i> Aturan penilaian
+                  <i class="bi bi-book"></i> Aturan penilaian
                 </a>
               </div>
             </div>
@@ -247,9 +247,9 @@
   <div class="container">
     <div class="sthac-sponsor-showcase">
       <div class="text-center mb-4">
-        <span class="badge-track-ihaa d-inline-block mb-2"><i class="bi bi-stars me-1"></i> OFFICIAL SPONSOR &amp; MITRA KEJUARAAN</span>
-        <h2 class="font-display fw-bold text-uppercase text-white mb-1" style="letter-spacing: 0.8px;">DIDUKUNG OLEH MITRA &amp; SPONSOR RESMI</h2>
-        <p class="small mb-0" style="color: #B4C6BC !important;">Apresiasi setinggi-tingginya kepada para sponsor dan mitra pendukung penyelenggaraan South Tangerang Horseback Archery Cup 2026.</p>
+        <span class="badge-green-soft d-inline-block mb-2"><i class="bi bi-stars me-1 text-warning"></i> OFFICIAL SPONSOR &amp; MITRA KEJUARAAN</span>
+        <h2 class="sponsor-main-title">DIDUKUNG OLEH MITRA &amp; SPONSOR RESMI</h2>
+        <p class="sponsor-main-subtitle mb-0">Apresiasi setinggi-tingginya kepada para sponsor dan mitra pendukung penyelenggaraan South Tangerang Horseback Archery Cup 2026.</p>
       </div>
 
       <div class="row g-3 justify-content-center">
@@ -266,8 +266,8 @@
                 </div>
               <% } else { %>
                 <span class="sthac-sponsor-placeholder-num">0<%= sp.slotNumber || (idx + 1) %></span>
-                <div class="fw-bold text-center text-truncate w-100" style="color: #FFFFFF !important; font-size: 0.8rem;"><%= sp.namaSponsor %></div>
-                <small class="text-uppercase" style="color: #C8B273 !important; font-size: 0.63rem; letter-spacing: 0.6px;"><%= sp.kategori %></small>
+                <div class="sponsor-slot-name text-center text-truncate w-100"><%= sp.namaSponsor %></div>
+                <small class="sponsor-slot-tier"><%= sp.kategori %></small>
               <% } %>
             </a>
           </div>
