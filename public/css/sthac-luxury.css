@@ -2213,3 +2213,18 @@ html[data-theme="dark"] body .sthac-rules-card-v2 .rules-action-btn:hover {
   border-color: #D9B45C !important;
   color: #04150E !important;
 }
+
+
+/* === DARK MODE FORM INPUT CONTRAST FIX === */
+html[data-theme="dark"] .sthac-input,
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select {
+  color: #F4F6F4 !important;
+  background-color: rgba(4, 21, 14, 0.75) !important;
+  border-color: rgba(217, 180, 92, 0.3) !important;
+}
+
+html[data-theme="dark"] .sthac-input::placeholder,
+html[data-theme="dark"] .form-control::placeholder {
+  color: rgba(199, 214, 206, 0.5) !important;
+}

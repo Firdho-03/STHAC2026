@@ -2692,3 +2692,17 @@
     if (klsInp) klsInp.value = klsChecked.join(' | ');
   };
 </script>
+
+
+<script>
+  window.syncAdmKatAndKelas = function() {
+    var katChecked = Array.from(document.querySelectorAll('.chk-adm-kat:checked')).map(function(c){ return c.value; });
+    var katInp = document.getElementById('inp-rider-kategori');
+    if (katInp) katInp.value = katChecked.length ? katChecked.join(' | ') : 'U14';
+
+    var klsChecked = Array.from(document.querySelectorAll('.chk-adm-kls:checked')).map(function(c){ return c.value; });
+    var klsInp = document.getElementById('inp-rider-kelas');
+    if (klsInp) klsInp.value = klsChecked.join(' | ');
+  };
+</script>
+<script src="/js/sthac-image-uploader.js"></script>

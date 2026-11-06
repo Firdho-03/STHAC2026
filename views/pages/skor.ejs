@@ -64,8 +64,6 @@
                     <% for (let rNo = 1; rNo <= k.jumlahRun; rNo++) { %>
                       <th class="text-center">RUN #<%= rNo %></th>
                     <% } %>
-                    <th class="text-center">TARGET</th>
-                    <th class="text-center">WAKTU</th>
                     <th class="text-end">TOTAL SKOR</th>
                   </tr>
                 </thead>
@@ -94,8 +92,6 @@
                           <% } %>
                         </td>
                       <% } %>
-                      <td class="text-center fw-semibold"><%= row.totalTarget %></td>
-                      <td class="text-center"><%= row.totalWaktu %></td>
                       <td class="text-end">
                         <span class="badge-green-soft fs-6 fw-bold"><%= row.totalSkor %> Pts</span>
                       </td>

@@ -20,7 +20,48 @@
         <a href="/profile" class="btn btn-gold-pill px-4 py-2 fw-bold">
           <i class="bi bi-people-fill me-1"></i> Lihat di Profil Ekosistem
         </a>
-        <button type="button" onclick="closeRegPopup()" class="btn btn-dark-pill px-4 py-2">
+                      <div class="row g-3 mb-3 sthac-upload-widget">
+                <div class="col-md-6">
+                  <label class="small fw-bold mb-1">FOTO PELATIH (UPLOAD FILE)</label>
+                  <input type="file" accept="image/*" class="form-control sthac-input sthac-file-Trigger" />
+                  <input type="hidden" name="fotoUploadedData" class="sthac-hidden-dataurl" />
+                  <input type="hidden" name="fotoUploadedData" class="sthac-hidden-dataurl" />
+                </div>
+                <div class="col-md-6">
+                  <label class="small fw-bold mb-1">ATAU URL FOTO PELATIH</label>
+                  <input type="url" name="fotoUrl" class="form-control sthac-input sthac-url-trigger" placeholder="https://..." />
+                </div>
+                <div class="col-12 d-none sthac-preview-wrap">
+                  <div class="d-inline-flex align-items-center gap-3 p-2 rounded-3 border" style="background: rgba(217,180,92,0.08);">
+                    <img src="" alt="Preview Foto Pelatih" class="sthac-img-preview rounded-circle object-fit-cover border" style="width: 54px; height: 54px;" />
+                    <div>
+                      <div class="small fw-bold">Pratinjau Foto Pelatih</div>
+                                    <div class="row g-3 mb-3 sthac-upload-widget">
+                <div class="col-md-6">
+                  <label class="small fw-bold mb-1">LOGO / FOTO STABLE (UPLOAD FILE)</label>
+                  <input type="file" accept="image/*" class="form-control sthac-input sthac-file-Trigger" />
+                  <input type="hidden" name="fotoUploadedData" class="sthac-hidden-dataurl" />
+                </div>
+                <div class="col-md-6">
+                  <label class="small fw-bold mb-1">ATAU URL LOGO STABLE</label>
+                  <input type="url" name="logoUrl" class="form-control sthac-input sthac-url-trigger" placeholder="https://..." />
+                </div>
+                <div class="col-12 d-none sthac-preview-wrap">
+                  <div class="d-inline-flex align-items-center gap-3 p-2 rounded-3 border" style="background: rgba(217,180,92,0.08);">
+                    <img src="" alt="Preview Logo Stable" class="sthac-img-preview rounded-3 object-fit-cover border" style="width: 54px; height: 54px;" />
+                    <div>
+                      <div class="small fw-bold">Pratinjau Logo / Foto Stable</div>
+                      <button type="button" class="btn btn-link btn-sm text-danger p-0 text-decoration-none sthac-clear-img">Hapus gambar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-link btn-sm text-danger p-0 text-decoration-none sthac-clear-img">Hapus foto</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" onclick="closeRegPopup()" class="btn btn-dark-pill px-4 py-2">
           Selesai / Daftar Lagi
         </button>
       </div>
@@ -332,3 +373,4 @@
   };
 
 </script>
+<script src="/js/sthac-image-uploader.js"></script>
