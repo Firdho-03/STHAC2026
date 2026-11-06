@@ -1,0 +1,204 @@
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <span class="badge-green-soft mb-2">CHAMPIONSHIP STANDINGS</span>
+        <h1 class="font-display fw-bold text-uppercase mb-1">KLASEMEN POIN JUARA UMUM</h1>
+        <p class="text-muted small mb-0">Dihitung otomatis dari akumulasi poin peringkat kelas pada seluruh seri yang sudah dipertandingkan.</p>
+      </div>
+      <button onclick="window.print()" class="btn btn-sm btn-dark-pill px-3 py-2">
+        <i class="bi bi-printer me-1"></i> Cetak Klasemen
+      </button>
+    </div>
+
+    <div class="sthac-card overflow-hidden mb-4">
+      <div class="table-responsive">
+        <table class="table sthac-table align-middle mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4">PERINGKAT</th>
+              <th>KODE</th>
+              <th>NAMA RIDER</th>
+              <th>ASAL STABLE</th>
+              <th>KELAS DIIKUTI</th>
+              <th class="text-center">TOTAL SKOR RUN</th>
+              <th class="text-end pe-4">POIN KEJUARAAN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%
+              const rawList = (typeof klasemenList !== 'undefined' && Array.isArray(klasemenList)) ? klasemenList : [];
+              // Hitung total poin langsung dari penjumlahan baris skor tiap rider
+              const computedList = rawList.map((k, idx) => {
+                let katRows = [];
+                if (Array.isArray(k.kategoriRows) && k.kategoriRows.length > 0) {
+                  katRows = k.kategoriRows;
+                } else if (k.kategori) {
+                  katRows = String(k.kategori).split(/[|,;/]+/).map(s => s.trim()).filter(Boolean);
+                }
+                if (katRows.length === 0) katRows = ['U14'];
+
+                let scoreRows = [];
+                if (Array.isArray(k.scoreRows) && k.scoreRows.length === katRows.length) {
+                  scoreRows = k.scoreRows.map(v => Number(v || 0));
+                } else if (Array.isArray(k.splitRows) && k.splitRows.length === katRows.length) {
+                  scoreRows = k.splitRows.map(sr => Number(sr.poinKelas !== undefined ? sr.poinKelas : 10));
+                } else {
+                  scoreRows = katRows.map(() => 10);
+                }
+
+                const sumPoints = scoreRows.reduce((acc, n) => acc + Number(n || 0), 0);
+                return {
+                  ...k,
+                  _katRows: katRows,
+                  _scoreRows: scoreRows,
+                  _sumPoints: sumPoints
+                };
+              }).sort((a, b) => b._sumPoints - a._sumPoints);
+            %>
+            <% if (computedList.length > 0) { %>
+              <% computedList.forEach((k, idx) => { %>
+                <tr>
+                  <td class="ps-4 fw-bold">Peringkat <%= idx + 1 %></td>
+                  <td class="small text-muted"><%= k.kodeRider || k.kode || '-' %></td>
+                  <td class="fw-bold"><%= k.namaLengkap || k.namaRider || k.nama || '-' %></td>
+                  <td><%= k.asalStable || k.namaStable || '-' %></td>
+
+                  <!-- KOLOM KELAS DIIKUTI (SPLIT ATAS-BAWAH) -->
+                  <td class="p-0 align-middle klasemen-split-border-x" style="min-width: 220px;">
+                    <div class="d-flex flex-column w-100">
+                      <% k._katRows.forEach((katName, rIdx) => { %>
+                        <div class="px-3 py-2 fw-semibold d-flex align-items-center <%= rIdx > 0 ? 'klasemen-split-item-top' : '' %>" style="min-height: 40px; font-size: 0.86rem;">
+                          <span><%= katName %></span>
+                        </div>
+                      <% }) %>
+                    </div>
+                  </td>
+
+                  <!-- KOLOM TOTAL SKOR RUN (NILAI POSISI KELAS SPLIT ATAS-BAWAH) -->
+                  <td class="p-0 align-middle text-center klasemen-split-border-x" style="width: 155px;">
+                    <div class="d-flex flex-column w-100">
+                      <% k._scoreRows.forEach((scVal, rIdx) => { %>
+                        <div class="px-3 py-2 fw-bold font-display d-flex align-items-center justify-content-center <%= rIdx > 0 ? 'klasemen-split-item-top' : '' %>" style="min-height: 40px; font-size: 1.05rem;">
+                          <span><%= scVal %></span>
+                        </div>
+                      <% }) %>
+                    </div>
+                  </td>
+
+                  <!-- KOLOM POIN KEJUARAAN (HASIL PENJUMLAHAN LANGSUNG TOTAL SKOR RUN) -->
+                  <td class="text-end pe-4 font-display fw-bold fs-4 text-gold">
+                    <%= k._sumPoints %> pts
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="7" class="text-center py-4 text-muted">Belum ada data rider terdaftar pada klasemen.</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- KARTU ATURAN POIN PERSIS GAMBAR KEDUA (KOMPATIBEL LIGHT & DARK MODE) -->
+    <div class="row g-4 mt-2">
+      <!-- KARTU KIRI: CARA POIN DIHITUNG -->
+      <div class="col-lg-6">
+        <div class="sthac-rules-card-v2 h-100">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <span class="rules-header-icon"><i class="bi bi-award-fill"></i></span>
+            <h4 class="rules-card-title text-uppercase">CARA POIN DIHITUNG</h4>
+          </div>
+
+          <ul class="list-unstyled mb-3" style="font-size: 0.92rem;">
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-medal-bullet"><i class="bi bi-award-fill"></i></span>
+              <span>Peringkat 1: <strong class="rules-highlight">10</strong> poin</span>
+            </li>
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-medal-bullet"><i class="bi bi-award-fill"></i></span>
+              <span>Peringkat 2: <strong class="rules-highlight">8</strong> poin</span>
+            </li>
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-medal-bullet"><i class="bi bi-award-fill"></i></span>
+              <span>Peringkat 3: <strong class="rules-highlight">6</strong> poin</span>
+            </li>
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-medal-bullet"><i class="bi bi-award-fill"></i></span>
+              <span>Peringkat 4: <strong class="rules-highlight">5</strong> poin</span>
+            </li>
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-medal-bullet"><i class="bi bi-award-fill"></i></span>
+              <span>Peringkat 5: <strong class="rules-highlight">4</strong> poin</span>
+            </li>
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-medal-bullet"><i class="bi bi-award-fill"></i></span>
+              <span>Peringkat 6: <strong class="rules-highlight">3</strong> poin</span>
+            </li>
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-medal-bullet"><i class="bi bi-award-fill"></i></span>
+              <span>Peringkat 7: <strong class="rules-highlight">2</strong> poin</span>
+            </li>
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-medal-bullet"><i class="bi bi-award-fill"></i></span>
+              <span>Peringkat 8: <strong class="rules-highlight">1</strong> poin</span>
+            </li>
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-neutral-bullet"><i class="bi bi-person-walking"></i></span>
+              <span>Peringkat di luar daftar: <strong class="rules-highlight">0</strong> poin</span>
+            </li>
+            <li class="py-1 d-flex align-items-center gap-3">
+              <span class="rules-square-bullet"><i class="bi bi-bar-chart-fill"></i></span>
+              <span>Seluruh kelas yang diikuti ikut dihitung</span>
+            </li>
+          </ul>
+
+          <p class="rules-footnote mb-0">
+            Kelas exhibition (mis. Open Qabaq) tidak dihitung untuk juara umum. Bila poin sama, rider dengan <strong class="rules-highlight">kemenangan kelas</strong> lebih banyak berada di atasnya; bila masih sama, dilihat dari total skor.
+          </p>
+        </div>
+      </div>
+
+      <!-- KARTU KANAN: YANG PERLU DIKETAHUI -->
+      <div class="col-lg-6">
+        <div class="sthac-rules-card-v2 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <span class="rules-header-icon"><i class="bi bi-bar-chart-fill"></i></span>
+              <h4 class="rules-card-title text-uppercase">YANG PERLU DIKETAHUI</h4>
+            </div>
+
+            <div class="d-flex gap-3 mb-3 align-items-start">
+              <span class="rules-medal-bullet mt-1"><i class="bi bi-check-lg"></i></span>
+              <p class="mb-0" style="font-size: 0.92rem; line-height: 1.65;">
+                Poin dihitung otomatis dari hasil setiap run yang dimasukkan panitia — tanpa perhitungan manual.
+              </p>
+            </div>
+
+            <div class="d-flex gap-3 mb-3 align-items-start">
+              <span class="rules-medal-bullet mt-1"><i class="bi bi-award-fill"></i></span>
+              <p class="mb-0" style="font-size: 0.92rem; line-height: 1.65;">
+                Rider hanya mendapat poin pada kelas yang benar-benar dipertandingkan (bukan sekadar terdaftar).
+              </p>
+            </div>
+
+            <div class="d-flex gap-3 mb-4 align-items-start">
+              <span class="rules-square-bullet mt-1"><i class="bi bi-calendar3"></i></span>
+              <p class="mb-0" style="font-size: 0.92rem; line-height: 1.65;">
+                Juara umum tahunan diambil dari akumulasi seluruh seri, sesuai tema kejuaraan berjenjang.
+              </p>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 pt-1">
+              <a href="/aturan" class="rules-action-btn">Aturan &amp; penilaian</a>
+              <a href="/jadwal" class="rules-action-btn">Semua seri</a>
+            </div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

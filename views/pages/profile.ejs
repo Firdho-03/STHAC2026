@@ -156,7 +156,6 @@
               <tr>
                 <th class="ps-4">KODE</th>
                 <th>NAMA RIDER</th>
-                <th>JENJANG LEVEL</th>
                 <th>KATEGORI</th>
                 <th>STABLE</th>
                 <th class="text-end pe-4">PROFIL</th>
@@ -170,7 +169,6 @@
                     data-stable="<%= (r.asalStable || '').toLowerCase() %>">
                   <td class="ps-4 font-monospace fw-bold"><%= r.kodeRider %></td>
                   <td class="fw-bold"><%= r.namaLengkap %></td>
-                  <td><%= r.jenjang || r.pengalaman || 'Beginner (Pemula)' %></td>
                   <td><span class="badge bg-dark text-warning border border-warning px-2 py-1"><%= r.kategoriUmur %></span></td>
                   <td><%= r.asalStable %></td>
                   <td class="text-end pe-4">

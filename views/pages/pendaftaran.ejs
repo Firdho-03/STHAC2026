@@ -66,19 +66,16 @@
         <div class="row g-3 mb-3">
           <div class="col-md-6">
             <label class="small fw-bold text-warning mb-1">KATEGORI</label>
-            <select name="kategoriUmur" class="form-select sthac-input">
-              <option value="U14">U14 (Anak &amp; Junior)</option>
-              <option value="Terbuka">Terbuka (Open)</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="small fw-bold text-warning mb-1">KELAS PERTANDINGAN</label>
-            <select name="kelasPilihan" class="form-select sthac-input">
-              <option value="Beginner ( Walk )">— Belum menentukan —</option>
-              <% kelasList.forEach(k => { %>
-                <option value="<%= k.namaKelas %> · <%= k.kategori %>"><%= k.namaKelas %> · <%= k.kategori %> (<%= k.namaLintasan %>)</option>
-              <% }) %>
-            </select>
+            <div class="sthac-multi-check-group" id="box-reg-kelas">
+                    <% const listKls = (typeof kelasList !== 'undefined' && kelasList && kelasList.length > 0) ? kelasList : [{ namaKelas: 'Beginner ( Walk ) · U14' }, { namaKelas: 'Beginner ( Trot ) · Terbuka' }]; %>
+                    <% listKls.forEach((k, idx) => { %>
+                      <label class="sthac-check-pill">
+                        <input type="checkbox" name="kelasYangDiikuti" value="<%= k.namaKelas %>" <%= idx === 0 ? 'checked' : '' %> />
+                        <span><%= k.namaKelas %></span>
+                      </label>
+                    <% }) %>
+                  </div>
+                  <small class="text-muted d-block mt-1" style="font-size:0.72rem;">Bisa centang lebih dari 1 kelas pertandingan.</small>
           </div>
         </div>
 
@@ -324,4 +321,14 @@
       }
     }
   };
+
+  window.syncRegMultiKategori = function() {
+    const checked = Array.from(document.querySelectorAll('.chk-reg-kategori:checked')).map(el => el.value);
+    document.getElementById('reg-rider-kategori-val').value = checked.length ? checked.join(' | ') : 'U14';
+  };
+  window.syncRegMultiKelas = function() {
+    const checked = Array.from(document.querySelectorAll('.chk-reg-kelas:checked')).map(el => el.value);
+    document.getElementById('reg-rider-kelas-val').value = checked.length ? checked.join(' | ') : '';
+  };
+
 </script>

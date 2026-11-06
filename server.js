@@ -30,6 +30,42 @@ app.use(express.static(path.join(__dirname, 'public')));
 attachUniversalCrudRoutes(app, io);
 
 // Pasang rute utama aplikasi
+
+
+// Middleware Normalisasi Pilihan >1 Kategori & Kelas Pertandingan
+app.use((req, res, next) => {
+  if (req.body && typeof req.body === 'object') {
+    if (Array.isArray(req.body.kategori)) {
+      req.body.kategori = req.body.kategori.map(s => String(s).trim()).filter(Boolean).join(' | ');
+    }
+    if (Array.isArray(req.body.kelasYangDiikuti)) {
+      req.body.kelasYangDiikuti = req.body.kelasYangDiikuti.map(s => String(s).trim()).filter(Boolean).join(' | ');
+    }
+    if (Array.isArray(req.body.kelasPertandingan)) {
+      req.body.kelasPertandingan = req.body.kelasPertandingan.map(s => String(s).trim()).filter(Boolean).join(' | ');
+    }
+    if (!req.body.kelasYangDiikuti && req.body.kelasPertandingan) {
+      req.body.kelasYangDiikuti = req.body.kelasPertandingan;
+    }
+  }
+  next();
+});
+
+
+
+// Override otomatis data Klasemen Poin Juara Umum
+const { buildOfficialKlasemen } = require('./src/services/KlasemenCalculator');
+app.use((req, res, next) => {
+  const _origRender = res.render.bind(res);
+  res.render = function(view, locals, cb) {
+    if (locals && typeof locals === 'object') {
+      buildOfficialKlasemen(locals);
+    }
+    return _origRender(view, locals, cb);
+  };
+  next();
+});
+
 app.use('/', webRoutes);
 
 // Socket.io Real-time Connection

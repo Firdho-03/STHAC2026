@@ -1733,3 +1733,483 @@ html[data-theme="dark"] .sthac-sponsor-slot.active-sponsor-card .sponsor-meta-ti
   background: rgba(217, 180, 92, 0.18);
   border-color: rgba(217, 180, 92, 0.45);
 }
+
+
+
+/* ==================== TABEL KLASEMEN SPLIT ATAS-BAWAH & ATURAN POIN ==================== */
+.klasemen-cell-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(7, 38, 25, 0.14);
+  border-radius: 0.55rem;
+  background: rgba(7, 38, 25, 0.02);
+  overflow: hidden;
+}
+
+html[data-theme="dark"] .klasemen-cell-box {
+  border-color: rgba(217, 180, 92, 0.28);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.klasemen-cell-row {
+  min-height: 36px;
+  padding: 0.35rem 0.75rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-main) !important;
+}
+
+.klasemen-cell-row + .klasemen-cell-row {
+  border-top: 1px solid rgba(7, 38, 25, 0.14);
+}
+
+html[data-theme="dark"] .klasemen-cell-row + .klasemen-cell-row {
+  border-top-color: rgba(217, 180, 92, 0.28);
+}
+
+.klasemen-cell-row.score-val {
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #072619 !important;
+}
+
+html[data-theme="dark"] .klasemen-cell-row.score-val {
+  color: #F2D078 !important;
+}
+
+/* ==================== KLASEMEN SPLIT TABLE EXACT MATCH ==================== */
+.sthac-table td.klasemen-split-td {
+  padding: 0 !important;
+  vertical-align: middle !important;
+  border-left: 1px solid rgba(7, 38, 25, 0.08);
+  border-right: 1px solid rgba(7, 38, 25, 0.08);
+}
+
+html[data-theme="dark"] .sthac-table td.klasemen-split-td {
+  border-left-color: rgba(217, 180, 92, 0.16);
+  border-right-color: rgba(217, 180, 92, 0.16);
+}
+
+.klasemen-stack-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.klasemen-stack-line {
+  min-height: 40px;
+  padding: 0.45rem 0.9rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-main) !important;
+}
+
+.klasemen-stack-line + .klasemen-stack-line {
+  border-top: 1px dashed rgba(7, 38, 25, 0.28) !important;
+}
+
+html[data-theme="dark"] .klasemen-stack-line + .klasemen-stack-line {
+  border-top-color: rgba(217, 180, 92, 0.4) !important;
+}
+
+.klasemen-stack-line.is-score {
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #072619 !important;
+}
+
+html[data-theme="dark"] .klasemen-stack-line.is-score {
+  color: #F2D078 !important;
+}
+
+/* Multi-select Checkbox Pills untuk Pendaftaran & Panitia */
+.sthac-multi-check-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sthac-check-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.48rem 0.85rem;
+  border-radius: 0.65rem;
+  background: var(--bg-input, #F5F7F6);
+  border: 1px solid var(--border-input, rgba(7, 38, 25, 0.18));
+  color: var(--text-main) !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.sthac-check-pill:hover {
+  border-color: #D9B45C;
+}
+
+.sthac-check-pill input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #072619;
+  cursor: pointer;
+}
+
+html[data-theme="dark"] .sthac-check-pill input[type="checkbox"] {
+  accent-color: #D9B45C;
+}
+
+/* ==================== CASE 2 KLASEMEN SPLIT & RULES ==================== */
+.sthac-table td.klasemen-split-cell {
+  padding: 0 !important;
+  vertical-align: middle !important;
+  border-left: 1px solid rgba(7, 38, 25, 0.08);
+  border-right: 1px solid rgba(7, 38, 25, 0.08);
+}
+
+html[data-theme="dark"] .sthac-table td.klasemen-split-cell {
+  border-left-color: rgba(217, 180, 92, 0.16);
+  border-right-color: rgba(217, 180, 92, 0.16);
+}
+
+.klasemen-split-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.klasemen-split-row {
+  min-height: 42px;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main) !important;
+}
+
+.klasemen-split-row + .klasemen-split-row {
+  border-top: 1px dashed rgba(7, 38, 25, 0.28) !important;
+}
+
+html[data-theme="dark"] .klasemen-split-row + .klasemen-split-row {
+  border-top-color: rgba(217, 180, 92, 0.38) !important;
+}
+
+.klasemen-split-row.score-col {
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #072619 !important;
+}
+
+html[data-theme="dark"] .klasemen-split-row.score-col {
+  color: #F2D078 !important;
+}
+
+/* Kartu Aturan Cara Poin Dihitung (Sesuai Gambar Referensi) */
+.sthac-rule-box {
+  background: linear-gradient(160deg, #072317 0%, #04150E 100%);
+  border: 1px solid rgba(217, 180, 92, 0.32);
+  border-top: 3px solid #D9B45C;
+  border-radius: 1.15rem;
+  padding: 1.75rem;
+  color: #F4F6F4 !important;
+  height: 100%;
+  box-shadow: 0 16px 36px -12px rgba(4, 21, 14, 0.35);
+}
+
+.sthac-rule-box h4,
+.sthac-rule-box strong {
+  color: #FFFFFF !important;
+}
+
+.sthac-rule-box p,
+.sthac-rule-box li {
+  color: rgba(244, 246, 244, 0.86) !important;
+}
+
+.sthac-rule-icon-header {
+  width: 36px;
+  height: 36px;
+  border-radius: 0.65rem;
+  background: rgba(217, 180, 92, 0.16);
+  border: 1px solid rgba(217, 180, 92, 0.45);
+  color: #F2D078 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.sthac-rule-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sthac-rule-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.32rem 0;
+  font-size: 0.9rem;
+}
+
+.sthac-rule-medal {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(217, 180, 92, 0.2);
+  border: 1px solid rgba(217, 180, 92, 0.55);
+  color: #F2D078 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.btn-rule-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(217, 180, 92, 0.35);
+  color: #F4F6F4 !important;
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-rule-pill:hover {
+  background: #D9B45C;
+  color: #051A10 !important;
+}
+
+
+/* ==================== STHAC KLASEMEN & RULES CARD THEME FIX ==================== */
+/* Garis pemisah sel Split Atas-Bawah */
+.klasemen-split-border-x {
+  border-left: 1px solid rgba(7, 38, 25, 0.1) !important;
+  border-right: 1px solid rgba(7, 38, 25, 0.1) !important;
+}
+
+html[data-theme="dark"] .klasemen-split-border-x {
+  border-left-color: rgba(217, 180, 92, 0.18) !important;
+  border-right-color: rgba(217, 180, 92, 0.18) !important;
+}
+
+.klasemen-split-item-top {
+  border-top: 1px dashed rgba(7, 38, 25, 0.25) !important;
+}
+
+html[data-theme="dark"] .klasemen-split-item-top {
+  border-top-color: rgba(217, 180, 92, 0.35) !important;
+}
+
+/* ---------------------------------------------------------------------
+   DEFAULT: LIGHT MODE (LATAR PUTIH SEPERTI KARTU LAINNYA)
+   --------------------------------------------------------------------- */
+html body .sthac-rules-card-v2 {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(7, 38, 25, 0.12) !important;
+  border-top: 3px solid #D9B45C !important;
+  border-radius: 1.15rem !important;
+  padding: 1.85rem 2rem !important;
+  box-shadow: 0 12px 30px -10px rgba(7, 38, 25, 0.07) !important;
+  color: #2C4237 !important;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+html body .sthac-rules-card-v2 h4,
+html body .sthac-rules-card-v2 .rules-card-title {
+  color: #072619 !important;
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  margin-bottom: 0 !important;
+}
+
+html body .sthac-rules-card-v2 strong,
+html body .sthac-rules-card-v2 .rules-highlight {
+  color: #072619 !important;
+  font-weight: 700 !important;
+}
+
+html body .sthac-rules-card-v2 span,
+html body .sthac-rules-card-v2 p,
+html body .sthac-rules-card-v2 li {
+  color: #2C4237 !important;
+}
+
+html body .sthac-rules-card-v2 .rules-footnote {
+  color: #5A7065 !important;
+  font-size: 0.84rem !important;
+  line-height: 1.65 !important;
+}
+
+/* Ikon Header & Medali saat Light Mode */
+html body .sthac-rules-card-v2 .rules-header-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 0.6rem;
+  background: rgba(217, 180, 92, 0.18) !important;
+  border: 1px solid rgba(217, 180, 92, 0.55) !important;
+  color: #9A721C !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+html body .sthac-rules-card-v2 .rules-header-icon i {
+  color: #9A721C !important;
+}
+
+html body .sthac-rules-card-v2 .rules-medal-bullet {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(217, 180, 92, 0.18) !important;
+  border: 1px solid rgba(217, 180, 92, 0.55) !important;
+  color: #9A721C !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+}
+
+html body .sthac-rules-card-v2 .rules-medal-bullet i {
+  color: #9A721C !important;
+}
+
+html body .sthac-rules-card-v2 .rules-neutral-bullet {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(7, 38, 25, 0.07) !important;
+  border: 1px solid rgba(7, 38, 25, 0.22) !important;
+  color: #072619 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.74rem;
+  flex-shrink: 0;
+}
+
+html body .sthac-rules-card-v2 .rules-neutral-bullet i {
+  color: #072619 !important;
+}
+
+html body .sthac-rules-card-v2 .rules-square-bullet {
+  width: 24px;
+  height: 24px;
+  border-radius: 0.35rem;
+  background: rgba(217, 180, 92, 0.2) !important;
+  border: 1px solid rgba(217, 180, 92, 0.55) !important;
+  color: #9A721C !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.74rem;
+  flex-shrink: 0;
+}
+
+html body .sthac-rules-card-v2 .rules-square-bullet i {
+  color: #9A721C !important;
+}
+
+html body .sthac-rules-card-v2 .rules-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.15rem;
+  border-radius: 999px;
+  background: rgba(7, 38, 25, 0.04) !important;
+  border: 1px solid rgba(7, 38, 25, 0.18) !important;
+  color: #072619 !important;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+html body .sthac-rules-card-v2 .rules-action-btn:hover {
+  background: #072619 !important;
+  border-color: #072619 !important;
+  color: #FFFFFF !important;
+}
+
+/* ---------------------------------------------------------------------
+   DARK MODE: LATAR HIJAU TUA MEWAH (SEPERTI GAMBAR REFERENSI)
+   --------------------------------------------------------------------- */
+html[data-theme="dark"] body .sthac-rules-card-v2 {
+  background: linear-gradient(165deg, #072318 0%, #04150E 100%) !important;
+  border: 1px solid rgba(217, 180, 92, 0.35) !important;
+  border-top: 2px solid #D9B45C !important;
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.5) !important;
+  color: #C7D6CE !important;
+}
+
+html[data-theme="dark"] body .sthac-rules-card-v2 h4,
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-card-title,
+html[data-theme="dark"] body .sthac-rules-card-v2 strong,
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-highlight {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] body .sthac-rules-card-v2 span,
+html[data-theme="dark"] body .sthac-rules-card-v2 p,
+html[data-theme="dark"] body .sthac-rules-card-v2 li {
+  color: #C7D6CE !important;
+}
+
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-footnote {
+  color: rgba(199, 214, 206, 0.78) !important;
+}
+
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-header-icon,
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-header-icon i,
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-medal-bullet,
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-medal-bullet i,
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-square-bullet,
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-square-bullet i {
+  color: #E5C158 !important;
+}
+
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-neutral-bullet {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-neutral-bullet i {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-action-btn {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(217, 180, 92, 0.32) !important;
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] body .sthac-rules-card-v2 .rules-action-btn:hover {
+  background: #D9B45C !important;
+  border-color: #D9B45C !important;
+  color: #04150E !important;
+}

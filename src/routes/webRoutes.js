@@ -1,3 +1,4 @@
+const { buildOfficialKlasemen } = require('../services/KlasemenCalculator');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
@@ -21,7 +22,6 @@ function createSafeBundle(baseObj) {
     }
   });
 }
-
 function getTemplateVariables(viewName) {
   try {
     const filePath = path.join(process.cwd(), 'views', `${viewName}.ejs`);
@@ -158,6 +158,7 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
     statusVerifikasi: r.statusVerifikasi || 'Diterima',
     statusAktif: r.statusAktif !== false
   }));
+  const riders = riderList;
 
   const pelatihList = pelatihRaw.map((c, i) => ({
     ...c,
@@ -518,6 +519,9 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
 
   const cntMenunggu = pendaftarList.filter(p => p.statusAcc !== 'Diterima').length;
   const cntDiterima = pendaftarList.filter(p => p.statusAcc === 'Diterima').length + riderList.length;
+  
+  
+
   const stats = {
     menungguAcc: cntMenunggu,
     pendingAcc: cntMenunggu,
@@ -691,6 +695,7 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
     sponsors: sponsorList,
     beritaDetail: null,
     newsDetail: null
+  
   };
 
   if (viewName) {
@@ -705,7 +710,6 @@ async function buildViewContext(req, activePage, pageTitle, viewName) {
       }
     });
   }
-
   return ctx;
 }
 
@@ -741,3 +745,25 @@ router.get(['/panitia', '/admin'], safeRoute('panitia', 'Panel Panitia', 'pages/
 
 module.exports = router;
 module.exports.buildViewContext = buildViewContext;
+router.get('/klasemen', async (req, res) => {
+  try {
+    const storePath = path.join(process.cwd(), 'prisma', 'sthac-unified-store.json');
+    let riders = [];
+    if (fs.existsSync(storePath)) {
+      const store = JSON.parse(fs.readFileSync(storePath, 'utf8'));
+      if (Array.isArray(store.rider)) riders = store.rider;
+    }
+
+    const { buildOfficialKlasemen } = require('../services/KlasemenCalculator');
+    const viewModel = buildOfficialKlasemen({
+      riderList: riders,
+      scoreboardByClass: global.scoreboardByClass || [],
+      settings: {}
+    });
+
+    res.render('pages/juara', viewModel);
+  } catch (err) {
+    console.error('Error /klasemen:', err);
+    res.render('pages/juara', { klasemenList: [], settings: {} });
+  }
+});

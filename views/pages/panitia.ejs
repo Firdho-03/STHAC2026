@@ -43,7 +43,7 @@
             <label class="small fw-bold text-warning mb-1 d-block">ALAMAT EMAIL PANITIA / JURI *</label>
             <input type="email" id="inp-login-email" class="form-control sthac-input" placeholder="Masukkan email resmi Anda..." required />
           </div>
-          <button type="submit" class="btn btn-gold-pill w-100 py-2 fw-bold">
+          <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold">
             <i class="bi bi-send-fill me-1"></i> Kirim Kode OTP ke Email
           </button>
         </form>
@@ -71,7 +71,7 @@
               </select>
             </div>
           </div>
-          <button type="submit" class="btn btn-gold-pill w-100 py-2 fw-bold">
+          <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold">
             <i class="bi bi-envelope-check-fill me-1"></i> Kirim Kode Verifikasi OTP
           </button>
         </form>
@@ -92,7 +92,7 @@
               class="form-control sthac-input text-center font-monospace fs-4 fw-bold"
               style="letter-spacing: 8px;" placeholder="••••••" required />
           </div>
-          <button type="submit" class="btn btn-gold-pill w-100 py-2 fw-bold mb-2">
+          <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold">
             <i class="bi bi-shield-check me-1"></i> Verifikasi &amp; Masuk Panel
           </button>
           <div class="d-flex justify-content-between align-items-center pt-2">
@@ -113,7 +113,7 @@
             <label class="small fw-bold text-warning mb-1 d-block">KODE AKSES OTORISASI PANITIA *</label>
             <input type="password" id="inp-quick-password" class="form-control sthac-input" placeholder="Masukkan sandi otorisasi panitia..." required />
           </div>
-          <button type="submit" class="btn btn-gold-pill w-100 py-2 fw-bold">
+          <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold">
             <i class="bi bi-box-arrow-in-right me-1"></i> Masuk Panel Panitia
           </button>
         </form>
@@ -612,16 +612,36 @@
                 </div>
                 <div class="col-4">
                   <label class="small fw-bold text-warning mb-1">KATEGORI</label>
-                  <select name="kategoriUmur" id="inp-rider-kategori" class="form-select sthac-input">
-                    <option value="U14">U14</option>
-                    <option value="Terbuka">Terbuka</option>
-                  </select>
+                  <input type="hidden" name="kategori" id="inp-rider-kategori" value="U14" />
+                  <div class="sthac-multi-check-group" id="adm-kat-group">
+                    <label class="sthac-check-pill py-1 px-2">
+                      <input type="checkbox" class="chk-adm-kat" value="U14" checked onchange="syncAdmKatAndKelas()" />
+                      <span>U14</span>
+                    </label>
+                    <label class="sthac-check-pill py-1 px-2">
+                      <input type="checkbox" class="chk-adm-kat" value="Terbuka" onchange="syncAdmKatAndKelas()" />
+                      <span>Terbuka</span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
               <div class="row g-2 mb-2">
                 <div class="col-6">
-                  <label class="small fw-bold text-warning mb-1">ASAL STABLE / KLUB *</label>
+                  <div class="mb-3">
+                <label class="small fw-bold mb-1">KELAS PERTANDINGAN DIIKUTI (BISA PILIH &gt; 1 KELAS)</label>
+                <input type="hidden" name="kelasYangDiikuti" id="inp-rider-kelas" value="Beginner ( Walk ) · U14" />
+                <div class="sthac-multi-check-group" id="adm-kelas-group">
+                  <% const admListKls = (typeof kelasList !== 'undefined' && kelasList && kelasList.length > 0) ? kelasList : [{ namaKelas: 'Beginner ( Walk ) · U14' }, { namaKelas: 'Beginner ( Trot ) · Terbuka' }]; %>
+                  <% admListKls.forEach((k, idx) => { %>
+                    <label class="sthac-check-pill">
+                      <input type="checkbox" class="chk-adm-kls" value="<%= k.namaKelas %>" <%= idx === 0 ? 'checked' : '' %> onchange="syncAdmKatAndKelas()" />
+                      <span><%= k.namaKelas %></span>
+                    </label>
+                  <% }) %>
+                </div>
+              </div>
+              <label class="small fw-bold text-warning mb-1">ASAL STABLE / KLUB *</label>
                   <input type="text" name="asalStable" id="inp-rider-stable" class="form-control sthac-input" placeholder="Saiga Stable" required />
                 </div>
                 <div class="col-6">
@@ -985,7 +1005,7 @@
                 <label class="small fw-bold text-warning mb-1">LOKASI VENUE</label>
                 <input type="text" name="lokasi" value="<%= seriList[0] ? seriList[0].lokasi : 'Saiga Stable, Tangerang Selatan' %>" class="form-control sthac-input" />
               </div>
-              <button type="submit" class="btn btn-gold-pill w-100 py-2 fw-bold"><i class="bi bi-save me-1"></i> Simpan Perubahan Seri</button>
+              <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold"><i class="bi bi-save me-1"></i> Simpan Perubahan Seri</button>
             </form>
           </div>
         </div>
@@ -1330,7 +1350,7 @@
               <span class="saiga-filter-chip">Poin Waktu: <strong id="prev-poin-waktu" class="text-warning">0.0 Pts</strong></span>
               <span class="badge-green-soft px-3 py-2">Estimasi Skor Run: <strong id="prev-total-skor">15.00 Pts</strong></span>
             </div>
-            <button type="submit" class="btn btn-gold-pill px-5 py-2 fw-bold">
+            <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold">
               <i class="bi bi-check2-circle me-1"></i> Simpan Hasil Run &amp; Perbarui Papan Skor Publik
             </button>
           </div>
@@ -1973,7 +1993,7 @@
             </div>
           </div>
           <div class="mt-4">
-            <button type="submit" class="btn btn-gold-pill px-4 py-2 fw-bold"><i class="bi bi-check2-circle me-1"></i> Simpan Pengaturan Situs</button>
+            <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold"><i class="bi bi-check2-circle me-1"></i> Simpan Pengaturan Situs</button>
           </div>
         </form>
       </div>
@@ -2659,4 +2679,16 @@
   };
 
   document.addEventListener('DOMContentLoaded', () => { renderAdminSessionState(); onSelectSponsorSlot(1); });
+</script>
+
+<script>
+  window.syncAdmKatAndKelas = function() {
+    var katChecked = Array.from(document.querySelectorAll('.chk-adm-kat:checked')).map(function(c){ return c.value; });
+    var katInp = document.getElementById('inp-rider-kategori');
+    if (katInp) katInp.value = katChecked.length ? katChecked.join(' | ') : 'U14';
+
+    var klsChecked = Array.from(document.querySelectorAll('.chk-adm-kls:checked')).map(function(c){ return c.value; });
+    var klsInp = document.getElementById('inp-rider-kelas');
+    if (klsInp) klsInp.value = klsChecked.join(' | ');
+  };
 </script>
