@@ -778,6 +778,20 @@
       "content": "Untuk nomor Qabaq hanya diperbolehkan menggunakan anak panah flu-flu (blunt). Tim medis dan panitia berhak menghentikan peserta atau kuda yang dinilai tidak bugar.",
       "summary": "Seluruh peserta wajib mengenakan helm berkuda, sepatu boots berhak, serta melewati pemeriksaan anak panah pukul 07:00 WIB.",
       "excerpt": "Seluruh peserta wajib mengenakan helm berkuda, sepatu boots berhak, serta melewati pemeriksaan anak panah pukul 07:00 WIB."
+    },
+    {
+      "id": 3,
+      "judul": "testing 1",
+      "kategori": "Liputan Seri",
+      "tanggalTerbit": "24 Oktober 2026",
+      "ringkasan": "tes-tes",
+      "slug": "testing-1-4158",
+      "kategoriUmur": "Liputan Seri",
+      "title": "testing 1",
+      "summary": "tes-tes",
+      "excerpt": "tes-tes",
+      "createdAt": "2026-11-06T13:07:34.158Z",
+      "updatedAt": "2026-11-06T13:07:34.158Z"
     }
   ],
   "sponsor": [
@@ -1773,5 +1787,82 @@
   "run": [],
   "runs": [],
   "hasilRun": [],
-  "klasemen": []
+  "klasemen": [],
+  "rundown": [
+    {
+      "id": 1,
+      "jam": "07.00",
+      "kegiatan": "Registrasi ulang peserta & pemeriksaan anak panah"
+    },
+    {
+      "id": 2,
+      "jam": "07.30",
+      "kegiatan": "Briefing panitia, juri, dan course designer"
+    },
+    {
+      "id": 3,
+      "jam": "08.00",
+      "kegiatan": "Pemanasan lintasan (walk/trot) untuk kelas Beginner"
+    },
+    {
+      "id": 4,
+      "jam": "08.30",
+      "kegiatan": "Kelas Beginner (Pemula) dimulai"
+    },
+    {
+      "id": 5,
+      "jam": "10.00",
+      "kegiatan": "Kelas Intermediate (Menengah)"
+    },
+    {
+      "id": 6,
+      "jam": "12.00",
+      "kegiatan": "Ishoma"
+    },
+    {
+      "id": 7,
+      "jam": "13.00",
+      "kegiatan": "Kelas Advanced (Mahir)"
+    },
+    {
+      "id": 8,
+      "jam": "15.30",
+      "kegiatan": "Kelas Open Qabaq (Exhibition)"
+    },
+    {
+      "id": 9,
+      "jam": "16.30",
+      "kegiatan": "Penyerahan medali & penutupan"
+    }
+  ],
+  "peraturan": [
+    {
+      "id": 1,
+      "isi": "Peserta wajib mengenakan <strong>helm berkuda</strong> dan <strong>sepatu riding boots berhak (heels)</strong>."
+    },
+    {
+      "id": 2,
+      "isi": "Anak panah wajib diperiksa oleh panitia sebelum bertanding; untuk tembakan <em>Qabaq</em> hanya diperbolehkan memakai <strong>anak panah flu-flu (blunt)</strong>."
+    },
+    {
+      "id": 3,
+      "isi": "Peserta wajib mengenakan <strong>nomor dada (Bib number)</strong> yang dibagikan panitia."
+    },
+    {
+      "id": 4,
+      "isi": "Kuda dan rider diperiksa oleh <strong>tim medis</strong> sebelum berlaga; panitia berhak menghentikan peserta yang dinilai tidak bugar."
+    },
+    {
+      "id": 5,
+      "isi": "Keputusan juri bersifat mengikat; protes diajukan secara tertulis maksimal <strong>15 menit setelah kelas berakhir</strong>."
+    },
+    {
+      "id": 6,
+      "isi": "Peserta yang tidak hadir setelah <strong>dipanggil 3 kali</strong> dianggap mengundurkan diri (<em>walkover</em>)."
+    },
+    {
+      "id": 7,
+      "isi": "<strong>Kesejahteraan kuda (Horse Welfare)</strong> menjadi prioritas utama: segala bentuk kekerasan terhadap kuda berakibat diskualifikasi langsung."
+    }
+  ]
 }

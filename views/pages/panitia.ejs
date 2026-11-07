@@ -176,6 +176,7 @@
               <li><a class="dropdown-item adm-sub-link" data-tab="panitia" href="javascript:void(0)" onclick="openAdminTab('panitia')"><i class="bi bi-person-vcard-fill me-2 text-warning"></i> Panitia &amp; Juri (<%= stats.panitia %>)</a></li>
               <li><a class="dropdown-item adm-sub-link" data-tab="unduhan" href="javascript:void(0)" onclick="openAdminTab('unduhan')"><i class="bi bi-file-earmark-arrow-down-fill me-2 text-warning"></i> Unduhan Dokumen (<%= stats.dokumen %>)</a></li>
               <li><a class="dropdown-item adm-sub-link" data-tab="berita" href="javascript:void(0)" onclick="openAdminTab('berita')"><i class="bi bi-newspaper me-2 text-warning"></i> Berita &amp; Warta (<%= stats.berita %>)</a></li>
+              <li><a id="dropdown-item-rundown-aturan" class="dropdown-item adm-sub-link" data-tab="rundown" href="javascript:void(0)" onclick="openAdminTab('rundown')"><i class="bi bi-clock-history me-2 text-warning"></i> Rundown &amp; Aturan (<span id="badge-nav-rundown">9</span>)</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item adm-sub-link" data-tab="sponsor" href="javascript:void(0)" onclick="openAdminTab('sponsor')"><i class="bi bi-patch-check-fill me-2 text-warning"></i> Sponsor &amp; Mitra (6 Slot)</a></li>
             </ul>
@@ -1796,10 +1797,149 @@
             </div>
           </div>
         </div>
+      </div>    </div>        
+    
+    <!-- ==================== 12A. TAB RUNDOWN & ATURAN UMUM PERTANDINGAN (OOP MODULE) ==================== -->
+    <div id="adm-sec-rundown" class="admin-section" style="display:none;">
+      <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">
+        <div>
+          <div class="saiga-breadcrumb mb-1">PANEL PANITIA &rsaquo; SISTEM &amp; KONTEN &rsaquo; RUNDOWN &amp; ATURAN</div>
+          <h2 class="font-display fw-bold text-white mb-1">Kelola Susunan Acara &amp; Aturan Pertandingan</h2>
+          <p class="small text-white-50 mb-0">Atur jadwal rundown Hari-H (kolom waktu di sebelah kiri &amp; teks kegiatan di kanan) serta 7 aturan umum pertandingan.</p>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <div class="saiga-kpi-mini text-center">
+            <div class="kpi-val" id="kpi-rundown-count">9</div>
+            <div class="kpi-lbl">Jadwal Acara</div>
+          </div>
+          <div class="saiga-kpi-mini text-center">
+            <div class="kpi-val" id="kpi-aturan-count">7</div>
+            <div class="kpi-lbl">Aturan Umum</div>
+          </div>
+          <a href="/event" target="_blank" class="btn btn-sm btn-dark-pill px-3 py-2">
+            <i class="bi bi-box-arrow-up-right me-1 text-warning"></i> Lihat di Halaman Event
+          </a>
+        </div>
+      </div>
+
+      <!-- BARIS 1: SUSUNAN ACARA HARI-H (RUNDOWN) -->
+      <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+          <div class="sthac-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <span class="saiga-avatar"><i class="bi bi-clock-fill"></i></span>
+                <div>
+                  <h6 class="font-display fw-bold text-uppercase text-white mb-0">INPUT RUNDOWN ACARA</h6>
+                  <small class="text-white-50" style="font-size:0.7rem;">Isi Kolom Waktu (Kiri) &amp; Kegiatan (Kanan)</small>
+                </div>
+              </div>
+              <span class="badge-green-soft" id="oop-badge-mode-rnd">MODE TAMBAH</span>
+            </div>
+
+            <form onsubmit="window.sthacPanitiaApp.rundownManager.submitRundownForm(event)">
+              <input type="hidden" id="oop-inp-rnd-id" value="" />
+              <div class="row g-2 mb-3">
+                <div class="col-4">
+                  <label class="small fw-bold text-warning mb-1">WAKTU / JAM *</label>
+                  <input type="text" id="oop-inp-rnd-jam" class="form-control sthac-input fw-bold" placeholder="07.00" required />
+                </div>
+                <div class="col-8">
+                  <label class="small fw-bold text-warning mb-1">TEKS KEGIATAN ACARA *</label>
+                  <input type="text" id="oop-inp-rnd-keg" class="form-control sthac-input" placeholder="Registrasi ulang peserta..." required />
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold">
+                  <i class="bi bi-save me-1"></i> <span id="oop-btn-label-rnd">Simpan Jadwal</span>
+                </button>
+                <button type="button" onclick="window.sthacPanitiaApp.rundownManager.resetRundownForm()" class="btn btn-dark-pill px-3 py-2">Reset</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="sthac-card p-4 h-100">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <h6 class="font-display fw-bold text-uppercase text-white mb-0">SUSUNAN ACARA HARI-H (<span id="lbl-rundown-count">9</span>)</h6>
+              <button type="button" onclick="window.sthacPanitiaApp.rundownManager.restoreDefaultRundown()" class="btn btn-sm btn-dark-pill px-3 py-1">
+                <i class="bi bi-arrow-counterclockwise me-1 text-warning"></i> Muat Default (07.00 - 16.30)
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="table sthac-table mb-0 small align-middle">
+                <thead>
+                  <tr>
+                    <th style="width: 115px;">WAKTU</th>
+                    <th>TEKS KEGIATAN ACARA</th>
+                    <th class="text-end" style="width: 120px;">AKSI</th>
+                  </tr>
+                </thead>
+                <tbody id="oop-rundown-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BARIS 2: ATURAN UMUM PERTANDINGAN -->
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="sthac-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <span class="saiga-avatar"><i class="bi bi-shield-check"></i></span>
+                <div>
+                  <h6 class="font-display fw-bold text-uppercase text-white mb-0">INPUT ATURAN UMUM</h6>
+                  <small class="text-white-50" style="font-size:0.7rem;">Regulasi &amp; Ketentuan Pertandingan</small>
+                </div>
+              </div>
+              <span class="badge-green-soft" id="oop-badge-mode-prt">MODE TAMBAH</span>
+            </div>
+
+            <form onsubmit="window.sthacPanitiaApp.rundownManager.submitAturanForm(event)">
+              <input type="hidden" id="oop-inp-prt-id" value="" />
+              <div class="mb-3">
+                <label class="small fw-bold text-warning mb-1">TEKS BUTIR ATURAN UMUM *</label>
+                <textarea id="oop-inp-prt-isi" rows="4" class="form-control sthac-input" placeholder="Tulis butir aturan umum pertandingan..." required></textarea>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold">
+                  <i class="bi bi-save me-1"></i> <span id="oop-btn-label-prt">Simpan Aturan</span>
+                </button>
+                <button type="button" onclick="window.sthacPanitiaApp.rundownManager.resetAturanForm()" class="btn btn-dark-pill px-3 py-2">Reset</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="sthac-card p-4 h-100">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <h6 class="font-display fw-bold text-uppercase text-white mb-0">ATURAN UMUM PERTANDINGAN (<span id="lbl-aturan-count">7</span>)</h6>
+              <button type="button" onclick="window.sthacPanitiaApp.rundownManager.restoreDefaultAturan()" class="btn btn-sm btn-dark-pill px-3 py-1">
+                <i class="bi bi-arrow-counterclockwise me-1 text-warning"></i> Muat 7 Aturan Default
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="table sthac-table mb-0 small align-middle">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">NO</th>
+                    <th>ISI ATURAN UMUM PERTANDINGAN</th>
+                    <th class="text-end" style="width: 105px;">AKSI</th>
+                  </tr>
+                </thead>
+                <tbody id="oop-aturan-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-        <!-- ==================== 12B. TAB SPONSOR & MITRA (6 KOTAK FOTO SPONSOR BERANDA) ==================== -->
+    <!-- ==================== 12B. TAB SPONSOR & MITRA (6 KOTAK FOTO SPONSOR BERANDA) ==================== -->
     <div id="adm-sec-sponsor" class="admin-section" style="display:none;">
       <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">
         <div>
@@ -1999,710 +2139,15 @@
       </div>
     </div>
 
-  </div>
-</div>
-
+  </div><script src="/js/PanitiaDashboardApp.js"></script>
+<script src="/js/PanitiaDashboardApp.js"></script>
 <script>
-  let pendingOtpEmail = '';
-  let pendingOtpName = '';
-  let pendingOtpRole = '';
-  let pendingOtpPurpose = 'LOGIN';
-  let popupConfirmCallback = null;
-
-  // ==================== POP-UP MODAL MODERN ====================
-  window.showSthacPopup = function(title, message, type = 'error', onConfirm = null) {
-    const backdrop = document.getElementById('sthac-popup-backdrop');
-    const iconWrap = document.getElementById('popup-icon-wrap');
-    const iconEl = document.getElementById('popup-icon');
-    const titleEl = document.getElementById('popup-title');
-    const msgEl = document.getElementById('popup-message');
-    const btnCancel = document.getElementById('popup-btn-cancel');
-    const btnOk = document.getElementById('popup-btn-ok');
-
-    titleEl.innerText = title;
-    msgEl.innerHTML = message;
-    popupConfirmCallback = onConfirm;
-
-    if (type === 'success') {
-      iconWrap.style.background = 'rgba(16, 185, 129, 0.16)';
-      iconWrap.style.color = '#10B981';
-      iconEl.className = 'bi bi-check-circle-fill';
-      btnCancel.classList.add('d-none');
-      btnOk.innerText = 'Selesai';
-    } else if (type === 'confirm') {
-      iconWrap.style.background = 'rgba(245, 158, 11, 0.16)';
-      iconWrap.style.color = '#F59E0B';
-      iconEl.className = 'bi bi-question-circle-fill';
-      btnCancel.classList.remove('d-none');
-      btnOk.innerText = 'Ya, Lanjutkan';
-    } else {
-      iconWrap.style.background = 'rgba(220, 38, 38, 0.16)';
-      iconWrap.style.color = '#EF4444';
-      iconEl.className = 'bi bi-exclamation-triangle-fill';
-      btnCancel.classList.add('d-none');
-      btnOk.innerText = 'Coba Lagi';
-    }
-    backdrop.style.display = 'flex';
-  };
-
-  window.closeSthacPopup = function(confirmed = false) {
-    document.getElementById('sthac-popup-backdrop').style.display = 'none';
-    if (confirmed && typeof popupConfirmCallback === 'function') {
-      const cb = popupConfirmCallback;
-      popupConfirmCallback = null;
-      cb();
-    } else {
-      popupConfirmCallback = null;
-    }
-  };
-
-  // ==================== AUTENTIKASI LOGIN & VERIFIKASI OTP ====================
-  window.switchAuthMode = function(mode) {
-    ['login-otp', 'register-otp', 'quick-pass'].forEach(m => {
-      const pane = document.getElementById('auth-pane-' + m);
-      const btn = document.getElementById('tab-btn-' + m);
-      if (pane) pane.style.display = (m === mode) ? 'block' : 'none';
-      if (btn) btn.className = 'btn btn-sm flex-fill py-2 ' + (m === mode ? 'btn-gold-pill' : 'btn-dark-pill');
+  document.addEventListener('DOMContentLoaded', function() {
+    window.sthacPanitiaApp = new PanitiaDashboardApp({
+      existingRuns: <%- JSON.stringify(scoreRunList.map(r => ({ id: r.id, kelasId: r.kelasId, riderId: r.riderId, runNumber: r.runNumber, t1: r.target1, t2: r.target2, t3: r.target3, waktu: r.waktuTempuh, totalSkor: r.totalSkor }))) %>,
+      sponsorSlots: <%- JSON.stringify(sponsorList || []) %>
     });
-    document.getElementById('auth-otp-verify-box').style.display = 'none';
-  };
-
-  window.resetOtpView = function() {
-    switchAuthMode(pendingOtpPurpose === 'REGISTER' ? 'register-otp' : 'login-otp');
-  };
-
-  window.resendCurrentOtp = function() {
-    if (!pendingOtpEmail) return;
-    requestOtpFromServer(pendingOtpEmail, pendingOtpName, pendingOtpRole, pendingOtpPurpose);
-  };
-
-  window.handleRequestOtp = function(e, purpose) {
-    e.preventDefault();
-    const email = purpose === 'REGISTER'
-      ? document.getElementById('inp-reg-email').value.trim()
-      : document.getElementById('inp-login-email').value.trim();
-    const namaLengkap = purpose === 'REGISTER'
-      ? document.getElementById('inp-reg-name').value.trim()
-      : email.split('@')[0];
-    const jabatan = purpose === 'REGISTER'
-      ? document.getElementById('inp-reg-role').value
-      : 'Dewan Juri & Panitia';
-
-    if (!email) return showSthacPopup('Email Belum Diisi', 'Masukkan alamat email resmi Anda.', 'error');
-
-    pendingOtpEmail = email;
-    pendingOtpName = namaLengkap;
-    pendingOtpRole = jabatan;
-    pendingOtpPurpose = purpose;
-    requestOtpFromServer(email, namaLengkap, jabatan, purpose);
-  };
-
-  async function requestOtpFromServer(email, namaLengkap, jabatan, purpose) {
-    try {
-      const res = await fetch('/api/panitia/request-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, namaLengkap, jabatan, purpose })
-      });
-      const out = await res.json();
-      if (out.ok || out.success) {
-        document.getElementById('auth-pane-login-otp').style.display = 'none';
-        document.getElementById('auth-pane-register-otp').style.display = 'none';
-        document.getElementById('auth-otp-verify-box').style.display = 'block';
-        document.getElementById('lbl-target-otp-email').innerText = email;
-        const codeInp = document.getElementById('inp-verify-otp-code');
-        codeInp.value = '';
-        codeInp.focus();
-      } else {
-        showSthacPopup('Gagal Mengirim OTP', out.message || 'Tidak dapat mengirim kode OTP.', 'error');
-      }
-    } catch (err) {
-      showSthacPopup('Gangguan Koneksi', 'Tidak dapat terhubung ke server: ' + err.message, 'error');
-    }
-  }
-
-  window.handleVerifyOtp = async function(e) {
-    e.preventDefault();
-    const codeInp = document.getElementById('inp-verify-otp-code');
-    const otpCode = codeInp.value.trim();
-
-    if (!otpCode || otpCode.length < 6) {
-      return showSthacPopup('Kode OTP Belum Lengkap', 'Masukkan 6 digit angka kode OTP yang dikirim ke email Anda.', 'error');
-    }
-
-    try {
-      const res = await fetch('/api/panitia/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: pendingOtpEmail, otpCode })
-      });
-      const out = await res.json();
-      if (res.ok && (out.ok || out.success)) {
-        activateAdminSession(out.user || { namaLengkap: pendingOtpName, jabatan: pendingOtpRole, email: pendingOtpEmail });
-      } else {
-        codeInp.value = '';
-        codeInp.focus();
-        showSthacPopup('Kode OTP Salah!', out.message || 'Kode OTP yang Anda masukkan tidak sesuai atau sudah kedaluwarsa.', 'error');
-      }
-    } catch (err) {
-      showSthacPopup('Gagal Memverifikasi OTP', 'Terjadi kesalahan saat memverifikasi kode OTP.', 'error');
-    }
-  };
-
-  window.handleQuickLogin = async function(e) {
-    e.preventDefault();
-    const passInp = document.getElementById('inp-quick-password');
-    const password = passInp.value.trim();
-    try {
-      const res = await fetch('/api/panitia/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-      });
-      const out = await res.json();
-      if (res.ok && (out.ok || out.success)) {
-        activateAdminSession(out.user || { namaLengkap: 'Panitia Utama', jabatan: 'Dewan Juri', email: 'admin@sthac.com' });
-      } else {
-        passInp.value = '';
-        passInp.focus();
-        showSthacPopup('Sandi Otorisasi Salah', 'Kode sandi akses yang Anda masukkan tidak valid.', 'error');
-      }
-    } catch (err) {
-      showSthacPopup('Gangguan Koneksi', 'Gagal memverifikasi sandi akses.', 'error');
-    }
-  };
-
-  function activateAdminSession(user) {
-    sessionStorage.setItem('sthac_admin_auth', '1');
-    sessionStorage.setItem('sthac_admin_user', JSON.stringify(user));
-    localStorage.setItem('sthac_admin_auth', '1');
-    localStorage.setItem('sthac_admin_user', JSON.stringify(user));
-    renderAdminSessionState();
-  }
-
-  window.logoutAdmin = function() {
-    sessionStorage.removeItem('sthac_admin_auth');
-    sessionStorage.removeItem('sthac_admin_user');
-    localStorage.removeItem('sthac_admin_auth');
-    localStorage.removeItem('sthac_admin_user');
-    window.location.reload();
-  };
-
-  function renderAdminSessionState() {
-    const isAuth = sessionStorage.getItem('sthac_admin_auth') === '1' || localStorage.getItem('sthac_admin_auth') === '1';
-    const gate = document.getElementById('admin-login-gate');
-    const panel = document.getElementById('admin-dashboard-panel');
-    if (isAuth) {
-      if (gate) gate.style.display = 'none';
-      if (panel) panel.style.display = 'block';
-      try {
-        const u = JSON.parse(localStorage.getItem('sthac_admin_user') || sessionStorage.getItem('sthac_admin_user') || '{}');
-        if (u && u.namaLengkap) {
-          document.getElementById('lbl-active-admin-user').innerText = u.namaLengkap + ' · ' + (u.jabatan || 'Panitia');
-          const wEl = document.getElementById('lbl-welcome-admin');
-          if (wEl) wEl.innerText = u.namaLengkap + ' (' + (u.jabatan || 'Super Admin') + ')';
-        }
-      } catch (e) {}
-      const savedTab = sessionStorage.getItem('sthac_active_adm_tab') || 'ringkasan';
-      openAdminTab(savedTab);
-      syncExistingRunToForm();
-    } else {
-      if (gate) gate.style.display = 'block';
-      if (panel) panel.style.display = 'none';
-    }
-  }
-
-  // ==================== NAVIGASI PANEL PANITIA (BEBAS NYANGKUT) ====================
-  window.closeAllAdminDropdowns = function(exceptToggle = null) {
-    document.querySelectorAll('#admin-nav-pills .dropdown').forEach(dropWrapper => {
-      const toggleBtn = dropWrapper.querySelector('.dropdown-toggle');
-      const menuEl = dropWrapper.querySelector('.dropdown-menu');
-      if (exceptToggle && toggleBtn === exceptToggle) return;
-
-      if (toggleBtn && window.bootstrap && bootstrap.Dropdown) {
-        const inst = bootstrap.Dropdown.getInstance(toggleBtn);
-        if (inst) {
-          try { inst.hide(); } catch (e) {}
-        }
-      }
-      if (toggleBtn) {
-        toggleBtn.classList.remove('show');
-        toggleBtn.setAttribute('aria-expanded', 'false');
-      }
-      if (menuEl) {
-        menuEl.classList.remove('show');
-        menuEl.removeAttribute('data-bs-popper');
-        menuEl.style.display = '';
-      }
-    });
-  };
-
-  window.openAdminTab = function(tabName) {
-    // 1. Tutup paksa semua dropdown begitu menu dipilih
-    closeAllAdminDropdowns();
-
-    // 2. Simpan & tampilkan section yang dipilih
-    sessionStorage.setItem('sthac_active_adm_tab', tabName);
-    document.querySelectorAll('.admin-section').forEach(el => { el.style.display = 'none'; });
-    const target = document.getElementById('adm-sec-' + tabName);
-    if (target) target.style.display = 'block';
-
-    // 3. Perbarui warna tombol grup utama tanpa merusak state dropdown
-    const groups = {
-      ringkasan: ['ringkasan'],
-      peserta: ['pendaftar', 'rider', 'pelatih', 'stable'],
-      teknis: ['acara', 'lintasan', 'penilaian', 'poin'],
-      sistem: ['panitia', 'unduhan', 'berita', 'sponsor'],
-      setelan: ['setelan']
-    };
-
-    Object.keys(groups).forEach(gKey => {
-      const btn = document.getElementById('adm-group-' + gKey);
-      if (!btn) return;
-      const isActive = groups[gKey].includes(tabName);
-      btn.classList.remove('btn-gold-pill', 'btn-dark-pill', 'show');
-      btn.classList.add(isActive ? 'btn-gold-pill' : 'btn-dark-pill');
-      btn.setAttribute('aria-expanded', 'false');
-    });
-
-    // 4. Tandai sub-menu yang sedang aktif
-    document.querySelectorAll('.adm-sub-link').forEach(link => {
-      if (link.getAttribute('data-tab') === tabName) link.classList.add('active-sub');
-      else link.classList.remove('active-sub');
-    });
-  };
-
-  // Pastikan saat 1 tombol dropdown diklik, dropdown lain yang terbuka langsung ditutup
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('#admin-nav-pills .dropdown-toggle').forEach(btn => {
-      btn.addEventListener('click', () => {
-        closeAllAdminDropdowns(btn);
-      });
-    });
-
-    // Tutup dropdown jika user klik area kosong di luar navbar
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#admin-nav-pills')) {
-        closeAllAdminDropdowns();
-      }
-    });
+    window.sthacPanitiaApp.init();
   });
-
-  // ==================== FILTER & LIVE SEARCH INTERAKTIF ====================
-  window.filterTableRows = function(tableId, query) {
-    const q = String(query || '').toLowerCase().trim();
-    const tbl = document.getElementById(tableId);
-    if (!tbl) return;
-    tbl.querySelectorAll('tbody tr').forEach(tr => {
-      const text = tr.innerText.toLowerCase();
-      tr.style.display = (!q || text.includes(q)) ? '' : 'none';
-    });
-  };
-
-  window.filterPendaftarCards = function(status, btnEl) {
-    if (btnEl && btnEl.parentElement) {
-      btnEl.parentElement.querySelectorAll('.saiga-filter-chip').forEach(b => b.classList.remove('active'));
-      btnEl.classList.add('active');
-    }
-    document.querySelectorAll('.pendaftar-card-item').forEach(card => {
-      const st = card.getAttribute('data-status') || '';
-      card.style.display = (status === 'ALL' || st.toLowerCase() === status.toLowerCase()) ? '' : 'none';
-    });
-  };
-
-  window.searchPendaftarCards = function(val) {
-    const q = String(val || '').toLowerCase().trim();
-    document.querySelectorAll('.pendaftar-card-item').forEach(card => {
-      const hay = card.getAttribute('data-search') || '';
-      card.style.display = (!q || hay.includes(q)) ? '' : 'none';
-    });
-  };
-
-  window.filterBeritaCards = function(val) {
-    const q = String(val || '').toLowerCase().trim();
-    document.querySelectorAll('.berita-card-item').forEach(card => {
-      const hay = card.getAttribute('data-search') || '';
-      card.style.display = (!q || hay.includes(q)) ? '' : 'none';
-    });
-  };
-
-  // ==================== KALKULATOR LIVE PREVIEW SKOR RUN ====================
-  const existingRunsData = <%- JSON.stringify(scoreRunList.map(r => ({ id: r.id, kelasId: r.kelasId, riderId: r.riderId, runNumber: r.runNumber, t1: r.target1, t2: r.target2, t3: r.target3, waktu: r.waktuTempuh, totalSkor: r.totalSkor }))) %>;
-
-  window.syncExistingRunToForm = function() {
-    const kId = Number(document.getElementById('inp-score-kelas')?.value || 0);
-    const rId = Number(document.getElementById('inp-score-rider')?.value || 0);
-    const runNo = Number(document.getElementById('inp-score-run')?.value || 1);
-    const match = existingRunsData.find(x => Number(x.kelasId) === kId && Number(x.riderId) === rId && Number(x.runNumber) === runNo);
-    if (match) {
-      document.getElementById('inp-score-t1').value = match.t1;
-      document.getElementById('inp-score-t2').value = match.t2;
-      document.getElementById('inp-score-t3').value = match.t3;
-      document.getElementById('inp-score-waktu').value = match.waktu;
-    }
-    recalcLiveScorePreview();
-  };
-
-  window.stepRunNumber = function(delta) {
-    const inp = document.getElementById('inp-score-run');
-    if (!inp) return;
-    const next = Math.max(1, Math.min(10, (parseInt(inp.value, 10) || 1) + delta));
-    inp.value = next;
-    syncExistingRunToForm();
-  };
-
-  window.recalcLiveScorePreview = function() {
-    const t1 = parseFloat(document.getElementById('inp-score-t1')?.value) || 0;
-    const t2 = parseFloat(document.getElementById('inp-score-t2')?.value) || 0;
-    const t3 = parseFloat(document.getElementById('inp-score-t3')?.value) || 0;
-    const waktu = parseFloat(document.getElementById('inp-score-waktu')?.value) || 0;
-
-    const selKelas = document.getElementById('inp-score-kelas');
-    const opt = selKelas && selKelas.selectedOptions ? selKelas.selectedOptions[0] : null;
-    const parTime = opt ? (parseFloat(opt.getAttribute('data-partime')) || 0) : 0;
-    const bonusSapu = opt ? (parseFloat(opt.getAttribute('data-bonus')) || 0) : 0;
-
-    const poinTarget = t1 + t2 + t3;
-    const kenaCount = [t1, t2, t3].filter(v => v > 0).length;
-
-    let poinWaktu = 0;
-    if (parTime > 0 && waktu > 0 && kenaCount > 0) {
-      poinWaktu = parTime - waktu;
-    }
-    const bonus = (kenaCount === 3 && bonusSapu > 0) ? bonusSapu : 0;
-    const total = Math.max(0, poinTarget + poinWaktu + bonus);
-
-    const elT = document.getElementById('prev-poin-target');
-    const elW = document.getElementById('prev-poin-waktu');
-    const elTot = document.getElementById('prev-total-skor');
-    if (elT) elT.innerText = poinTarget.toFixed(1) + ' Pts';
-    if (elW) elW.innerText = poinWaktu.toFixed(2) + ' Pts';
-    if (elTot) elTot.innerText = total.toFixed(2) + ' Pts';
-  };
-
-  // ==================== CRUD & EDIT PRE-FILL ====================
-  window.apiPanitiaCrud = async function(entity, action, id = null, data = {}) {
-    try {
-      const res = await fetch('/api/panitia/crud', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entity, action, id, data })
-      });
-      const out = await res.json();
-      if (res.ok && (out.ok || out.success)) {
-        showSthacPopup('Berhasil Disimpan', out.message || 'Data berhasil diperbarui.', 'success', () => {
-          window.location.reload();
-        });
-      } else {
-        showSthacPopup('Gagal Memproses Data', out.message || 'Terjadi kesalahan saat menyimpan data.', 'error');
-      }
-    } catch (err) {
-      showSthacPopup('Gangguan Koneksi', 'Tidak dapat menghubungi server: ' + err.message, 'error');
-    }
-  };
-
-  window.toggleRegistrationStatus = function(openState) {
-    apiPanitiaCrud('setelan', 'update', 1, { registrationOpen: openState });
-  };
-
-  window.submitEntityForm = function(e, entity) {
-    e.preventDefault();
-    const form = e.target;
-    const fd = new FormData(form);
-    const dataObj = {};
-    fd.forEach((v, k) => { dataObj[k] = v; });
-    const idVal = dataObj.id ? parseInt(dataObj.id, 10) : null;
-    apiPanitiaCrud(entity, idVal ? 'update' : 'create', idVal, dataObj);
-  };
-
-  window.resetEntityForm = function(formId, hiddenIdField, titleId, defaultTitle) {
-    const f = document.getElementById(formId);
-    if (f) f.reset();
-    const h = document.getElementById(hiddenIdField);
-    if (h) h.value = '';
-    const t = document.getElementById(titleId);
-    if (t) t.innerText = defaultTitle;
-  };
-
-  window.fillRiderEdit = function(r) {
-    document.getElementById('inp-rider-id').value = r.id;
-    document.getElementById('inp-rider-kode').value = r.kodeRider || '';
-    document.getElementById('inp-rider-nama').value = r.namaLengkap || '';
-    document.getElementById('inp-rider-gender').value = r.gender || 'Putra';
-    document.getElementById('inp-rider-umur').value = r.umur || 15;
-    document.getElementById('inp-rider-kategori').value = r.kategoriUmur || 'Terbuka';
-    document.getElementById('inp-rider-stable').value = r.asalStable || '';
-    document.getElementById('inp-rider-pelatih').value = r.namaPelatih || '';
-    document.getElementById('inp-rider-kota').value = r.kotaAsal || '';
-    document.getElementById('inp-rider-wa').value = r.noWhatsapp || '';
-    document.getElementById('title-form-rider').innerText = 'EDIT RIDER: ' + r.namaLengkap;
-    document.getElementById('card-form-rider').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.fillPelatihEdit = function(c) {
-    document.getElementById('inp-pelatih-id').value = c.id;
-    document.getElementById('inp-pelatih-nama').value = c.namaLengkap || '';
-    document.getElementById('inp-pelatih-stable').value = c.asalStable || '';
-    document.getElementById('inp-pelatih-kota').value = c.kotaAsal || '';
-    document.getElementById('inp-pelatih-wa').value = c.noWhatsapp || '';
-    if (document.getElementById('inp-pelatih-lisensi')) document.getElementById('inp-pelatih-lisensi').value = c.lisensi || 'Pordasi / IHAA';
-    document.getElementById('title-form-pelatih').innerText = 'EDIT PELATIH: ' + c.namaLengkap;
-    document.getElementById('card-form-pelatih').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.fillStableEdit = function(s) {
-    document.getElementById('inp-stable-id').value = s.id;
-    document.getElementById('inp-stable-nama').value = s.namaStable || '';
-    document.getElementById('inp-stable-kota').value = s.kota || '';
-    document.getElementById('inp-stable-prov').value = s.provinsi || '';
-    document.getElementById('inp-stable-wa').value = s.kontakWa || '';
-    document.getElementById('title-form-stable').innerText = 'EDIT STABLE: ' + s.namaStable;
-    document.getElementById('card-form-stable').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.fillKelasEdit = function(k) {
-    document.getElementById('inp-kelas-id').value = k.id;
-    document.getElementById('inp-kelas-nama').value = k.namaKelas || '';
-    document.getElementById('inp-kelas-kategori').value = k.kategori || 'Terbuka';
-    document.getElementById('inp-kelas-lintasan').value = k.lintasanId || 1;
-    document.getElementById('inp-kelas-run').value = k.jumlahRun || 3;
-    document.getElementById('title-form-kelas').innerText = 'EDIT KELAS: ' + k.namaKelas;
-    document.getElementById('card-form-kelas').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.fillLintasanEdit = function(l) {
-    document.getElementById('inp-lintasan-id').value = l.id;
-    document.getElementById('inp-lintasan-nama').value = l.namaLintasan || '';
-    document.getElementById('inp-lintasan-sistem').value = l.sistem || 'IHAA';
-    document.getElementById('inp-lintasan-panjang').value = l.panjangMeter || 90;
-    document.getElementById('inp-lintasan-target').value = l.jumlahTarget || 3;
-    document.getElementById('inp-lintasan-par').value = l.parTime || 0;
-    document.getElementById('inp-lintasan-zona').value = l.nilaiZonaTarget || '5 / 4 / 3 / 2 / 1';
-    document.getElementById('inp-lintasan-bonus').value = l.bonusSapuBersih || 0;
-    document.getElementById('inp-lintasan-aturan').value = l.aturanOvertime || '';
-    document.getElementById('title-form-lintasan').innerText = 'EDIT LINTASAN: ' + l.namaLintasan;
-    document.getElementById('card-form-lintasan').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.fillPanitiaEdit = function(u) {
-    document.getElementById('inp-panitia-id').value = u.id;
-    document.getElementById('inp-panitia-nama').value = u.namaLengkap || '';
-    document.getElementById('inp-panitia-email').value = u.email || '';
-    document.getElementById('inp-panitia-jabatan').value = u.jabatan || '';
-    document.getElementById('title-form-panitia').innerText = 'EDIT PETUGAS: ' + u.namaLengkap;
-    document.getElementById('card-form-panitia').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.fillUnduhanEdit = function(d) {
-    document.getElementById('inp-unduhan-id').value = d.id;
-    document.getElementById('inp-unduhan-kode').value = d.kodeBadge || 'DOC';
-    document.getElementById('inp-unduhan-judul').value = d.judul || '';
-    document.getElementById('inp-unduhan-kategori').value = d.kategori || '';
-    document.getElementById('inp-unduhan-url').value = d.fileUrl || '';
-    document.getElementById('title-form-unduhan').innerText = 'EDIT DOKUMEN: ' + d.judul;
-    document.getElementById('card-form-unduhan').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.fillBeritaEdit = function(b) {
-    document.getElementById('inp-berita-id').value = b.id;
-    document.getElementById('inp-berita-judul').value = b.judul || '';
-    document.getElementById('inp-berita-kategori').value = b.kategori || 'Pengumuman';
-    document.getElementById('inp-berita-tanggal').value = b.tanggalTerbit || '';
-    document.getElementById('inp-berita-ringkasan').value = b.ringkasan || '';
-    document.getElementById('title-form-berita').innerText = 'EDIT WARTA: ' + b.judul;
-    document.getElementById('card-form-berita').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.deleteEntity = function(entity, id, label = '') {
-    showSthacPopup(
-      'Konfirmasi Hapus Data',
-      'Apakah Anda yakin ingin menghapus <strong>' + (label || entity) + '</strong> secara permanen?',
-      'confirm',
-      () => apiPanitiaCrud(entity, 'delete', id)
-    );
-  };
-
-  window.approveReg = function(id) {
-    apiPanitiaCrud('pendaftar', 'approve', id);
-  };
-
-  window.rejectReg = function(id) {
-    showSthacPopup('Tolak Pendaftar?', 'Data pendaftar ini akan dihapus dari daftar antrean.', 'confirm', () => {
-      apiPanitiaCrud('pendaftar', 'reject', id);
-    });
-  };
-
-  window.pilihKelasUntukInput = function(kelasId, maxRun) {
-    openAdminTab('penilaian');
-    const sel = document.getElementById('inp-score-kelas');
-    if (sel) sel.value = String(kelasId);
-    const runInp = document.getElementById('inp-score-run');
-    if (runInp && maxRun) runInp.max = maxRun;
-    recalcLiveScorePreview();
-    document.getElementById('card-form-penilaian').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.isiFormEditSkor = function(kelasId, riderId, runNumber, t1, t2, t3, waktu) {
-    openAdminTab('penilaian');
-    document.getElementById('inp-score-kelas').value = String(kelasId);
-    document.getElementById('inp-score-rider').value = String(riderId);
-    document.getElementById('inp-score-run').value = runNumber;
-    document.getElementById('inp-score-t1').value = t1;
-    document.getElementById('inp-score-t2').value = t2;
-    document.getElementById('inp-score-t3').value = t3;
-    document.getElementById('inp-score-waktu').value = waktu;
-    recalcLiveScorePreview();
-    document.getElementById('card-form-penilaian').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  window.submitNilaiRunPanitia = async function(e) {
-    e.preventDefault();
-    const payload = {
-      kelasId: document.getElementById('inp-score-kelas').value,
-      riderId: document.getElementById('inp-score-rider').value,
-      runNumber: document.getElementById('inp-score-run').value,
-      t1: document.getElementById('inp-score-t1').value,
-      t2: document.getElementById('inp-score-t2').value,
-      t3: document.getElementById('inp-score-t3').value,
-      waktuTempuh: document.getElementById('inp-score-waktu').value
-    };
-    try {
-      const res = await fetch('/api/panitia/score-run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const out = await res.json();
-      if (res.ok && (out.ok || out.success)) {
-        sessionStorage.setItem('sthac_active_adm_tab', 'penilaian');
-        showSthacPopup('Nilai Run Tersimpan', out.message, 'success', () => {
-          window.location.reload();
-        });
-      } else {
-        showSthacPopup('Gagal Menyimpan Skor', out.message || 'Periksa kembali input nilai Anda.', 'error');
-      }
-    } catch (err) {
-      showSthacPopup('Gangguan Koneksi', 'Gagal menghubungi server: ' + err.message, 'error');
-    }
-  };
-
-  window.hapusNilaiRunPanitia = function(id) {
-    showSthacPopup('Hapus Nilai Run?', 'Apakah Anda yakin ingin menghapus catatan nilai run ini?', 'confirm', async () => {
-      const res = await fetch('/api/panitia/score-run/delete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
-      });
-      const out = await res.json();
-      if (out.ok || out.success) {
-        sessionStorage.setItem('sthac_active_adm_tab', 'penilaian');
-        window.location.reload();
-      }
-    });
-  };
-
-  
-  // ==================== MANAJEMEN 6 SLOT FOTO SPONSOR ====================
-  const sponsorSlotsData = <%- JSON.stringify(sponsorList || []) %>;
-
-  window.updateSponsorPreviewBox = function(src) {
-    const img = document.getElementById('img-sponsor-preview');
-    const txt = document.getElementById('txt-sponsor-nopreview');
-    if (src && src.trim().length > 4) {
-      img.src = src;
-      img.style.display = 'block';
-      txt.style.display = 'none';
-    } else {
-      img.src = '';
-      img.style.display = 'none';
-      txt.style.display = 'inline';
-    }
-  };
-
-  window.previewSponsorFile = function(fileInp) {
-    const file = fileInp.files && fileInp.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      const dataUrl = evt.target.result;
-      document.getElementById('inp-sponsor-foto').value = dataUrl;
-      updateSponsorPreviewBox(dataUrl);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  window.onSelectSponsorSlot = function(slotNo, scrollToForm = false) {
-    const num = Number(slotNo);
-    const sel = document.getElementById('inp-sponsor-slot');
-    if (sel) sel.value = String(num);
-    const badge = document.getElementById('badge-slot-sponsor');
-    if (badge) badge.innerText = 'SLOT #' + num;
-
-    const found = sponsorSlotsData.find(s => Number(s.slotNumber) === num);
-    if (found) {
-      document.getElementById('inp-sponsor-nama').value = found.namaSponsor || ('Sponsor #' + num);
-      document.getElementById('inp-sponsor-kategori').value = found.kategori || 'Official Partner';
-      document.getElementById('inp-sponsor-foto').value = found.fotoUrl || '';
-      document.getElementById('inp-sponsor-web').value = found.websiteUrl || '#';
-      updateSponsorPreviewBox(found.fotoUrl || '');
-    }
-    if (scrollToForm) {
-      document.getElementById('card-form-sponsor').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
-
-  window.submitSponsorForm = function(e) {
-    e.preventDefault();
-    const slotNumber = parseInt(document.getElementById('inp-sponsor-slot').value, 10) || 1;
-    const payload = {
-      slotNumber,
-      namaSponsor: document.getElementById('inp-sponsor-nama').value.trim(),
-      kategori: document.getElementById('inp-sponsor-kategori').value,
-      fotoUrl: document.getElementById('inp-sponsor-foto').value.trim(),
-      websiteUrl: document.getElementById('inp-sponsor-web').value.trim() || '#'
-    };
-    sessionStorage.setItem('sthac_active_adm_tab', 'sponsor');
-    apiPanitiaCrud('sponsor', 'update', slotNumber, payload);
-  };
-
-  window.clearSponsorSlot = function(slotParam) {
-    const slotNumber = slotParam || parseInt(document.getElementById('inp-sponsor-slot').value, 10) || 1;
-    showSthacPopup(
-      'Kosongkan Foto Slot #' + slotNumber + '?',
-      'Foto sponsor pada Slot #' + slotNumber + ' akan dihapus dan dikembalikan ke status kosong.',
-      'confirm',
-      () => {
-        sessionStorage.setItem('sthac_active_adm_tab', 'sponsor');
-        apiPanitiaCrud('sponsor', 'delete', slotNumber, { slotNumber });
-      }
-    );
-  };
-
-  document.addEventListener('DOMContentLoaded', () => { renderAdminSessionState(); onSelectSponsorSlot(1); });
-</script>
-
-<script>
-  window.syncAdmKatAndKelas = function() {
-    var katChecked = Array.from(document.querySelectorAll('.chk-adm-kat:checked')).map(function(c){ return c.value; });
-    var katInp = document.getElementById('inp-rider-kategori');
-    if (katInp) katInp.value = katChecked.length ? katChecked.join(' | ') : 'U14';
-
-    var klsChecked = Array.from(document.querySelectorAll('.chk-adm-kls:checked')).map(function(c){ return c.value; });
-    var klsInp = document.getElementById('inp-rider-kelas');
-    if (klsInp) klsInp.value = klsChecked.join(' | ');
-  };
-</script>
-
-
-<script>
-  window.syncAdmKatAndKelas = function() {
-    var katChecked = Array.from(document.querySelectorAll('.chk-adm-kat:checked')).map(function(c){ return c.value; });
-    var katInp = document.getElementById('inp-rider-kategori');
-    if (katInp) katInp.value = katChecked.length ? katChecked.join(' | ') : 'U14';
-
-    var klsChecked = Array.from(document.querySelectorAll('.chk-adm-kls:checked')).map(function(c){ return c.value; });
-    var klsInp = document.getElementById('inp-rider-kelas');
-    if (klsInp) klsInp.value = klsChecked.join(' | ');
-  };
 </script>
 <script src="/js/sthac-image-uploader.js"></script>

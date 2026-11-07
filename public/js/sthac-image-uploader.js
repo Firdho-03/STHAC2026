@@ -321,27 +321,23 @@
 
   function removeScoreboardTargetWaktuColumns() {
     document.querySelectorAll('table').forEach(function(table) {
+      if (table.id === 'public-rundown-table') return;
       var headers = Array.from(table.querySelectorAll('thead th'));
       if (!headers.length) return;
+      var headerTexts = headers.map(function(th) { return (th.textContent || '').trim().toUpperCase(); });
+      if (headerTexts.indexOf('TARGET') === -1 || headerTexts.indexOf('WAKTU') === -1) return;
+
       var removeIndices = [];
       headers.forEach(function(th, idx) {
         var txt = (th.textContent || '').trim().toUpperCase();
-        if (txt === 'TARGET' || txt === 'WAKTU') {
-          removeIndices.push(idx);
-        }
+        if (txt === 'TARGET' || txt === 'WAKTU') removeIndices.push(idx);
       });
-      if (!removeIndices.length) return;
-      // Hapus dari indeks terbesar ke terkecil agar posisi kolom tidak bergeser
       removeIndices.sort(function(a, b) { return b - a; });
-      removeIndices.forEach(function(colIdx) {
-        if (headers[colIdx]) headers[colIdx].remove();
-      });
+      removeIndices.forEach(function(colIdx) { if (headers[colIdx]) headers[colIdx].remove(); });
       table.querySelectorAll('tbody tr').forEach(function(tr) {
         var cells = Array.from(tr.children);
         if (cells.length === headers.length) {
-          removeIndices.forEach(function(colIdx) {
-            if (cells[colIdx]) cells[colIdx].remove();
-          });
+          removeIndices.forEach(function(colIdx) { if (cells[colIdx]) cells[colIdx].remove(); });
         }
       });
     });
@@ -353,3 +349,12 @@
   }
 
 })();
+
+
+
+
+
+
+
+
+

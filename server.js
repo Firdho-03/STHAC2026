@@ -213,6 +213,173 @@ app.use((req, res, next) => {
 });
 // === END UNIVERSAL IMAGE UPLOAD MIDDLEWARE ===
 
+
+
+
+// === RUNDOWN & PERATURAN API ROUTES ===
+const _fsRnd = require('fs');
+const _pathRnd = require('path');
+const _storeRndPath = _pathRnd.join(process.cwd(), 'prisma', 'sthac-unified-store.json');
+
+const _DEFAULT_RUNDOWN = [
+  { id: 1, jam: '07.00', kegiatan: 'Registrasi ulang peserta & pemeriksaan anak panah' },
+  { id: 2, jam: '07.30', kegiatan: 'Briefing panitia, juri, dan course designer' },
+  { id: 3, jam: '08.00', kegiatan: 'Pemanasan lintasan (walk/trot) untuk kelas Beginner' },
+  { id: 4, jam: '08.30', kegiatan: 'Kelas Beginner (Pemula) dimulai' },
+  { id: 5, jam: '10.00', kegiatan: 'Kelas Intermediate (Menengah)' },
+  { id: 6, jam: '12.00', kegiatan: 'Ishoma' },
+  { id: 7, jam: '13.00', kegiatan: 'Kelas Advanced (Mahir)' },
+  { id: 8, jam: '15.30', kegiatan: 'Kelas Open Qabaq (Exhibition)' },
+  { id: 9, jam: '16.30', kegiatan: 'Penyerahan medali & penutupan' }
+];
+
+const _DEFAULT_PERATURAN = [
+  { id: 1, isi: 'Peserta wajib mengenakan <strong>helm berkuda</strong> dan <strong>sepatu riding boots berhak (heels)</strong>.' },
+  { id: 2, isi: 'Anak panah wajib diperiksa oleh panitia sebelum bertanding; untuk tembakan <em>Qabaq</em> hanya diperbolehkan memakai <strong>anak panah flu-flu (blunt)</strong>.' },
+  { id: 3, isi: 'Peserta wajib mengenakan <strong>nomor dada (Bib number)</strong> yang dibagikan panitia.' },
+  { id: 4, isi: 'Kuda dan rider diperiksa oleh <strong>tim medis</strong> sebelum berlaga; panitia berhak menghentikan peserta yang dinilai tidak bugar.' },
+  { id: 5, isi: 'Keputusan juri bersifat mengikat; protes diajukan secara tertulis maksimal <strong>15 menit setelah kelas berakhir</strong>.' },
+  { id: 6, isi: 'Peserta yang tidak hadir setelah <strong>dipanggil 3 kali</strong> dianggap mengundurkan diri (<em>walkover</em>).' },
+  { id: 7, isi: '<strong>Kesejahteraan kuda (Horse Welfare)</strong> menjadi prioritas utama: segala bentuk kekerasan terhadap kuda berakibat diskualifikasi langsung.' }
+];
+
+function _readRndStore() {
+  let st = {};
+  try {
+    if (_fsRnd.existsSync(_storeRndPath)) {
+      st = JSON.parse(_fsRnd.readFileSync(_storeRndPath, 'utf8'));
+    }
+  } catch (e) { st = {}; }
+  let modified = false;
+  if (!Array.isArray(st.rundown) || st.rundown.length === 0) {
+    st.rundown = JSON.parse(JSON.stringify(_DEFAULT_RUNDOWN));
+    modified = true;
+  }
+  if (!Array.isArray(st.peraturan) || st.peraturan.length === 0) {
+    st.peraturan = JSON.parse(JSON.stringify(_DEFAULT_PERATURAN));
+    modified = true;
+  }
+  if (modified) {
+    try { _fsRnd.writeFileSync(_storeRndPath, JSON.stringify(st, null, 2), 'utf8'); } catch (e) {}
+  }
+  return st;
+}
+
+function _writeRndStore(st) {
+  _fsRnd.writeFileSync(_storeRndPath, JSON.stringify(st, null, 2), 'utf8');
+}
+
+app.get('/api/sthac-content', (req, res) => {
+  try {
+    const st = _readRndStore();
+    res.json({ ok: true, rundown: st.rundown, peraturan: st.peraturan });
+  } catch (e) {
+    res.json({ ok: true, rundown: _DEFAULT_RUNDOWN, peraturan: _DEFAULT_PERATURAN });
+  }
+});
+
+app.post('/api/sthac-content/rundown/save', (req, res) => {
+  try {
+    const st = _readRndStore();
+    const { id, jam, kegiatan } = req.body;
+    if (id) {
+      const item = st.rundown.find(r => Number(r.id) === Number(id));
+      if (item) {
+        item.jam = String(jam || '').trim();
+        item.kegiatan = String(kegiatan || '').trim();
+      }
+    } else {
+      const newId = st.rundown.length > 0 ? Math.max(...st.rundown.map(r => Number(r.id) || 0)) + 1 : 1;
+      st.rundown.push({ id: newId, jam: String(jam || '').trim(), kegiatan: String(kegiatan || '').trim() });
+    }
+    _writeRndStore(st);
+    res.json({ ok: true, rundown: st.rundown });
+  } catch (e) {
+    res.status(500).json({ ok: false, message: e.message });
+  }
+});
+
+app.post('/api/sthac-content/rundown/delete', (req, res) => {
+  try {
+    const st = _readRndStore();
+    const { id } = req.body;
+    st.rundown = (st.rundown || []).filter(r => Number(r.id) !== Number(id));
+    _writeRndStore(st);
+    res.json({ ok: true, rundown: st.rundown });
+  } catch (e) {
+    res.status(500).json({ ok: false, message: e.message });
+  }
+});
+
+app.post('/api/sthac-content/rundown/reset', (req, res) => {
+  try {
+    const st = _readRndStore();
+    st.rundown = JSON.parse(JSON.stringify(_DEFAULT_RUNDOWN));
+    _writeRndStore(st);
+    res.json({ ok: true, rundown: st.rundown });
+  } catch (e) {
+    res.status(500).json({ ok: false, message: e.message });
+  }
+});
+
+app.post('/api/sthac-content/peraturan/save', (req, res) => {
+  try {
+    const st = _readRndStore();
+    const { id, isi } = req.body;
+    if (id) {
+      const item = st.peraturan.find(p => Number(p.id) === Number(id));
+      if (item) { item.isi = String(isi || '').trim(); }
+    } else {
+      const newId = st.peraturan.length > 0 ? Math.max(...st.peraturan.map(p => Number(p.id) || 0)) + 1 : 1;
+      st.peraturan.push({ id: newId, isi: String(isi || '').trim() });
+    }
+    _writeRndStore(st);
+    res.json({ ok: true, peraturan: st.peraturan });
+  } catch (e) {
+    res.status(500).json({ ok: false, message: e.message });
+  }
+});
+
+app.post('/api/sthac-content/peraturan/delete', (req, res) => {
+  try {
+    const st = _readRndStore();
+    const { id } = req.body;
+    st.peraturan = (st.peraturan || []).filter(p => Number(p.id) !== Number(id));
+    _writeRndStore(st);
+    res.json({ ok: true, peraturan: st.peraturan });
+  } catch (e) {
+    res.status(500).json({ ok: false, message: e.message });
+  }
+});
+
+app.post('/api/sthac-content/peraturan/reset', (req, res) => {
+  try {
+    const st = _readRndStore();
+    st.peraturan = JSON.parse(JSON.stringify(_DEFAULT_PERATURAN));
+    _writeRndStore(st);
+    res.json({ ok: true, peraturan: st.peraturan });
+  } catch (e) {
+    res.status(500).json({ ok: false, message: e.message });
+  }
+});
+
+// Inject rundown & peraturan ke seluruh view
+app.use((req, res, next) => {
+  const _origRndRender = res.render.bind(res);
+  res.render = function(view, locals, cb) {
+    try {
+      const st = _readRndStore();
+      if (locals && typeof locals === 'object') {
+        locals.rundownList = st.rundown;
+        locals.peraturanList = st.peraturan;
+      }
+    } catch (e) {}
+    return _origRndRender(view, locals, cb);
+  };
+  next();
+});
+// === END RUNDOWN & PERATURAN API ROUTES ===
+
 app.use('/', webRoutes);
 
 // Socket.io Real-time Connection

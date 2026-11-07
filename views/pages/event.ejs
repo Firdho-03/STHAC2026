@@ -27,37 +27,41 @@
     </div>
 
     <div class="table-responsive">
-      <table class="table sthac-table mb-0">
-        <thead>
-          <tr>
-            <th>URUT</th>
-            <th>KELAS</th>
-            <th>KATEGORI</th>
-            <th>LINTASAN</th>
-            <th class="text-center">RUN DINILAI</th>
-            <th class="text-center">KUOTA PESERTA</th>
-            <th>STATUS</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% kelasList.forEach(k => { %>
+      <div class="table-responsive">
+        <table class="table sthac-table align-middle mb-0">
+          <thead>
             <tr>
-              <td><%= k.urutanTampil %></td>
-              <td class="fw-bold text-forest"><%= k.namaKelas %></td>
-              <td><span class="badge bg-light text-forest border"><%= k.kategori %></span></td>
-              <td><%= k.namaLintasan %></td>
-              <td class="text-center fw-bold"><%= k.jumlahRun %> Run</td>
-              <td class="text-center"><%= k.pesertaTerisi %>/<%= k.kuotaPeserta %></td>
-              <td>
-                <span class="badge rounded-pill bg-success-subtle text-success me-1"><%= k.statusKelas %></span>
-                <% if (k.hitungPoinJuara) { %>
-                  <span class="badge rounded-pill bg-warning-subtle text-dark">IKUT POIN</span>
-                <% } %>
-              </td>
+              <th class="ps-4">#</th>
+              <th>NAMA KELAS</th>
+              <th>KATEGORI</th>
+              <th>ARENA</th>
+              <th>JUMLAH RUN</th>
+              <th>KUOTA</th>
+              <th class="pe-4">STATUS</th>
             </tr>
-          <% }) %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <% const klsData = (typeof kelasList !== 'undefined' && Array.isArray(kelasList) && kelasList.length > 0) ? kelasList : [
+              { id: 1, namaKelas: 'Beginner ( Walk ) · U14', kategori: 'U14', arena: 'Arena Walk-Trot', jumlahRun: 6, kuota: '1/20', status: 'Aktif' },
+              { id: 2, namaKelas: 'Beginner ( Trot ) · Terbuka', kategori: 'Terbuka', arena: 'Arena Walk-Trot', jumlahRun: 3, kuota: '2/30', status: 'Aktif' }
+            ]; %>
+            <% klsData.forEach((k, idx) => { %>
+              <tr>
+                <td class="ps-4 fw-bold"><%= idx + 1 %></td>
+                <td class="fw-bold"><%= k.namaKelas %></td>
+                <td><span class="badge rounded-pill bg-light text-dark border px-3 py-1"><%= k.kategori || 'Umum' %></span></td>
+                <td><%= k.arena || 'Arena Walk-Trot' %></td>
+                <td class="fw-semibold"><%= k.jumlahRun || 6 %> Run</td>
+                <td><%= k.kuota || '20 Peserta' %></td>
+                <td class="pe-4">
+                  <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1 me-1"><%= k.status || 'Aktif' %></span>
+                  <span class="badge bg-warning-subtle text-dark rounded-pill px-2 py-1">IKUT POIN</span>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -66,18 +70,31 @@
       <div class="sthac-card p-4 h-100">
         <h4 class="font-display fw-bold text-uppercase text-forest mb-3"><i class="bi bi-clock-history text-gold me-2"></i>Susunan Acara Hari-H (Rundown)</h4>
         <div class="table-responsive">
-          <table class="table sthac-table mb-0 small">
-            <thead><tr><th style="width:95px;">WAKTU</th><th>KEGIATAN</th></tr></thead>
+          <table class="table sthac-table align-middle mb-0" id="public-rundown-table">
+            <thead>
+              <tr>
+                <th class="ps-3" style="width: 115px;">JAM</th>
+                <th>KEGIATAN</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">07:00</span></td><td>Registrasi ulang peserta &amp; pemeriksaan anak panah</td></tr>
-              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">07:30</span></td><td>Briefing panitia, juri, dan course designer</td></tr>
-              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">08:00</span></td><td>Pemanasan lintasan (walk/trot) untuk kelas Beginner</td></tr>
-              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">08:30</span></td><td>Kelas Beginner (Pemula) dimulai</td></tr>
-              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">10:00</span></td><td>Kelas Intermediate (Menengah)</td></tr>
-              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">12:00</span></td><td>Ishoma (Istirahat, Sholat, Makan Siang)</td></tr>
-              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">13:00</span></td><td>Kelas Advanced (Mahir)</td></tr>
-              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">15:30</span></td><td>Kelas Open Qabaq (Exhibition)</td></tr>
-              <tr><td><span class="badge bg-forest-pill text-white" style="background:#072619;">16:30</span></td><td>Penyerahan medali &amp; penutupan</td></tr>
+              <% const rList = (typeof rundownList !== 'undefined' && Array.isArray(rundownList) && rundownList.length > 0) ? rundownList : [
+                { jam: '07.00', kegiatan: 'Registrasi ulang peserta & pemeriksaan anak panah' },
+                { jam: '07.30', kegiatan: 'Briefing panitia, juri, dan course designer' },
+                { jam: '08.00', kegiatan: 'Pemanasan lintasan (walk/trot) untuk kelas Beginner' },
+                { jam: '08.30', kegiatan: 'Kelas Beginner (Pemula) dimulai' },
+                { jam: '10.00', kegiatan: 'Kelas Intermediate (Menengah)' },
+                { jam: '12.00', kegiatan: 'Ishoma' },
+                { jam: '13.00', kegiatan: 'Kelas Advanced (Mahir)' },
+                { jam: '15.30', kegiatan: 'Kelas Open Qabaq (Exhibition)' },
+                { jam: '16.30', kegiatan: 'Penyerahan medali & penutupan' }
+              ]; %>
+              <% rList.forEach((r) => { %>
+                <tr>
+                  <td class="ps-3 fw-bold text-gold text-nowrap"><%= r.jam %></td>
+                  <td class="fw-medium"><%= r.kegiatan %></td>
+                </tr>
+              <% }) %>
             </tbody>
           </table>
         </div>
@@ -87,15 +104,16 @@
     <div class="col-lg-6">
       <div class="sthac-card p-4 h-100">
         <h4 class="font-display fw-bold text-uppercase text-forest mb-3"><i class="bi bi-shield-check text-gold me-2"></i>7 Peraturan Umum Pertandingan</h4>
-        <ol class="small text-secondary vstack gap-2 mb-0 ps-3" style="line-height:1.7;">
-          <li>Peserta wajib mengenakan <strong class="text-forest">helm berkuda</strong> dan <strong class="text-forest">sepatu riding boots berhak (heels)</strong>.</li>
-          <li>Anak panah wajib diperiksa oleh panitia sebelum bertanding; untuk tembakan <em>Qabaq</em> hanya diperbolehkan memakai <strong class="text-forest">anak panah flu-flu (blunt)</strong>.</li>
-          <li>Peserta wajib mengenakan <strong class="text-forest">nomor dada (Bib number)</strong> yang dibagikan panitia.</li>
-          <li>Kuda dan rider diperiksa oleh <strong class="text-forest">tim medis</strong> sebelum berlaga; panitia berhak menghentikan peserta yang dinilai tidak bugar.</li>
-          <li>Keputusan juri bersifat mengikat; protes diajukan secara tertulis maksimal <strong class="text-forest">15 menit setelah kelas berakhir</strong>.</li>
-          <li>Peserta yang tidak hadir setelah <strong class="text-forest">dipanggil 3 kali</strong> dianggap mengundurkan diri (<em>walkover</em>).</li>
-          <li><strong class="text-forest">Kesejahteraan kuda (Horse Welfare)</strong> menjadi prioritas utama: segala bentuk kekerasan terhadap kuda berakibat diskualifikasi langsung.</li>
-        </ol>
+        <ol class="ps-3 mb-0" style="line-height: 1.8; font-size: 0.94rem;">
+              <% const pList = (typeof peraturanList !== 'undefined' && peraturanList.length > 0) ? peraturanList : []; %>
+              <% if (pList.length > 0) { %>
+                <% pList.forEach((p) => { %>
+                  <li class="mb-2"><%- p.isi %></li>
+                <% }) %>
+              <% } else { %>
+                <li class="text-muted">Belum ada peraturan tercantum.</li>
+              <% } %>
+            </ol>
       </div>
     </div>
   </div>
