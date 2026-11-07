@@ -212,6 +212,114 @@ app.use((req, res, next) => {
   next();
 });
 // === END UNIVERSAL IMAGE UPLOAD MIDDLEWARE ===
+// === START BERITA & CRUD NESTED PHOTO HOOK ===
+app.use((req, res, next) => {
+  try {
+    if (req.body && typeof req.body === 'object') {
+      const map = typeof _readMediaMap === 'function' ? _readMediaMap() : { byCode: {}, byName: {}, byBeritaId: {}, byBeritaTitle: {} };
+      if (!map.byBeritaId) map.byBeritaId = {};
+      if (!map.byBeritaTitle) map.byBeritaTitle = {};
+
+      const resolvePhotoField = (obj) => {
+        if (!obj || typeof obj !== 'object') return '';
+        const fields = ['fotoUploadedData', 'fotoUrl', 'logoUrl', 'foto', 'logo', 'gambar', 'image'];
+        let found = '';
+        for (const f of fields) {
+          const val = obj[f];
+          if (typeof val === 'string' && val.startsWith('data:image/') && typeof _saveBase64Image === 'function') {
+            const saved = _saveBase64Image(val);
+            if (saved) {
+              obj[f] = saved;
+              if (!found) found = saved;
+            }
+          } else if (typeof val === 'string' && (val.startsWith('/uploads/') || val.startsWith('http://') || val.startsWith('https://'))) {
+            if (!found) found = val.trim();
+          }
+        }
+        if (found) {
+          obj.fotoUrl = found;
+          obj.foto = found;
+          obj.gambar = found;
+          obj.image = found;
+        }
+        delete obj.fotoUploadedData;
+        return found;
+      };
+
+      const topPhoto = resolvePhotoField(req.body);
+      const nestedPhoto = req.body.data ? resolvePhotoField(req.body.data) : '';
+      const finalPhoto = nestedPhoto || topPhoto;
+
+      // Jika request berasal dari /api/panitia/crud
+      if (req.body.entity && req.body.data) {
+        const ent = String(req.body.entity).toLowerCase();
+        const d = req.body.data;
+        const recId = req.body.id || d.id;
+
+        if (ent === 'berita') {
+          const titleKey = String(d.judul || '').trim().toLowerCase();
+          if (finalPhoto) {
+            if (recId) map.byBeritaId[String(recId)] = finalPhoto;
+            if (titleKey) map.byBeritaTitle[titleKey] = finalPhoto;
+          } else if (d.clearPhoto === '1' || d.fotoUrl === '') {
+            if (recId) delete map.byBeritaId[String(recId)];
+            if (titleKey) delete map.byBeritaTitle[titleKey];
+          }
+          if (typeof _writeMediaMap === 'function') _writeMediaMap(map);
+        } else if (finalPhoto) {
+          const codeKey = String(d.kodeRider || d.kodePelatih || d.kodeStable || '').trim().toUpperCase();
+          const nameKey = String(d.namaLengkap || d.namaStable || '').trim().toLowerCase();
+          if (codeKey && codeKey !== 'OTOMATIS') map.byCode[codeKey] = finalPhoto;
+          if (nameKey) map.byName[nameKey] = finalPhoto;
+          if (typeof _writeMediaMap === 'function') _writeMediaMap(map);
+        }
+      }
+    }
+  } catch (e) {}
+  next();
+});
+
+// Perkaya semua array berita/warta di locals saat res.render dipanggil
+app.use((req, res, next) => {
+  const _origRenderBerita = res.render.bind(res);
+  res.render = function(view, locals, cb) {
+    try {
+      if (locals && typeof locals === 'object' && typeof _readMediaMap === 'function') {
+        const map = _readMediaMap();
+        const byId = map.byBeritaId || {};
+        const byTitle = map.byBeritaTitle || {};
+        const byName = map.byName || {};
+
+        Object.keys(locals).forEach(key => {
+          const val = locals[key];
+          if (Array.isArray(val)) {
+            val.forEach(item => {
+              if (!item || typeof item !== 'object') return;
+              const titleRaw = item.judul || item.title || item.namaBerita || '';
+              if (!titleRaw) return;
+              const tKey = String(titleRaw).trim().toLowerCase();
+              const photo =
+                (item.id && byId[String(item.id)]) ||
+                (tKey && byTitle[tKey]) ||
+                (tKey && byName[tKey]) ||
+                item.fotoUrl || item.foto || item.gambar || item.image || '';
+              if (photo) {
+                item.fotoUrl = photo;
+                item.foto = photo;
+                item.gambar = photo;
+                item.image = photo;
+              }
+            });
+          }
+        });
+      }
+    } catch (e) {}
+    return _origRenderBerita(view, locals, cb);
+  };
+  next();
+});
+// === END BERITA & CRUD NESTED PHOTO HOOK ===
+
 
 
 

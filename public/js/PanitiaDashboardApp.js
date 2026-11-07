@@ -350,6 +350,11 @@ class EntityCrudController {
     if (h) h.value = '';
     const t = document.getElementById(titleId);
     if (t) t.innerText = defaultTitle;
+    if (formId === 'form-crud-berita') {
+      this.clearBeritaPhoto();
+      const bMode = document.getElementById('badge-mode-berita');
+      if (bMode) bMode.innerText = 'EDITOR WARTA';
+    }
   }
 
   deleteEntity(entity, id, label = '') {
@@ -487,13 +492,103 @@ class EntityCrudController {
     document.getElementById('card-form-unduhan').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
+    updateBeritaPreviewBox(src) {
+    const wrap = document.getElementById('berita-preview-wrap');
+    const img = document.getElementById('img-berita-preview');
+    const txt = document.getElementById('txt-berita-nopreview');
+    const btnClear = document.getElementById('btn-clear-berita-foto');
+    if (!img || !txt) return;
+
+    if (src && src.trim().length > 4) {
+      img.src = src.trim();
+      img.style.display = 'block';
+      txt.style.display = 'none';
+      if (btnClear) btnClear.classList.remove('d-none');
+      if (wrap) wrap.style.borderColor = 'rgba(217, 180, 92, 0.6)';
+    } else {
+      img.src = '';
+      img.style.display = 'none';
+      txt.style.display = 'inline';
+      if (btnClear) btnClear.classList.add('d-none');
+      if (wrap) wrap.style.borderColor = '';
+    }
+  }
+
+  previewBeritaFile(fileInp) {
+    const file = fileInp && fileInp.files && fileInp.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = async () => {
+        const maxDim = 960;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const outType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+        const dataUrl = canvas.toDataURL(outType, 0.86);
+
+        const fotoInp = document.getElementById('inp-berita-foto');
+        if (fotoInp) fotoInp.value = dataUrl;
+        this.updateBeritaPreviewBox(dataUrl);
+
+        // Unggah langsung ke /api/sthac-upload agar menjadi path /uploads/... yang ringan
+        try {
+          const judulVal = document.getElementById('inp-berita-judul')?.value.trim() || '';
+          const res = await fetch('/api/sthac-upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dataUrl, nama: judulVal })
+          });
+          const out = await res.json();
+          if (out && out.ok && out.url) {
+            if (fotoInp) fotoInp.value = out.url;
+            this.updateBeritaPreviewBox(out.url);
+          }
+        } catch (err) {}
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  clearBeritaPhoto() {
+    const fotoInp = document.getElementById('inp-berita-foto');
+    const fileInp = document.getElementById('inp-berita-file');
+    if (fotoInp) fotoInp.value = '';
+    if (fileInp) fileInp.value = '';
+    this.updateBeritaPreviewBox('');
+  }
+
   fillBeritaEdit(b) {
     document.getElementById('inp-berita-id').value = b.id;
     document.getElementById('inp-berita-judul').value = b.judul || '';
     document.getElementById('inp-berita-kategori').value = b.kategori || 'Pengumuman';
     document.getElementById('inp-berita-tanggal').value = b.tanggalTerbit || '';
     document.getElementById('inp-berita-ringkasan').value = b.ringkasan || '';
+    const fotoUrl = b.fotoUrl || b.foto || b.gambar || '';
+    const fotoInp = document.getElementById('inp-berita-foto');
+    if (fotoInp) fotoInp.value = fotoUrl;
+    const fileInp = document.getElementById('inp-berita-file');
+    if (fileInp) fileInp.value = '';
+    this.updateBeritaPreviewBox(fotoUrl);
     document.getElementById('title-form-berita').innerText = 'EDIT WARTA: ' + b.judul;
+    const bMode = document.getElementById('badge-mode-berita');
+    if (bMode) bMode.innerText = 'MODE EDIT';
     document.getElementById('card-form-berita').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
@@ -1008,6 +1103,9 @@ class PanitiaDashboardApp {
     window.fillPanitiaEdit = (u) => this.crud.fillPanitiaEdit(u);
     window.fillUnduhanEdit = (d) => this.crud.fillUnduhanEdit(d);
     window.fillBeritaEdit = (b) => this.crud.fillBeritaEdit(b);
+    window.previewBeritaFile = (inp) => this.crud.previewBeritaFile(inp);
+    window.updateBeritaPreviewBox = (s) => this.crud.updateBeritaPreviewBox(s);
+    window.clearBeritaPhoto = () => this.crud.clearBeritaPhoto();
 
     window.syncExistingRunToForm = () => this.scoreCalculator.syncExistingRunToForm();
     window.stepRunNumber = (d) => this.scoreCalculator.stepRunNumber(d);

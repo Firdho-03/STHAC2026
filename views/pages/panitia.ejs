@@ -1712,13 +1712,13 @@
       </div>
     </div>
 
-    <!-- ==================== 12. TAB BERITA & WARTA (SPLIT-SCREEN SESUAI SCREENSHOT 1 KIRI) ==================== -->
+    <!-- ==================== 12. TAB BERITA & WARTA (SPLIT-SCREEN DENGAN UPLOAD FOTO) ==================== -->
     <div id="adm-sec-berita" class="admin-section" style="display:none;">
       <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">
         <div>
           <div class="saiga-breadcrumb mb-1">PANEL PANITIA &rsaquo; SISTEM &amp; KONTEN &rsaquo; BERITA &amp; WARTA</div>
           <h2 class="font-display fw-bold text-white mb-1">Tulis Berita / Pengumuman &amp; Kelola Warta Resmi</h2>
-          <p class="small text-white-50 mb-0">Publikasikan informasi resmi kejuaraan, regulasi teknis, dan rilis pers STHAC 2026 ke halaman publik.</p>
+          <p class="small text-white-50 mb-0">Publikasikan informasi resmi kejuaraan, regulasi teknis, dan rilis pers STHAC 2026 beserta foto dokumentasi ke halaman publik.</p>
         </div>
         <div class="d-flex gap-2">
           <div class="saiga-kpi-mini text-center"><div class="kpi-val">0<%= beritaList.length %></div><div class="kpi-lbl">Total Warta</div></div>
@@ -1731,7 +1731,7 @@
           <div class="sthac-card p-4 h-100" id="card-form-berita">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h6 class="font-display fw-bold text-uppercase text-white mb-0" id="title-form-berita"><i class="bi bi-pencil-square text-warning me-2"></i>TULIS BERITA / PENGUMUMAN</h6>
-              <span class="badge-green-soft">EDITOR WARTA</span>
+              <span class="badge-green-soft" id="badge-mode-berita">EDITOR WARTA</span>
             </div>
             <form id="form-crud-berita" onsubmit="submitEntityForm(event, 'berita')">
               <input type="hidden" name="id" id="inp-berita-id" value="" />
@@ -1757,6 +1757,35 @@
                 <label class="small fw-bold text-warning mb-1">ISI RINGKASAN / ARTIKEL WARTA *</label>
                 <textarea name="ringkasan" id="inp-berita-ringkasan" rows="4" class="form-control sthac-input" placeholder="Tulis isi pengumuman atau berita resmi kejuaraan..." required></textarea>
               </div>
+
+              <!-- INPUT UPLOAD FOTO / THUMBNAIL WARTA -->
+              <div class="mb-3">
+                <label class="small fw-bold text-warning mb-1">FOTO / GAMBAR WARTA (UPLOAD FILE / URL)</label>
+                <div class="row g-2">
+                  <div class="col-7">
+                    <input type="file" id="inp-berita-file" accept="image/*" onchange="previewBeritaFile(this)" class="form-control form-control-sm sthac-input" />
+                  </div>
+                  <div class="col-5">
+                    <input type="text" name="fotoUrl" id="inp-berita-foto" oninput="updateBeritaPreviewBox(this.value)" class="form-control form-control-sm sthac-input" placeholder="Atau URL foto..." />
+                  </div>
+                </div>
+                <small class="text-white-50 d-block mt-1" style="font-size:0.68rem;">Mendukung JPG, PNG, atau WEBP. Otomatis disimpan ke server.</small>
+              </div>
+
+              <!-- KOTAK PRATINJAU FOTO WARTA -->
+              <div class="p-2 rounded-3 mb-3 text-center" id="berita-preview-wrap" style="background:var(--bg-table-head); border:1px dashed var(--border-card-hover);">
+                <div class="d-flex justify-content-between align-items-center px-2 mb-1">
+                  <span class="small text-white-50" style="font-size:0.68rem;">PRATINJAU FOTO WARTA:</span>
+                  <button type="button" id="btn-clear-berita-foto" onclick="clearBeritaPhoto()" class="btn btn-link btn-sm text-danger p-0 text-decoration-none d-none" style="font-size:0.7rem;">
+                    <i class="bi bi-x-circle me-1"></i>Hapus Foto
+                  </button>
+                </div>
+                <div class="mx-auto d-flex align-items-center justify-content-center rounded-3 overflow-hidden" style="height:115px; max-width:280px; background:rgba(7,38,25,0.06);">
+                  <img id="img-berita-preview" src="" alt="Preview Foto Warta" style="max-height:110px; max-width:100%; object-fit:cover; display:none; border-radius:0.5rem;" />
+                  <span id="txt-berita-nopreview" class="small text-muted"><i class="bi bi-image me-1"></i>Belum ada foto warta dipilih</span>
+                </div>
+              </div>
+
               <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-gold-pill flex-grow-1 py-2 fw-bold"><i class="bi bi-send-check me-1"></i> Publikasikan Berita</button>
                 <button type="button" onclick="resetEntityForm('form-crud-berita', 'inp-berita-id', 'title-form-berita', 'TULIS BERITA / PENGUMUMAN')" class="btn btn-dark-pill px-3 py-2">Reset</button>
@@ -1774,6 +1803,7 @@
 
             <div class="vstack gap-3" id="berita-list-container">
               <% beritaList.forEach(b => { %>
+                <% const bPhoto = b.fotoUrl || b.foto || b.gambar || ''; %>
                 <div class="p-3 rounded-3 berita-card-item" data-search="<%= (b.judul + ' ' + b.kategori + ' ' + b.ringkasan).toLowerCase() %>" style="background:var(--bg-table-head); border:1px solid var(--border-main);">
                   <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                     <div>
@@ -1782,7 +1812,7 @@
                     </div>
                     <div class="d-flex gap-1">
                       <button type="button" class="btn btn-sm btn-dark-pill px-2 py-1"
-                        onclick='fillBeritaEdit(<%- JSON.stringify({ id: b.id, judul: b.judul, kategori: b.kategori, tanggalTerbit: b.tanggalTerbit, ringkasan: b.ringkasan }) %>)'>
+                        onclick='fillBeritaEdit(<%- JSON.stringify({ id: b.id, judul: b.judul, kategori: b.kategori, tanggalTerbit: b.tanggalTerbit, ringkasan: b.ringkasan, fotoUrl: bPhoto }) %>)'>
                         <i class="bi bi-pencil"></i> Edit
                       </button>
                       <button type="button" class="btn btn-sm btn-logout-pill px-2 py-1" onclick="deleteEntity('berita', <%= b.id %>, '<%= b.judul %>')">
@@ -1790,15 +1820,23 @@
                       </button>
                     </div>
                   </div>
-                  <h6 class="fw-bold text-white mb-1"><%= b.judul %></h6>
-                  <p class="small text-white-50 mb-0"><%= b.ringkasan %></p>
+                  <div class="d-flex align-items-start gap-3">
+                    <% if (bPhoto) { %>
+                      <img src="<%= bPhoto %>" alt="<%= b.judul %>" class="rounded-3 border flex-shrink-0" style="width:88px; height:64px; object-fit:cover;" />
+                    <% } %>
+                    <div>
+                      <h6 class="fw-bold text-white mb-1"><%= b.judul %></h6>
+                      <p class="small text-white-50 mb-0"><%= b.ringkasan %></p>
+                    </div>
+                  </div>
                 </div>
               <% }) %>
             </div>
           </div>
         </div>
-      </div>    </div>        
-    
+      </div>
+    </div>
+
     <!-- ==================== 12A. TAB RUNDOWN & ATURAN UMUM PERTANDINGAN (OOP MODULE) ==================== -->
     <div id="adm-sec-rundown" class="admin-section" style="display:none;">
       <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-3">

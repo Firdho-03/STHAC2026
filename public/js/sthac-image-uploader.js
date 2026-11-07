@@ -358,3 +358,58 @@
 
 
 
+
+
+// === START PUBLIC NEWS PHOTO INJECTOR ===
+(function() {
+  function injectPublicNewsPhotos() {
+    // Jangan jalankan di dalam form editor panitia
+    if (document.getElementById('admin-dashboard-panel') && document.getElementById('admin-dashboard-panel').style.display !== 'none') {
+      return;
+    }
+
+    fetch('/api/sthac-media-map')
+      .then(function(r) { return r.json(); })
+      .then(function(map) {
+        if (!map) return;
+        var byTitle = map.byBeritaTitle || {};
+        var byName = map.byName || {};
+
+        // Cari semua kartu berita di halaman WARTA STHAC 2026 (/berita) maupun Beranda
+        document.querySelectorAll('.sthac-card, .card').forEach(function(card) {
+          if (card.closest('#admin-dashboard-panel')) return;
+          var heading = card.querySelector('h2, h3, h4, h5, h6');
+          if (!heading) return;
+
+          var titleText = (heading.textContent || '').trim().toLowerCase();
+          if (!titleText) return;
+
+          var photoUrl = byTitle[titleText] || byName[titleText] || '';
+          if (!photoUrl) return;
+
+          // Jika kartu belum memiliki elemen <img> untuk foto warta, suntikkan di atas judul
+          if (!card.querySelector('.sthac-public-news-img')) {
+            var existingImg = card.querySelector('img');
+            if (existingImg) {
+              existingImg.src = photoUrl;
+              existingImg.classList.add('sthac-public-news-img');
+              return;
+            }
+            var wrap = document.createElement('div');
+            wrap.className = 'mb-3 rounded-3 overflow-hidden border sthac-public-news-img-wrap';
+            wrap.style.height = '210px';
+            wrap.style.background = 'rgba(7,38,25,0.05)';
+            wrap.innerHTML = '<img src="' + photoUrl + '" alt="' + heading.textContent.trim() + '" class="w-100 h-100 object-fit-cover d-block sthac-public-news-img" />';
+            heading.parentNode.insertBefore(wrap, heading);
+          }
+        });
+      })
+      .catch(function() {});
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injectPublicNewsPhotos);
+  } else {
+    injectPublicNewsPhotos();
+  }
+})();

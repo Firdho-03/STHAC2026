@@ -791,7 +791,25 @@
       "summary": "tes-tes",
       "excerpt": "tes-tes",
       "createdAt": "2026-11-06T13:07:34.158Z",
-      "updatedAt": "2026-11-06T13:07:34.158Z"
+      "updatedAt": "2026-11-07T01:48:47.384Z",
+      "fotoUrl": "/uploads/member-1794016125396-8577.png",
+      "fotoUploadedData": ""
+    },
+    {
+      "id": 4,
+      "judul": "testing 2",
+      "kategori": "Pengumuman",
+      "tanggalTerbit": "24 Oktober 2026",
+      "ringkasan": "tes aja",
+      "fotoUrl": "/uploads/member-1794016170314-3264.png",
+      "fotoUploadedData": "",
+      "slug": "testing-2-1863",
+      "kategoriUmur": "Pengumuman",
+      "title": "testing 2",
+      "summary": "tes aja",
+      "excerpt": "tes aja",
+      "createdAt": "2026-11-07T01:49:31.864Z",
+      "updatedAt": "2026-11-07T01:49:31.864Z"
     }
   ],
   "sponsor": [
