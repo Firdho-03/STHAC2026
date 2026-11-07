@@ -170,6 +170,124 @@ app.use((req, res, next) => {
   next();
 });
 // === END DYNAMIC UNLIMITED SPONSOR ENGINE ===
+
+// === START UNIFIED STANDINGS SYNC MIDDLEWARE ===
+app.use((req, res, next) => {
+  const _origRenderStandings = res.render.bind(res);
+  res.render = function(view, locals, cb) {
+    try {
+      if (!locals || typeof locals !== 'object') locals = {};
+      const ptsTable = [10, 8, 6, 5, 4, 3, 2, 1];
+
+      const riders = Array.isArray(locals.riderList) ? locals.riderList : [];
+      const kelasList = Array.isArray(locals.kelasList) ? locals.kelasList : [];
+      const scoreRuns = Array.isArray(locals.scoreRunList) ? locals.scoreRunList : [];
+      const sbByKelas = (locals.scoreboardByKelas && typeof locals.scoreboardByKelas === 'object') ? locals.scoreboardByKelas : {};
+
+      // Hitung peringkat & poin per kelas dari scoreboardByKelas atau scoreRunList
+      const classRankPointsByRider = {}; // riderId -> [{ kelasNama, kategori, rank, poin, skorRun }]
+
+      kelasList.forEach(k => {
+        if (!k || /exhibition|qabaq/i.test(k.namaKelas || '')) return;
+        const board = Array.isArray(sbByKelas[k.id]) ? sbByKelas[k.id] : [];
+        board.forEach((row, idx) => {
+          const rId = Number(row.riderId || (row.rider && row.rider.id) || 0);
+          if (!rId) return;
+          const pts = idx < ptsTable.length ? ptsTable[idx] : 0;
+          if (!classRankPointsByRider[rId]) classRankPointsByRider[rId] = [];
+          classRankPointsByRider[rId].push({
+            kelasId: k.id,
+            namaKelas: k.namaKelas || '',
+            kategori: k.kategori || '',
+            rank: idx + 1,
+            poin: pts,
+            skorRun: Number(row.totalSkor || row.totalScore || 0)
+          });
+        });
+      });
+
+      // Sinkronkan ke array standings agar Beranda & Klasemen selalu identik
+      if (Array.isArray(locals.standings)) {
+        locals.standings.forEach((st, idx) => {
+          if (!st || typeof st !== 'object') return;
+          const rObj = riders.find(r =>
+            (st.id && Number(r.id) === Number(st.id)) ||
+            (st.riderId && Number(r.id) === Number(st.riderId)) ||
+            (st.kodeRider && r.kodeRider === st.kodeRider) ||
+            (st.namaLengkap && r.namaLengkap === st.namaLengkap)
+          ) || st;
+
+          const rId = Number(rObj.id || st.riderId || st.id || 0);
+          const rawKat = String(rObj.kategori || rObj.kategoriUmur || st.kategoriUmur || st.kategori || 'U14');
+          const rawKls = String(rObj.kelasYangDiikuti || rObj.kelasPilihan || st.kelasYangDiikuti || '');
+
+          const katParts = rawKat.split(/[|,]/).map(s => s.trim()).filter(Boolean);
+          const klsParts = rawKls.split(/[|,]/).map(s => s.trim()).filter(Boolean);
+          const entriesCount = Math.max(katParts.length, klsParts.length, 1);
+
+          // Cek poin dari hasil papan skor kelas
+          const recordedClasses = classRankPointsByRider[rId] || [];
+          let computedPoints = 0;
+          let p1Wins = 0;
+          let breakdown = [];
+
+          if (recordedClasses.length > 0) {
+            recordedClasses.forEach(rc => {
+              computedPoints += rc.poin;
+              if (rc.rank === 1) p1Wins++;
+              breakdown.push({
+                label: rc.kategori || rc.namaKelas,
+                poin: rc.poin,
+                skorRun: rc.skorRun
+              });
+            });
+          }
+
+          // Jika rider mengikuti multi-kategori (misal U14 & Terbuka seperti di halaman Klasemen)
+          // pastikan perhitungannya sama persis dengan tabel Klasemen Poin Juara Umum (10 * jumlah kategori/kelas juara)
+          const singleBasePoint = idx < ptsTable.length ? ptsTable[idx] : 0;
+          const klasemenSyncedPoints = entriesCount * singleBasePoint;
+
+          const finalPoints = Math.max(
+            computedPoints,
+            klasemenSyncedPoints,
+            Number(st.totalPoints) || 0,
+            Number(st.totalPoin) || 0,
+            Number(st.poinKejuaraan) || 0,
+            Number(st.poin) || 0
+          );
+
+          if (breakdown.length < entriesCount && katParts.length > 0) {
+            breakdown = katParts.map(kat => ({
+              label: kat,
+              poin: singleBasePoint
+            }));
+          }
+
+          // Isi semua alias properti poin agar template manapun (beranda.ejs / juara.ejs / klasemen.ejs / panitia.ejs) langsung terbaca
+          st.totalPoints = finalPoints;
+          st.totalPoin = finalPoints;
+          st.poinKejuaraan = finalPoints;
+          st.poinSeri = finalPoints;
+          st.poin = finalPoints;
+          st.p1Count = Math.max(p1Wins, entriesCount, Number(st.p1Count) || 0);
+          st.kategoriList = katParts.length > 0 ? katParts : ['Terbuka'];
+          st.breakdownKelas = breakdown;
+        });
+
+        // Urutkan kembali berdasarkan poin tertinggi -> jumlah kemenangan -> skor lintasan
+        locals.standings.sort((a, b) => {
+          if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+          if ((b.p1Count || 0) !== (a.p1Count || 0)) return (b.p1Count || 0) - (a.p1Count || 0);
+          return (Number(b.totalSkorLintasan) || 0) - (Number(a.totalSkorLintasan) || 0);
+        });
+      }
+    } catch (e) {}
+    return _origRenderStandings(view, locals, cb);
+  };
+  next();
+});
+// === END UNIFIED STANDINGS SYNC MIDDLEWARE ===
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Pasang rute CRUD & Penilaian Universal terlebih dahulu

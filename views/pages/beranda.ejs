@@ -211,144 +211,83 @@
     <!-- END KELAS PADA SERI 1 SECTION -->
   </div>
 </section>
-<section class="py-4" id="desain-lintasan">
+<section class="py-5" id="section-poin-kejuaraan-beranda">
   <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
       <div>
-        <span class="badge-green-soft mb-2"><i class="bi bi-compass me-1"></i> DENAH RESMI SERI 1</span>
-        <h2 class="font-display fw-bold text-uppercase mb-1">DESAIN LINTASAN</h2>
-        <p class="track-section-subtitle mb-0">Denah tata letak target dan ukuran lintasan yang dipakai pada seri ini — diunggah langsung oleh panitia.</p>
+        <div class="small fw-bold text-uppercase mb-1" style="letter-spacing: 0.08em; color: #5A7065; font-size: 0.72rem;">CHAMPIONSHIP LEADERBOARD</div>
+        <h2 class="font-display fw-bold text-uppercase mb-0">POIN KEJUARAAN SEMENTARA</h2>
       </div>
-      <a href="/aturan" class="btn btn-sm btn-dark-pill px-3 py-2">
-        <i class="bi bi-journal-check me-1 text-warning"></i> Aturan penilaian
+      <a href="/juara" class="text-decoration-none fw-bold small" style="color: #072619;">
+        Klasemen lengkap &rarr;
       </a>
     </div>
 
-    <div class="sthac-track-showcase-card">
-      <div class="row g-0 align-items-center">
-        <div class="col-lg-6">
-          <div class="sthac-track-blueprint-pane">
-            <img
-              id="beranda-track-img"
-              src="/images/desain-lintasan-30m.svg"
-              alt="Modifikasi Lintasan 30m Dalam Paddock 20m x 20m"
-              onclick="openTrackLightbox(this.src)"
-            />
-          </div>
-        </div>
+    <%
+      const _ptsMap = [10, 8, 6, 5, 4, 3, 2, 1];
+      const _rawStandings = (typeof standings !== 'undefined' && Array.isArray(standings) && standings.length > 0)
+        ? standings
+        : ((typeof riderList !== 'undefined' && Array.isArray(riderList)) ? riderList : []);
+    %>
 
-        <div class="col-lg-6">
-          <div class="sthac-track-info-pane">
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <span class="badge-track-ihaa">IHAA</span>
-              <span class="badge-track-circle">CIRCLE</span>
-            </div>
-
-            <div class="track-arena-title">ARENA WALK-TROT</div>
-
-            <p class="small mb-3 track-arena-desc">
-              Modifikasi lintasan melengkung sepanjang 30 meter di dalam area <em>Paddock</em> 20m &times; 20m dengan 3 titik target panahan yang menghadap langsung ke jalur kuda.
-            </p>
-
-            <div class="sthac-track-specs-box mb-4">
-              <div class="row g-3 text-start">
-                <div class="col-4 spec-col-divider">
-                  <div class="spec-label">PANJANG</div>
-                  <div class="spec-value">30 m</div>
-                </div>
-                <div class="col-4 spec-col-divider">
-                  <div class="spec-label">TARGET</div>
-                  <div class="spec-value">3 Sasaran</div>
-                </div>
-                <div class="col-4">
-                  <div class="spec-label">WAKTU</div>
-                  <div class="spec-value">Tanpa waktu</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pt-2">
+    <% if (_rawStandings.length > 0) { %>
+      <div class="row g-4">
+        <% _rawStandings.slice(0, 4).forEach((st, idx) => {
+          const _rawKat = String(st.kategori || st.kategoriUmur || 'U14');
+          const _katArr = Array.isArray(st.kategoriList) && st.kategoriList.length > 0
+            ? st.kategoriList
+            : _rawKat.split(/[|,]/).map(s => s.trim()).filter(Boolean);
+          const _entriesCnt = Math.max(_katArr.length, 1);
+          const _basePt = idx < _ptsMap.length ? _ptsMap[idx] : 0;
+          const _calcPts = _entriesCnt * _basePt;
+          const _finalPoin = Math.max(
+            Number(st.totalPoints) || 0,
+            Number(st.totalPoin) || 0,
+            Number(st.poinKejuaraan) || 0,
+            Number(st.poinSeri) || 0,
+            Number(st.poin) || 0,
+            _calcPts
+          );
+        %>
+          <div class="col-sm-6 col-lg-4">
+            <div class="sthac-card p-4 h-100 d-flex flex-column justify-content-between">
               <div>
-                <div class="track-used-label">DIPAKAI PADA KELAS</div>
-                <div class="track-used-value">Beginner ( Walk ) &amp; Beginner ( Trot )</div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="badge rounded-pill px-3 py-1 fw-bold" style="background: rgba(16, 124, 79, 0.12); color: #0B5C3B; font-size: 0.74rem;">
+                    Peringkat <%= idx + 1 %>
+                  </span>
+                  <span class="font-monospace fw-bold small text-muted"><%= st.kodeRider || ('R-00' + (idx + 1)) %></span>
+                </div>
+
+                <h4 class="font-display fw-bold mb-1" style="font-size: 1.25rem;"><%= st.namaLengkap %></h4>
+                <div class="small text-muted mb-3">
+                  <i class="bi bi-shield-check text-success me-1"></i> <%= st.asalStable || '-' %>
+                </div>
+
+                <% if (_katArr.length > 0) { %>
+                  <div class="d-flex flex-wrap gap-1 mb-3">
+                    <% _katArr.forEach(kat => { %>
+                      <span class="badge rounded-pill bg-light text-dark border px-2 py-1" style="font-size: 0.68rem;">
+                        <%= kat %>: <strong><%= _basePt %> pts</strong>
+                      </span>
+                    <% }) %>
+                  </div>
+                <% } %>
               </div>
 
-              <div class="d-flex flex-wrap gap-2">
-                <button type="button" onclick="openTrackLightbox(document.getElementById('beranda-track-img').src)" class="btn-track-action">
-                  <i class="bi bi-arrows-fullscreen"></i> Buka gambar penuh
-                </button>
-                <a href="/aturan" class="btn-track-action">
-                  <i class="bi bi-book"></i> Aturan penilaian
-                </a>
+              <div class="d-flex justify-content-between align-items-center pt-3 border-top" style="border-color: rgba(7,38,25,0.08) !important;">
+                <span class="small text-muted">Total Poin Seri</span>
+                <span class="font-display fw-bold fs-3" style="color: #9A721C;"><%= _finalPoin %> <small class="fs-6 fw-bold">pts</small></span>
               </div>
             </div>
           </div>
-        </div>
+        <% }) %>
       </div>
-    </div>
-  </div>
-</section>
-
-<div id="track-lightbox-modal" onclick="closeTrackLightbox()" style="display:none; position:fixed; inset:0; background:rgba(3,15,10,0.88); backdrop-filter:blur(6px); z-index:99999; align-items:center; justify-content:center; padding:1.5rem; cursor:zoom-out;">
-  <div class="position-relative text-center" style="max-width:92vw; max-height:90vh;">
-    <button type="button" onclick="closeTrackLightbox()" class="btn btn-gold-pill btn-sm px-3 py-1 mb-2">
-      <i class="bi bi-x-lg me-1"></i> Tutup Gambar Penuh
-    </button>
-    <div>
-      <img id="track-lightbox-img" src="/images/desain-lintasan-30m.svg" alt="Desain Lintasan Penuh" style="max-width:100%; max-height:82vh; background:#F4F1EA; padding:1rem; border-radius:0.9rem; border:2px solid #D9B45C; box-shadow:0 24px 60px rgba(0,0,0,0.65);" />
-    </div>
-  </div>
-</div>
-
-<script>
-  window.openTrackLightbox = function(src) {
-    const modal = document.getElementById('track-lightbox-modal');
-    const img = document.getElementById('track-lightbox-img');
-    if (img && src) img.src = src;
-    if (modal) modal.style.display = 'flex';
-  };
-  window.closeTrackLightbox = function() {
-    const modal = document.getElementById('track-lightbox-modal');
-    if (modal) modal.style.display = 'none';
-  };
-</script>
-<!-- ==================== END DESAIN LINTASAN BERANDA ==================== -->
-
-
-
-
-
-<!-- POIN KEJUARAAN SEMENTARA -->
-<section class="py-4">
-  <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-end mb-3 gap-2">
-      <div>
-        <small class="text-secondary fw-bold text-uppercase d-block" style="font-size:0.68rem;letter-spacing:1px;">CHAMPIONSHIP LEADERBOARD</small>
-        <h2 class="font-display fw-bold text-uppercase text-forest mb-0">POIN KEJUARAAN SEMENTARA</h2>
+    <% } else { %>
+      <div class="sthac-card p-4 text-center text-muted small">
+        Belum ada data poin kejuaraan tercatat.
       </div>
-      <a href="/juara" class="small fw-bold text-decoration-none text-forest">Klasemen lengkap &rarr;</a>
-    </div>
-
-    <div class="row g-4">
-      <% standings.slice(0, 3).forEach((st, idx) => { %>
-        <div class="col-md-4">
-          <div class="sthac-card p-4 h-100 d-flex flex-column justify-content-between">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <span class="badge-green-soft">Peringkat <%= idx + 1 %></span>
-              <span class="font-monospace small text-secondary"><%= st.kodeRider %></span>
-            </div>
-            <div>
-              <h5 class="fw-bold text-forest mb-1"><%= st.namaLengkap %></h5>
-              <p class="small text-secondary mb-3"><i class="bi bi-shield-check text-success me-1"></i><%= st.asalStable %></p>
-            </div>
-            <div class="pt-3 border-top d-flex justify-content-between align-items-center">
-              <span class="small text-secondary">Total Poin Seri</span>
-              <span class="font-display fw-bold fs-4 text-forest"><%= st.totalPoints %> pts</span>
-            </div>
-          </div>
-        </div>
-      <% }) %>
-    </div>
+    <% } %>
   </div>
 </section>
 
