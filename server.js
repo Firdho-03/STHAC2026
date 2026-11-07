@@ -24,6 +24,152 @@ app.set('layout', 'layouts/main');
 // Middleware Body Parser & Static Files
 app.use(express.json({ limit: '30mb' }));
 app.use(express.urlencoded({ extended: true, limit: '30mb' }));
+
+// === START DYNAMIC UNLIMITED SPONSOR ENGINE ===
+const _fsSp = require('fs');
+const _pathSp = require('path');
+const _storeSpPath = _pathSp.join(process.cwd(), 'prisma', 'sthac-unified-store.json');
+const _uploadsSpDir = _pathSp.join(process.cwd(), 'public', 'uploads');
+
+function _saveSponsorBase64(dataUrl) {
+  const m = String(dataUrl || '').match(/^data:image\/([a-zA-Z0-9+.-]+);base64,(.+)$/);
+  if (!m) return dataUrl;
+  let ext = m[1].toLowerCase().replace('jpeg', 'jpg').replace('svg+xml', 'svg');
+  if (!['jpg', 'png', 'webp', 'gif', 'svg'].includes(ext)) ext = 'png';
+  if (!_fsSp.existsSync(_uploadsSpDir)) _fsSp.mkdirSync(_uploadsSpDir, { recursive: true });
+  const fileName = 'sponsor-' + Date.now() + '-' + Math.round(Math.random() * 1e4) + '.' + ext;
+  _fsSp.writeFileSync(_pathSp.join(_uploadsSpDir, fileName), Buffer.from(m[2], 'base64'));
+  return '/uploads/' + fileName;
+}
+
+function _readDynamicSponsors() {
+  try {
+    if (_fsSp.existsSync(_storeSpPath)) {
+      const st = JSON.parse(_fsSp.readFileSync(_storeSpPath, 'utf8'));
+      const raw = Array.isArray(st.sponsors) ? st.sponsors : (Array.isArray(st.sponsorList) ? st.sponsorList : []);
+      return raw
+        .filter(s => s && s.fotoUrl && String(s.fotoUrl).trim().length > 2 && s.terisi !== false)
+        .map((s, idx) => ({
+          id: Number(s.id) || (idx + 1),
+          slotNumber: idx + 1,
+          namaSponsor: String(s.namaSponsor || ('Sponsor #' + (idx + 1))).trim(),
+          kategori: String(s.kategori || 'Official Partner').trim(),
+          fotoUrl: String(s.fotoUrl || '').trim(),
+          websiteUrl: String(s.websiteUrl || '#').trim() || '#',
+          terisi: true
+        }));
+    }
+  } catch (e) {}
+  return [];
+}
+
+function _writeDynamicSponsors(list) {
+  let st = {};
+  try {
+    if (_fsSp.existsSync(_storeSpPath)) {
+      st = JSON.parse(_fsSp.readFileSync(_storeSpPath, 'utf8'));
+    }
+  } catch (e) { st = {}; }
+
+  const normalized = (list || []).map((s, idx) => ({
+    id: Number(s.id) || (idx + 1),
+    slotNumber: idx + 1,
+    namaSponsor: String(s.namaSponsor || ('Sponsor #' + (idx + 1))).trim(),
+    kategori: String(s.kategori || 'Official Partner').trim(),
+    fotoUrl: String(s.fotoUrl || '').trim(),
+    websiteUrl: String(s.websiteUrl || '#').trim() || '#',
+    terisi: true
+  }));
+
+  st.sponsors = normalized;
+  st.sponsorList = normalized;
+  _fsSp.writeFileSync(_storeSpPath, JSON.stringify(st, null, 2), 'utf8');
+  return normalized;
+}
+
+// Endpoint khusus GET & POST Sponsor Dinamis Tanpa Batas
+app.get('/api/sthac-sponsors', (req, res) => {
+  res.json({ ok: true, sponsorList: _readDynamicSponsors() });
+});
+
+app.post('/api/sthac-sponsors/save', (req, res) => {
+  try {
+    const d = req.body || {};
+    const targetId = Number(d.id || d.slotNumber || 0);
+    let list = _readDynamicSponsors();
+
+    let photo = String(d.fotoUrl || d.foto || '').trim();
+    if (photo.startsWith('data:image/')) {
+      photo = _saveSponsorBase64(photo);
+    }
+    if (!photo) {
+      return res.status(400).json({ ok: false, message: 'Silakan pilih file logo/foto sponsor atau tempel URL gambar terlebih dahulu.' });
+    }
+
+    const existingIdx = targetId > 0
+      ? list.findIndex(s => Number(s.id) === targetId || Number(s.slotNumber) === targetId)
+      : -1;
+
+    if (existingIdx !== -1) {
+      list[existingIdx].namaSponsor = String(d.namaSponsor || list[existingIdx].namaSponsor).trim();
+      list[existingIdx].kategori = String(d.kategori || list[existingIdx].kategori).trim();
+      list[existingIdx].fotoUrl = photo;
+      list[existingIdx].websiteUrl = String(d.websiteUrl || '#').trim() || '#';
+      list[existingIdx].terisi = true;
+    } else {
+      const nextId = list.length > 0 ? Math.max(...list.map(s => Number(s.id) || 0)) + 1 : 1;
+      list.push({
+        id: nextId,
+        slotNumber: list.length + 1,
+        namaSponsor: String(d.namaSponsor || ('Sponsor #' + (list.length + 1))).trim(),
+        kategori: String(d.kategori || 'Main Sponsor').trim(),
+        fotoUrl: photo,
+        websiteUrl: String(d.websiteUrl || '#').trim() || '#',
+        terisi: true
+      });
+    }
+
+    const saved = _writeDynamicSponsors(list);
+    return res.json({
+      ok: true,
+      success: true,
+      message: existingIdx !== -1 ? 'Data sponsor berhasil diperbarui.' : 'Sponsor baru berhasil ditambahkan ke Beranda!',
+      sponsorList: saved
+    });
+  } catch (err) {
+    return res.status(500).json({ ok: false, message: err.message });
+  }
+});
+
+app.post('/api/sthac-sponsors/delete', (req, res) => {
+  try {
+    const targetId = Number((req.body && (req.body.id || req.body.slotNumber)) || 0);
+    let list = _readDynamicSponsors();
+    list = list.filter(s => Number(s.id) !== targetId && Number(s.slotNumber) !== targetId);
+    const saved = _writeDynamicSponsors(list);
+    return res.json({ ok: true, success: true, message: 'Sponsor berhasil dihapus.', sponsorList: saved });
+  } catch (err) {
+    return res.status(500).json({ ok: false, message: err.message });
+  }
+});
+
+// Intercept res.render SEBELUM semua route agar sponsorList selalu terisi di Beranda & Panitia
+app.use((req, res, next) => {
+  const _origRenderTopSp = res.render.bind(res);
+  res.render = function(view, locals, cb) {
+    try {
+      if (!locals || typeof locals !== 'object') locals = {};
+      const dynamicSponsors = _readDynamicSponsors();
+      locals.sponsorList = dynamicSponsors;
+      locals.sponsors = dynamicSponsors;
+      res.locals.sponsorList = dynamicSponsors;
+      res.locals.sponsors = dynamicSponsors;
+    } catch (e) {}
+    return _origRenderTopSp(view, locals, cb);
+  };
+  next();
+});
+// === END DYNAMIC UNLIMITED SPONSOR ENGINE ===
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Pasang rute CRUD & Penilaian Universal terlebih dahulu
@@ -487,6 +633,7 @@ app.use((req, res, next) => {
   next();
 });
 // === END RUNDOWN & PERATURAN API ROUTES ===
+
 
 app.use('/', webRoutes);
 

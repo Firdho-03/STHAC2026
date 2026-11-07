@@ -360,22 +360,26 @@
 
 
 
+
 // === START PUBLIC NEWS PHOTO INJECTOR ===
 (function() {
+  function escHtml(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
   function injectPublicNewsPhotos() {
-    // Jangan jalankan di dalam form editor panitia
-    if (document.getElementById('admin-dashboard-panel') && document.getElementById('admin-dashboard-panel').style.display !== 'none') {
-      return;
-    }
+    // HANYA jalankan pada halaman Berita (/berita atau /news), JANGAN di Beranda agar kartu Leaderboard Rider tidak terkena!
+    var pathName = (window.location.pathname || '').toLowerCase();
+    var isNewsPage = pathName.indexOf('/berita') !== -1 || pathName.indexOf('/news') !== -1 || /WARTAs+STHAC/i.test(document.body.innerText || '');
+    if (!isNewsPage) return;
 
     fetch('/api/sthac-media-map')
       .then(function(r) { return r.json(); })
       .then(function(map) {
         if (!map) return;
+        // HANYA gunakan byBeritaTitle (JANGAN gunakan byName milik Rider!)
         var byTitle = map.byBeritaTitle || {};
-        var byName = map.byName || {};
 
-        // Cari semua kartu berita di halaman WARTA STHAC 2026 (/berita) maupun Beranda
         document.querySelectorAll('.sthac-card, .card').forEach(function(card) {
           if (card.closest('#admin-dashboard-panel')) return;
           var heading = card.querySelector('h2, h3, h4, h5, h6');
@@ -384,22 +388,15 @@
           var titleText = (heading.textContent || '').trim().toLowerCase();
           if (!titleText) return;
 
-          var photoUrl = byTitle[titleText] || byName[titleText] || '';
-          if (!photoUrl) return;
+          var photoUrl = byTitle[titleText] || '';
+          if (!photoUrl || photoUrl.trim().length <= 4) return;
 
-          // Jika kartu belum memiliki elemen <img> untuk foto warta, suntikkan di atas judul
           if (!card.querySelector('.sthac-public-news-img')) {
-            var existingImg = card.querySelector('img');
-            if (existingImg) {
-              existingImg.src = photoUrl;
-              existingImg.classList.add('sthac-public-news-img');
-              return;
-            }
             var wrap = document.createElement('div');
             wrap.className = 'mb-3 rounded-3 overflow-hidden border sthac-public-news-img-wrap';
             wrap.style.height = '210px';
             wrap.style.background = 'rgba(7,38,25,0.05)';
-            wrap.innerHTML = '<img src="' + photoUrl + '" alt="' + heading.textContent.trim() + '" class="w-100 h-100 object-fit-cover d-block sthac-public-news-img" />';
+            wrap.innerHTML = '<img src="' + photoUrl + '" alt="' + escHtml(heading.textContent.trim()) + '" class="w-100 h-100 object-fit-cover d-block sthac-public-news-img" />';
             heading.parentNode.insertBefore(wrap, heading);
           }
         });
@@ -407,9 +404,54 @@
       .catch(function() {});
   }
 
+  function syncPublicBerandaSponsors() {
+    var gridWrap = document.getElementById('public-beranda-sponsor-grid');
+    if (!gridWrap) return;
+
+    fetch('/api/sthac-sponsors')
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        if (!res || !res.ok || !Array.isArray(res.sponsorList)) return;
+        var list = res.sponsorList.filter(function(s) {
+          return s && s.fotoUrl && String(s.fotoUrl).trim().length > 2;
+        });
+        if (list.length === 0) return;
+
+        gridWrap.innerHTML =
+          '<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3 justify-content-center">' +
+            list.map(function(sp) {
+              var hasLink = sp.websiteUrl && sp.websiteUrl !== '#';
+              return '<div class="col">' +
+                '<a href="' + (hasLink ? escHtml(sp.websiteUrl) : 'javascript:void(0)') + '" ' +
+                   (hasLink ? 'target="_blank" rel="noopener"' : '') +
+                   ' class="sthac-card p-3 h-100 d-flex flex-column justify-content-between text-decoration-none sthac-public-sponsor-box">' +
+                  '<div class="d-flex justify-content-between align-items-center mb-2">' +
+                    '<span class="badge rounded-pill px-2 py-1 text-truncate" style="max-width: 115px; font-size: 0.62rem; background: rgba(217,180,92,0.18); color: #8C6514; border: 1px solid rgba(217,180,92,0.45);">' +
+                      escHtml(sp.kategori || 'Official Partner') +
+                    '</span>' +
+                    '<i class="bi bi-patch-check-fill text-warning" style="font-size: 0.8rem;"></i>' +
+                  '</div>' +
+                  '<div class="rounded-3 d-flex align-items-center justify-content-center my-1 overflow-hidden" style="height: 96px; background: #FFFFFF; padding: 0.55rem; border: 1px solid rgba(7,38,25,0.08);">' +
+                    '<img src="' + escHtml(sp.fotoUrl) + '" alt="' + escHtml(sp.namaSponsor) + '" style="max-height: 82px; max-width: 100%; object-fit: contain;" />' +
+                  '</div>' +
+                  '<div class="text-center mt-2 pt-1">' +
+                    '<div class="fw-bold small text-truncate">' + escHtml(sp.namaSponsor) + '</div>' +
+                  '</div>' +
+                '</a>' +
+              '</div>';
+            }).join('') +
+          '</div>';
+      })
+      .catch(function() {});
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectPublicNewsPhotos);
+    document.addEventListener('DOMContentLoaded', function() {
+      injectPublicNewsPhotos();
+      syncPublicBerandaSponsors();
+    });
   } else {
     injectPublicNewsPhotos();
+    syncPublicBerandaSponsors();
   }
 })();

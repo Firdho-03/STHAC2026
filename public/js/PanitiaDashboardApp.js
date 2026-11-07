@@ -720,7 +720,78 @@ class LiveScoreCalculator {
 class SponsorSlotManager {
   constructor(app, slots = []) {
     this.app = app;
-    this.slots = slots;
+    this.slots = Array.isArray(slots) ? slots : [];
+  }
+
+  esc(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  async fetchAndRender() {
+    try {
+      const res = await fetch('/api/sthac-sponsors');
+      const out = await res.json();
+      if (out && out.ok && Array.isArray(out.sponsorList)) {
+        this.slots = out.sponsorList;
+        this.renderAdminGrid();
+      }
+    } catch (e) {}
+  }
+
+  renderAdminGrid() {
+    // Update angka badge di dropdown & KPI
+    document.querySelectorAll('#kpi-sponsor-count, #lbl-sponsor-count, #badge-nav-sponsor').forEach(el => {
+      el.innerText = this.slots.length;
+    });
+    const navLink = document.querySelector('.adm-sub-link[data-tab="sponsor"]');
+    if (navLink) {
+      navLink.innerHTML = '<i class="bi bi-patch-check-fill me-2 text-warning"></i> Sponsor &amp; Mitra (' + this.slots.length + ')';
+    }
+
+    const container = document.getElementById('admin-sponsor-grid-container');
+    if (!container) return;
+
+    if (!this.slots || this.slots.length === 0) {
+      container.innerHTML = `
+        <div class="p-5 rounded-3 text-center" style="background:var(--bg-table-head); border:1px dashed var(--border-main);">
+          <i class="bi bi-patch-plus fs-1 text-warning d-block mb-2"></i>
+          <h6 class="fw-bold text-white mb-1">Belum Ada Sponsor Ditambahkan</h6>
+          <p class="small text-white-50 mb-0">Gunakan formulir di sebelah kiri untuk mengunggah logo/foto sponsor pertama Anda.</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = '<div class="row g-3" style="max-height: 620px; overflow-y: auto; padding-right: 4px;">' +
+      this.slots.map((sp, idx) => `
+        <div class="col-sm-6 col-md-4 sponsor-admin-card-item" data-search="${this.esc((sp.namaSponsor + ' ' + sp.kategori).toLowerCase())}">
+          <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background:var(--bg-table-head); border:1px solid var(--border-main);">
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-warning text-dark fw-bold">#${idx + 1}</span>
+                <span class="badge bg-success-subtle text-success" style="font-size:0.65rem;">Aktif</span>
+              </div>
+              <div class="rounded-3 mb-2 d-flex align-items-center justify-content-center overflow-hidden" style="height:105px; background:#FFFFFF; border:1px solid var(--border-main); padding:0.5rem;">
+                <img src="${this.esc(sp.fotoUrl)}" alt="${this.esc(sp.namaSponsor)}" style="max-height:92px; max-width:100%; object-fit:contain;" />
+              </div>
+              <div class="fw-bold text-white text-truncate small" title="${this.esc(sp.namaSponsor)}">${this.esc(sp.namaSponsor)}</div>
+              <div class="text-white-50 text-truncate" style="font-size:0.68rem;">${this.esc(sp.kategori)}</div>
+            </div>
+            <div class="d-flex gap-1 mt-3 pt-2 border-top" style="border-color:var(--border-main) !important;">
+              <button type="button" onclick="onSelectSponsorSlot(${sp.id || sp.slotNumber}, true)" class="btn btn-sm btn-gold-pill flex-grow-1 py-1" style="font-size:0.74rem;">
+                <i class="bi bi-pencil-square me-1"></i> Edit
+              </button>
+              <button type="button" onclick="clearSponsorSlot(${sp.id || sp.slotNumber})" class="btn btn-sm btn-logout-pill px-2 py-1" title="Hapus Sponsor">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('') +
+    '</div>';
   }
 
   updatePreviewBox(src) {
@@ -728,7 +799,7 @@ class SponsorSlotManager {
     const txt = document.getElementById('txt-sponsor-nopreview');
     if (!img || !txt) return;
     if (src && src.trim().length > 4) {
-      img.src = src;
+      img.src = src.trim();
       img.style.display = 'block';
       txt.style.display = 'none';
     } else {
@@ -739,62 +810,187 @@ class SponsorSlotManager {
   }
 
   previewFile(fileInp) {
-    const file = fileInp.files && fileInp.files[0];
-    if (!file) return;
+    const file = fileInp && fileInp.files && fileInp.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+
     const reader = new FileReader();
     reader.onload = (evt) => {
-      const dataUrl = evt.target.result;
-      document.getElementById('inp-sponsor-foto').value = dataUrl;
-      this.updatePreviewBox(dataUrl);
+      const img = new Image();
+      img.onload = async () => {
+        const maxDim = 800;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const outType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+        const dataUrl = canvas.toDataURL(outType, 0.88);
+
+        const fotoInp = document.getElementById('inp-sponsor-foto');
+        if (fotoInp) fotoInp.value = dataUrl;
+        this.updatePreviewBox(dataUrl);
+
+        try {
+          const namaSp = document.getElementById('inp-sponsor-nama')?.value.trim() || 'sponsor';
+          const res = await fetch('/api/sthac-upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dataUrl, nama: namaSp })
+          });
+          const out = await res.json();
+          if (out && out.ok && out.url) {
+            if (fotoInp) fotoInp.value = out.url;
+            this.updatePreviewBox(out.url);
+          }
+        } catch (err) {}
+      };
+      img.src = evt.target.result;
     };
     reader.readAsDataURL(file);
   }
 
-  selectSlot(slotNo, scrollToForm = false) {
-    const num = Number(slotNo);
-    const sel = document.getElementById('inp-sponsor-slot');
-    if (sel) sel.value = String(num);
-    const badge = document.getElementById('badge-slot-sponsor');
-    if (badge) badge.innerText = 'SLOT #' + num;
+  resetFormToCreate() {
+    const idInp = document.getElementById('inp-sponsor-id');
+    const namaInp = document.getElementById('inp-sponsor-nama');
+    const katInp = document.getElementById('inp-sponsor-kategori');
+    const fotoInp = document.getElementById('inp-sponsor-foto');
+    const fileInp = document.getElementById('inp-sponsor-file');
+    const webInp = document.getElementById('inp-sponsor-web');
+    const titleEl = document.getElementById('title-form-sponsor');
+    const badgeEl = document.getElementById('badge-slot-sponsor');
+    const btnLabel = document.getElementById('btn-label-sponsor');
 
-    const found = this.slots.find(s => Number(s.slotNumber) === num);
-    if (found) {
-      document.getElementById('inp-sponsor-nama').value = found.namaSponsor || ('Sponsor #' + num);
-      document.getElementById('inp-sponsor-kategori').value = found.kategori || 'Official Partner';
-      document.getElementById('inp-sponsor-foto').value = found.fotoUrl || '';
-      document.getElementById('inp-sponsor-web').value = found.websiteUrl || '#';
-      this.updatePreviewBox(found.fotoUrl || '');
+    if (idInp) idInp.value = '';
+    if (namaInp) namaInp.value = '';
+    if (katInp) katInp.value = 'Main Sponsor';
+    if (fotoInp) fotoInp.value = '';
+    if (fileInp) fileInp.value = '';
+    if (webInp) webInp.value = '#';
+    if (titleEl) titleEl.innerText = 'TAMBAH SPONSOR & MITRA BARU';
+    if (badgeEl) badgeEl.innerText = 'MODE TAMBAH';
+    if (btnLabel) btnLabel.innerText = 'Tambah Sponsor ke Beranda';
+    this.updatePreviewBox('');
+  }
+
+  selectSlot(idOrSlot, scrollToForm = false) {
+    if (!idOrSlot) {
+      this.resetFormToCreate();
+      return;
     }
+    const num = Number(idOrSlot);
+    const found = this.slots.find(s => Number(s.id) === num || Number(s.slotNumber) === num);
+    if (!found) {
+      this.resetFormToCreate();
+      return;
+    }
+
+    const idInp = document.getElementById('inp-sponsor-id');
+    if (idInp) idInp.value = String(found.id || found.slotNumber);
+    const namaInp = document.getElementById('inp-sponsor-nama');
+    if (namaInp) namaInp.value = found.namaSponsor || '';
+    const katInp = document.getElementById('inp-sponsor-kategori');
+    if (katInp) katInp.value = found.kategori || 'Main Sponsor';
+    const fotoInp = document.getElementById('inp-sponsor-foto');
+    if (fotoInp) fotoInp.value = found.fotoUrl || '';
+    const fileInp = document.getElementById('inp-sponsor-file');
+    if (fileInp) fileInp.value = '';
+    const webInp = document.getElementById('inp-sponsor-web');
+    if (webInp) webInp.value = found.websiteUrl || '#';
+
+    const titleEl = document.getElementById('title-form-sponsor');
+    if (titleEl) titleEl.innerText = 'EDIT SPONSOR: ' + (found.namaSponsor || ('#' + num));
+    const badgeEl = document.getElementById('badge-slot-sponsor');
+    if (badgeEl) badgeEl.innerText = 'EDIT #' + (found.slotNumber || num);
+    const btnLabel = document.getElementById('btn-label-sponsor');
+    if (btnLabel) btnLabel.innerText = 'Simpan Perubahan Sponsor';
+
+    this.updatePreviewBox(found.fotoUrl || '');
     if (scrollToForm) {
       document.getElementById('card-form-sponsor')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 
-  submitForm(e) {
+  async submitForm(e) {
     e.preventDefault();
-    const slotNumber = parseInt(document.getElementById('inp-sponsor-slot').value, 10) || 1;
+    const idVal = parseInt(document.getElementById('inp-sponsor-id')?.value || '', 10) || null;
     const payload = {
-      slotNumber,
+      id: idVal,
       namaSponsor: document.getElementById('inp-sponsor-nama').value.trim(),
       kategori: document.getElementById('inp-sponsor-kategori').value,
       fotoUrl: document.getElementById('inp-sponsor-foto').value.trim(),
       websiteUrl: document.getElementById('inp-sponsor-web').value.trim() || '#'
     };
+    if (!payload.fotoUrl) {
+      return this.app.popup.show('Foto Belum Dipilih', 'Silakan pilih file logo/foto sponsor atau tempel URL gambar terlebih dahulu.', 'error');
+    }
     sessionStorage.setItem('sthac_active_adm_tab', 'sponsor');
-    this.app.crud.sendCrudRequest('sponsor', 'update', slotNumber, payload);
+    try {
+      const res = await fetch('/api/sthac-sponsors/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const out = await res.json();
+      if (res.ok && out && out.ok) {
+        this.slots = out.sponsorList || [];
+        this.resetFormToCreate();
+        this.renderAdminGrid();
+        this.app.popup.show('Sponsor Tersimpan!', out.message || 'Sponsor berhasil ditambahkan dan ditampilkan di Beranda.', 'success');
+      } else {
+        this.app.popup.show('Gagal Menyimpan Sponsor', (out && out.message) || 'Terjadi kesalahan saat menyimpan sponsor.', 'error');
+      }
+    } catch (err) {
+      this.app.popup.show('Gangguan Koneksi', 'Tidak dapat menghubungi server: ' + err.message, 'error');
+    }
   }
 
-  clearSlot(slotParam) {
-    const slotNumber = slotParam || parseInt(document.getElementById('inp-sponsor-slot').value, 10) || 1;
+  clearSlot(idParam) {
+    const targetId = idParam || parseInt(document.getElementById('inp-sponsor-id')?.value || '', 10);
+    if (!targetId) {
+      this.resetFormToCreate();
+      return;
+    }
+    const found = this.slots.find(s => Number(s.id) === Number(targetId) || Number(s.slotNumber) === Number(targetId));
+    const label = found ? found.namaSponsor : ('Sponsor #' + targetId);
     this.app.popup.show(
-      'Kosongkan Foto Slot #' + slotNumber + '?',
-      'Foto sponsor pada Slot #' + slotNumber + ' akan dihapus dan dikembalikan ke status kosong.',
+      'Hapus ' + label + '?',
+      'Sponsor <strong>' + label + '</strong> akan dihapus dari daftar sponsor Beranda.',
       'confirm',
-      () => {
-        sessionStorage.setItem('sthac_active_adm_tab', 'sponsor');
-        this.app.crud.sendCrudRequest('sponsor', 'delete', slotNumber, { slotNumber });
+      async () => {
+        try {
+          const res = await fetch('/api/sthac-sponsors/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: targetId })
+          });
+          const out = await res.json();
+          if (out && out.ok) {
+            this.slots = out.sponsorList || [];
+            this.resetFormToCreate();
+            this.renderAdminGrid();
+          }
+        } catch (err) {}
       }
     );
+  }
+
+  filterCards(query) {
+    const q = String(query || '').toLowerCase().trim();
+    document.querySelectorAll('.sponsor-admin-card-item').forEach(col => {
+      const hay = (col.getAttribute('data-search') || '').toLowerCase();
+      col.style.display = (!q || hay.includes(q)) ? '' : 'none';
+    });
   }
 }
 
@@ -1061,7 +1257,8 @@ class PanitiaDashboardApp {
   init() {
     this.router.init();
     this.auth.renderSessionState();
-    this.sponsorManager.selectSlot(1);
+    this.sponsorManager.resetFormToCreate();
+    this.sponsorManager.fetchAndRender();
     this.rundownManager.fetchAndRender();
   }
 
@@ -1120,6 +1317,8 @@ class PanitiaDashboardApp {
     window.onSelectSponsorSlot = (no, sc) => this.sponsorManager.selectSlot(no, sc);
     window.submitSponsorForm = (e) => this.sponsorManager.submitForm(e);
     window.clearSponsorSlot = (no) => this.sponsorManager.clearSlot(no);
+    window.resetSponsorForm = () => this.sponsorManager.resetFormToCreate();
+    window.filterSponsorAdminCards = (q) => this.sponsorManager.filterCards(q);
   }
 }
 
