@@ -26,78 +26,61 @@
             </tr>
           </thead>
           <tbody>
-            <%
-              const rawList = (typeof klasemenList !== 'undefined' && Array.isArray(klasemenList)) ? klasemenList : [];
-              // Hitung total poin langsung dari penjumlahan baris skor tiap rider
-              const computedList = rawList.map((k, idx) => {
-                let katRows = [];
-                if (Array.isArray(k.kategoriRows) && k.kategoriRows.length > 0) {
-                  katRows = k.kategoriRows;
-                } else if (k.kategori) {
-                  katRows = String(k.kategori).split(/[|,;/]+/).map(s => s.trim()).filter(Boolean);
-                }
-                if (katRows.length === 0) katRows = ['U14'];
-
-                let scoreRows = [];
-                if (Array.isArray(k.scoreRows) && k.scoreRows.length === katRows.length) {
-                  scoreRows = k.scoreRows.map(v => Number(v || 0));
-                } else if (Array.isArray(k.splitRows) && k.splitRows.length === katRows.length) {
-                  scoreRows = k.splitRows.map(sr => Number(sr.poinKelas !== undefined ? sr.poinKelas : 10));
-                } else {
-                  scoreRows = katRows.map(() => 10);
-                }
-
-                const sumPoints = scoreRows.reduce((acc, n) => acc + Number(n || 0), 0);
-                return {
-                  ...k,
-                  _katRows: katRows,
-                  _scoreRows: scoreRows,
-                  _sumPoints: sumPoints
-                };
-              }).sort((a, b) => b._sumPoints - a._sumPoints);
-            %>
-            <% if (computedList.length > 0) { %>
-              <% computedList.forEach((k, idx) => { %>
-                <tr>
-                  <td class="ps-4 fw-bold">Peringkat <%= idx + 1 %></td>
-                  <td class="small text-muted"><%= k.kodeRider || k.kode || '-' %></td>
-                  <td class="fw-bold"><%= k.namaLengkap || k.namaRider || k.nama || '-' %></td>
-                  <td><%= k.asalStable || k.namaStable || '-' %></td>
-
-                  <!-- KOLOM KELAS DIIKUTI (SPLIT ATAS-BAWAH) -->
-                  <td class="p-0 align-middle klasemen-split-border-x" style="min-width: 220px;">
-                    <div class="d-flex flex-column w-100">
-                      <% k._katRows.forEach((katName, rIdx) => { %>
-                        <div class="px-3 py-2 fw-semibold d-flex align-items-center <%= rIdx > 0 ? 'klasemen-split-item-top' : '' %>" style="min-height: 40px; font-size: 0.86rem;">
-                          <span><%= katName %></span>
-                        </div>
-                      <% }) %>
-                    </div>
-                  </td>
-
-                  <!-- KOLOM TOTAL SKOR RUN (NILAI POSISI KELAS SPLIT ATAS-BAWAH) -->
-                  <td class="p-0 align-middle text-center klasemen-split-border-x" style="width: 155px;">
-                    <div class="d-flex flex-column w-100">
-                      <% k._scoreRows.forEach((scVal, rIdx) => { %>
-                        <div class="px-3 py-2 fw-bold font-display d-flex align-items-center justify-content-center <%= rIdx > 0 ? 'klasemen-split-item-top' : '' %>" style="min-height: 40px; font-size: 1.05rem;">
-                          <span><%= scVal %></span>
-                        </div>
-                      <% }) %>
-                    </div>
-                  </td>
-
-                  <!-- KOLOM POIN KEJUARAAN (HASIL PENJUMLAHAN LANGSUNG TOTAL SKOR RUN) -->
-                  <td class="text-end pe-4 font-display fw-bold fs-4 text-gold">
-                    <%= k._sumPoints %> pts
-                  </td>
-                </tr>
-              <% }) %>
-            <% } else { %>
-              <tr>
-                <td colspan="7" class="text-center py-4 text-muted">Belum ada data rider terdaftar pada klasemen.</td>
-              </tr>
-            <% } %>
-          </tbody>
+  <% if (!standings || standings.length === 0) { %>
+    <tr>
+      <td colspan="7" class="text-center py-4 text-muted">Belum ada peserta terdaftar di klasemen.</td>
+    </tr>
+  <% } else { %>
+    <% standings.forEach((st, idx) => {
+      const _rincian = Array.isArray(st.rincianKelas) && st.rincianKelas.length > 0
+        ? st.rincianKelas
+        : String(st.kategoriUmur || st.kategori || 'U14').split(/[|,]/).map(s => s.trim()).filter(Boolean).map(kat => ({
+            namaKelas: kat,
+            kategori: kat,
+            poinKlasmen: 0,
+            skorRun: 0,
+            peringkat: '-'
+          }));
+      const _totalPts = Number(st.totalPoints ?? st.totalPoin ?? 0);
+    %>
+      <tr>
+        <td class="fw-bold">
+          <span class="sthac-rank-pill">Peringkat <%= idx + 1 %></span>
+        </td>
+        <td class="font-monospace fw-bold"><%= st.kodeRider || ('R-00' + (idx + 1)) %></td>
+        <td>
+          <div class="fw-bold"><%= st.namaLengkap %></div>
+          <% if (st.p1Count > 0) { %>
+            <small class="text-warning fw-semibold" style="font-size: 0.7rem;">
+              <i class="bi bi-trophy-fill me-1"></i><%= st.p1Count %>x Juara 1 Kelas (Total Run: <%= st.totalSkorLintasan %> pts)
+            </small>
+          <% } %>
+        </td>
+        <td><%= st.asalStable || '-' %></td>
+        <td class="p-0 align-middle">
+          <% _rincian.forEach((rkItem, rIdx) => { %>
+            <div class="px-3 py-2 <%= rIdx < _rincian.length - 1 ? 'border-bottom' : '' %>" style="border-color: rgba(128,128,128,0.18) !important;">
+              <span class="fw-bold"><%= rkItem.kategori || rkItem.namaKelas %></span>
+              <% if (rkItem.namaKelas && rkItem.namaKelas !== rkItem.kategori) { %>
+                <small class="text-muted ms-1">(<%= rkItem.namaKelas %>)</small>
+              <% } %>
+            </div>
+          <% }) %>
+        </td>
+        <td class="p-0 text-center align-middle">
+          <% _rincian.forEach((rkItem, rIdx) => { %>
+            <div class="px-3 py-2 fw-bold <%= rIdx < _rincian.length - 1 ? 'border-bottom' : '' %>" style="border-color: rgba(128,128,128,0.18) !important;">
+              <%= rkItem.poinKlasmen %>
+            </div>
+          <% }) %>
+        </td>
+        <td class="text-end font-display fw-bold fs-4 sthac-total-pts-value">
+          <%= _totalPts %> <small class="fs-6">pts</small>
+        </td>
+      </tr>
+    <% }) %>
+  <% } %>
+</tbody>
         </table>
       </div>
     </div>

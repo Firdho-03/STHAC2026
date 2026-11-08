@@ -530,7 +530,9 @@
         // Baca nomor peringkat dari kolom POS (misal "#1", "#2", "1")
         var posText = (cells[0].textContent || '').replace(/[^0-9]/g, '');
         var rankNum = parseInt(posText, 10) || (rowIdx + 1);
-        var ptsVal = (!isExhibition && rankNum >= 1 && rankNum <= PTS_MAP.length) ? PTS_MAP[rankNum - 1] : 0;
+        var totalCellText = (cells[totalSkorIdx] ? cells[totalSkorIdx].textContent : '') || '';
+        var numericTotal = parseFloat(totalCellText.replace(/[^0-9.]/g, '')) || 0;
+        var ptsVal = (!isExhibition && numericTotal > 0 && rankNum >= 1 && rankNum <= PTS_MAP.length) ? PTS_MAP[rankNum - 1] : 0;
 
         // Jika baris sudah punya badge .sthac-poin-klasmen-badge, cukup pastikan nilainya akurat
         var existingBadge = tr.querySelector('.sthac-poin-klasmen-badge');
@@ -575,5 +577,156 @@
     document.addEventListener('DOMContentLoaded', syncKlasemenTableHeaders);
   } else {
     syncKlasemenTableHeaders();
+  }
+})();
+
+
+// === START LIVE AUTO-REFRESH & MANUAL REFRESH CONTROLLER ===
+(function() {
+  // HANYA aktifkan tombol Refresh & Auto-Refresh di Halaman Nilai / Papan Skor Pertandingan (/skor)
+  var pathName = (window.location.pathname || '').toLowerCase();
+  var isSkorPage = (pathName === '/skor' || pathName.indexOf('/skor/') === 0);
+  if (!isSkorPage) {
+    var oldBar = document.getElementById('sthac-live-refresh-bar');
+    if (oldBar) oldBar.remove();
+    return;
+  }
+
+  var _currentVersion = null;
+  var _autoRefreshEnabled = localStorage.getItem('sthac_auto_refresh') !== '0';
+  var _pollTimer = null;
+
+  window.triggerSthacManualRefresh = function(btnEl) {
+    if (btnEl) btnEl.disabled = true;
+    window.location.reload();
+  };
+
+  window.toggleSthacAutoRefresh = function() {
+    _autoRefreshEnabled = !_autoRefreshEnabled;
+    localStorage.setItem('sthac_auto_refresh', _autoRefreshEnabled ? '1' : '0');
+    updateSkorRefreshUI();
+  };
+
+  function updateSkorRefreshUI() {
+    var toggleBtn = document.getElementById('btn-sthac-auto-refresh-toggle');
+    if (toggleBtn) {
+      toggleBtn.innerHTML = _autoRefreshEnabled
+        ? '<i class="bi bi-broadcast-pin text-success me-1"></i> Auto-Refresh: <strong>AKTIF</strong>'
+        : '<i class="bi bi-pause-circle text-warning me-1"></i> Auto-Refresh: <strong>NONAKTIF</strong>';
+      toggleBtn.style.borderColor = _autoRefreshEnabled ? 'rgba(16,185,129,0.5)' : 'rgba(217,180,92,0.4)';
+    }
+  }
+
+  function mountSkorOnlyRefreshControls() {
+    if (document.getElementById('sthac-live-refresh-bar')) return;
+    var bar = document.createElement('div');
+    bar.id = 'sthac-live-refresh-bar';
+    bar.style.cssText = 'position:fixed; bottom:18px; right:18px; z-index:9990; display:flex; align-items:center; gap:6px; background:rgba(6,32,21,0.92); backdrop-filter:blur(8px); padding:6px 10px; border-radius:50rem; border:1px solid rgba(217,180,92,0.45); box-shadow:0 10px 25px rgba(0,0,0,0.28); font-size:0.74rem; color:#FFFFFF;';
+    bar.innerHTML =
+      '<button type="button" id="btn-sthac-auto-refresh-toggle" onclick="window.toggleSthacAutoRefresh()" class="btn btn-sm rounded-pill px-2 py-1 text-white" style="font-size:0.72rem; background:rgba(255,255,255,0.06); border:1px solid rgba(16,185,129,0.5);"></button>' +
+      '<button type="button" onclick="window.triggerSthacManualRefresh(this)" class="btn btn-sm btn-gold-pill px-3 py-1 fw-bold" style="font-size:0.72rem;">' +
+        '<i class="bi bi-arrow-clockwise me-1"></i> Refresh Nilai' +
+      '</button>';
+    document.body.appendChild(bar);
+    updateSkorRefreshUI();
+  }
+
+  function pollLiveState() {
+    fetch('/api/sthac-live-state', { cache: 'no-store' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!data || !data.ok) return;
+        if (_currentVersion === null) {
+          _currentVersion = data.version;
+          return;
+        }
+        if (data.version !== _currentVersion) {
+          _currentVersion = data.version;
+          if (_autoRefreshEnabled) {
+            window.location.reload();
+          }
+        }
+      })
+      .catch(function() {});
+  }
+
+  function initSkorLiveSync() {
+    mountSkorOnlyRefreshControls();
+    pollLiveState();
+    if (_pollTimer) clearInterval(_pollTimer);
+    _pollTimer = setInterval(pollLiveState, 5000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSkorLiveSync);
+  } else {
+    initSkorLiveSync();
+  }
+})();
+// === START POPUP STRAY UPLOAD CLEANER ===
+(function() {
+  function removeStrayUploadsFromPopups() {
+    // 1. Cari semua elemen input file atau label 'FOTO PELATIH' / 'FOTO RIDER' yang berada di luar <form>
+    document.querySelectorAll('input[type="file"], input[placeholder*="https://"]').forEach(function(inp) {
+      var inForm = inp.closest('form');
+      var inPopup = inp.closest('[id*="modal"], [id*="popup"], [id*="success"], [id*="berhasil"], .modal, .swal2-container');
+      var parentCard = inp.closest('.sthac-card, .card, div[style*="fixed"], div[style*="z-index"]');
+      var isSuccessBox = parentCard && /PENDAFTARAN\s+BERHASIL|Selesai\s*\/\s*Daftar\s*Lagi|KODE\s+RESMI/i.test(parentCard.textContent || '');
+
+      if (!inForm || inPopup || isSuccessBox) {
+        // Cari wrapper row/div dari input foto yang nyasar tersebut lalu hapus
+        var rowWrap = inp.closest('.row, .mb-3, .sthac-upload-injected-wrap');
+        if (rowWrap && (!rowWrap.closest('form') || isSuccessBox)) {
+          rowWrap.remove();
+        } else if (!inForm) {
+          var parentDiv = inp.parentElement;
+          if (parentDiv && parentDiv.parentElement && !parentDiv.parentElement.closest('form')) {
+            parentDiv.parentElement.remove();
+          } else if (parentDiv) {
+            parentDiv.remove();
+          }
+        }
+      }
+    });
+
+    // 2. Pastikan label 'FOTO PELATIH (UPLOAD FILE)' atau 'ATAU URL FOTO PELATIH' di dalam popup sukses ikut terhapus bersih
+    document.querySelectorAll('label, div, span').forEach(function(el) {
+      var txt = (el.textContent || '').trim().toUpperCase();
+      if (txt === 'FOTO PELATIH (UPLOAD FILE)' || txt === 'ATAU URL FOTO PELATIH' || txt === 'FOTO RIDER (UPLOAD FILE)') {
+        var inForm = el.closest('form');
+        var box = el.closest('div[style*="fixed"], .modal, .sthac-card, .card') || el.parentElement;
+        var isSuccessModal = box && /PENDAFTARAN\s+BERHASIL|Selesai\s*\/\s*Daftar\s*Lagi/i.test(box.textContent || '');
+        if (!inForm || isSuccessModal) {
+          var containerRow = el.closest('.row, .mb-3') || el.parentElement;
+          if (containerRow && (!containerRow.closest('form') || isSuccessModal)) {
+            containerRow.remove();
+          }
+        }
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      removeStrayUploadsFromPopups();
+      setTimeout(removeStrayUploadsFromPopups, 150);
+      setTimeout(removeStrayUploadsFromPopups, 600);
+    });
+  } else {
+    removeStrayUploadsFromPopups();
+    setTimeout(removeStrayUploadsFromPopups, 150);
+    setTimeout(removeStrayUploadsFromPopups, 600);
+  }
+
+  // Pantau jika popup sukses muncul secara dinamis setelah submit pendaftaran
+  var obs = new MutationObserver(function() {
+    removeStrayUploadsFromPopups();
+  });
+  if (document.body) {
+    obs.observe(document.body, { childList: true, subtree: true });
+  } else {
+    document.addEventListener('DOMContentLoaded', function() {
+      obs.observe(document.body, { childList: true, subtree: true });
+    });
   }
 })();

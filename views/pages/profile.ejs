@@ -169,7 +169,7 @@
                     data-stable="<%= (r.asalStable || '').toLowerCase() %>">
                   <td class="ps-4 font-monospace fw-bold"><%= r.kodeRider %></td>
                   <td class="fw-bold"><%= r.namaLengkap %></td>
-                  <td><span class="badge bg-dark text-warning border border-warning px-2 py-1"><%= r.kategoriUmur %></span></td>
+                  <td><span class="badge bg-dark text-warning border border-warning px-2 py-1"><%= r.kategoriUmur || r.kategori || "U14" %></span></td>
                   <td><%= r.asalStable %></td>
                   <td class="text-end pe-4">
                     <a href="/profile?id=<%= r.id %>" class="btn btn-sm btn-dark-pill px-3 py-1">Detail</a>

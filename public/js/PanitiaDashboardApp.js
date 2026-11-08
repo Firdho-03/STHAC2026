@@ -1,15 +1,10 @@
 /**
- * ============================================================================
  * STHAC 2026 — PANITIA DASHBOARD OOP ARCHITECTURE
- * File: /public/js/PanitiaDashboardApp.js
- * ============================================================================
  */
-
 class PopupDialogManager {
   constructor() {
     this.confirmCallback = null;
   }
-
   show(title, message, type = 'error', onConfirm = null) {
     const backdrop = document.getElementById('sthac-popup-backdrop');
     const iconWrap = document.getElementById('popup-icon-wrap');
@@ -19,11 +14,9 @@ class PopupDialogManager {
     const btnCancel = document.getElementById('popup-btn-cancel');
     const btnOk = document.getElementById('popup-btn-ok');
     if (!backdrop) return;
-
     titleEl.innerText = title;
     msgEl.innerHTML = message;
     this.confirmCallback = onConfirm;
-
     if (type === 'success') {
       iconWrap.style.background = 'rgba(16, 185, 129, 0.16)';
       iconWrap.style.color = '#10B981';
@@ -45,7 +38,6 @@ class PopupDialogManager {
     }
     backdrop.style.display = 'flex';
   }
-
   close(confirmed = false) {
     const backdrop = document.getElementById('sthac-popup-backdrop');
     if (backdrop) backdrop.style.display = 'none';
@@ -70,30 +62,24 @@ class AdminTabRouter {
       setelan: ['setelan']
     };
   }
-
   init() {
     document.querySelectorAll('#admin-nav-pills .dropdown-toggle').forEach(btn => {
       btn.addEventListener('click', () => this.closeAllDropdowns(btn));
     });
-
     document.addEventListener('click', (e) => {
       if (!e.target.closest('#admin-nav-pills')) {
         this.closeAllDropdowns();
       }
     });
   }
-
   closeAllDropdowns(exceptToggle = null) {
     document.querySelectorAll('#admin-nav-pills .dropdown').forEach(dropWrapper => {
       const toggleBtn = dropWrapper.querySelector('.dropdown-toggle');
       const menuEl = dropWrapper.querySelector('.dropdown-menu');
       if (exceptToggle && toggleBtn === exceptToggle) return;
-
       if (toggleBtn && window.bootstrap && bootstrap.Dropdown) {
         const inst = bootstrap.Dropdown.getInstance(toggleBtn);
-        if (inst) {
-          try { inst.hide(); } catch (e) {}
-        }
+        if (inst) { try { inst.hide(); } catch (e) {} }
       }
       if (toggleBtn) {
         toggleBtn.classList.remove('show');
@@ -106,20 +92,12 @@ class AdminTabRouter {
       }
     });
   }
-
   openTab(tabName) {
     this.closeAllDropdowns();
     sessionStorage.setItem('sthac_active_adm_tab', tabName);
-
-    document.querySelectorAll('.admin-section').forEach(el => {
-      el.style.display = 'none';
-    });
-
+    document.querySelectorAll('.admin-section').forEach(el => { el.style.display = 'none'; });
     const target = document.getElementById('adm-sec-' + tabName);
-    if (target) {
-      target.style.display = 'block';
-    }
-
+    if (target) target.style.display = 'block';
     Object.keys(this.groups).forEach(gKey => {
       const btn = document.getElementById('adm-group-' + gKey);
       if (!btn) return;
@@ -128,15 +106,10 @@ class AdminTabRouter {
       btn.classList.add(isActive ? 'btn-gold-pill' : 'btn-dark-pill');
       btn.setAttribute('aria-expanded', 'false');
     });
-
     document.querySelectorAll('.adm-sub-link').forEach(link => {
-      if (link.getAttribute('data-tab') === tabName) {
-        link.classList.add('active-sub');
-      } else {
-        link.classList.remove('active-sub');
-      }
+      if (link.getAttribute('data-tab') === tabName) link.classList.add('active-sub');
+      else link.classList.remove('active-sub');
     });
-
     if (tabName === 'rundown' && this.app.rundownManager) {
       this.app.rundownManager.fetchAndRender();
     }
@@ -151,7 +124,6 @@ class PanitiaAuthManager {
     this.pendingRole = '';
     this.pendingPurpose = 'LOGIN';
   }
-
   switchMode(mode) {
     ['login-otp', 'register-otp', 'quick-pass'].forEach(m => {
       const pane = document.getElementById('auth-pane-' + m);
@@ -162,16 +134,13 @@ class PanitiaAuthManager {
     const verifyBox = document.getElementById('auth-otp-verify-box');
     if (verifyBox) verifyBox.style.display = 'none';
   }
-
   resetOtpView() {
     this.switchMode(this.pendingPurpose === 'REGISTER' ? 'register-otp' : 'login-otp');
   }
-
   resendOtp() {
     if (!this.pendingEmail) return;
     this.requestOtpFromServer(this.pendingEmail, this.pendingName, this.pendingRole, this.pendingPurpose);
   }
-
   handleRequestOtp(e, purpose) {
     e.preventDefault();
     const email = purpose === 'REGISTER'
@@ -183,16 +152,13 @@ class PanitiaAuthManager {
     const jabatan = purpose === 'REGISTER'
       ? document.getElementById('inp-reg-role').value
       : 'Dewan Juri & Panitia';
-
     if (!email) return this.app.popup.show('Email Belum Diisi', 'Masukkan alamat email resmi Anda.', 'error');
-
     this.pendingEmail = email;
     this.pendingName = namaLengkap;
     this.pendingRole = jabatan;
     this.pendingPurpose = purpose;
     this.requestOtpFromServer(email, namaLengkap, jabatan, purpose);
   }
-
   async requestOtpFromServer(email, namaLengkap, jabatan, purpose) {
     try {
       const res = await fetch('/api/panitia/request-otp', {
@@ -216,7 +182,6 @@ class PanitiaAuthManager {
       this.app.popup.show('Gangguan Koneksi', 'Tidak dapat terhubung ke server: ' + err.message, 'error');
     }
   }
-
   async handleVerifyOtp(e) {
     e.preventDefault();
     const codeInp = document.getElementById('inp-verify-otp-code');
@@ -242,7 +207,6 @@ class PanitiaAuthManager {
       this.app.popup.show('Gagal Memverifikasi OTP', 'Terjadi kesalahan saat memverifikasi kode OTP.', 'error');
     }
   }
-
   async handleQuickLogin(e) {
     e.preventDefault();
     const passInp = document.getElementById('inp-quick-password');
@@ -265,7 +229,6 @@ class PanitiaAuthManager {
       this.app.popup.show('Gangguan Koneksi', 'Gagal memverifikasi sandi akses.', 'error');
     }
   }
-
   activateSession(user) {
     sessionStorage.setItem('sthac_admin_auth', '1');
     sessionStorage.setItem('sthac_admin_user', JSON.stringify(user));
@@ -273,7 +236,6 @@ class PanitiaAuthManager {
     localStorage.setItem('sthac_admin_user', JSON.stringify(user));
     this.renderSessionState();
   }
-
   logout() {
     sessionStorage.removeItem('sthac_admin_auth');
     sessionStorage.removeItem('sthac_admin_user');
@@ -281,7 +243,6 @@ class PanitiaAuthManager {
     localStorage.removeItem('sthac_admin_user');
     window.location.reload();
   }
-
   renderSessionState() {
     const isAuth = sessionStorage.getItem('sthac_admin_auth') === '1' || localStorage.getItem('sthac_admin_auth') === '1';
     const gate = document.getElementById('admin-login-gate');
@@ -312,7 +273,6 @@ class EntityCrudController {
   constructor(app) {
     this.app = app;
   }
-
   async sendCrudRequest(entity, action, id = null, data = {}) {
     try {
       const res = await fetch('/api/panitia/crud', {
@@ -332,17 +292,30 @@ class EntityCrudController {
       this.app.popup.show('Gangguan Koneksi', 'Tidak dapat menghubungi server: ' + err.message, 'error');
     }
   }
-
   submitForm(e, entity) {
     e.preventDefault();
+    if (entity === 'rider') {
+      this.syncKatAndKelas();
+    }
     const form = e.target;
     const fd = new FormData(form);
     const dataObj = {};
-    fd.forEach((v, k) => { dataObj[k] = v; });
+    fd.forEach((v, k) => {
+      if (Object.prototype.hasOwnProperty.call(dataObj, k)) {
+        if (v && !String(dataObj[k]).split(' | ').includes(String(v))) {
+          dataObj[k] = dataObj[k] + ' | ' + v;
+        }
+      } else {
+        dataObj[k] = v;
+      }
+    });
+    if (entity === 'rider') {
+      dataObj.kategoriUmur = dataObj.kategori || dataObj.kategoriUmur || 'U14';
+      dataObj.kelasPilihan = dataObj.kelasYangDiikuti || dataObj.kelasPilihan || '';
+    }
     const idVal = dataObj.id ? parseInt(dataObj.id, 10) : null;
     this.sendCrudRequest(entity, idVal ? 'update' : 'create', idVal, dataObj);
   }
-
   resetForm(formId, hiddenIdField, titleId, defaultTitle) {
     const f = document.getElementById(formId);
     if (f) f.reset();
@@ -355,8 +328,12 @@ class EntityCrudController {
       const bMode = document.getElementById('badge-mode-berita');
       if (bMode) bMode.innerText = 'EDITOR WARTA';
     }
+    if (formId === 'form-crud-rider') {
+      const bMode = document.getElementById('badge-mode-rider');
+      if (bMode) bMode.innerText = 'MODE TAMBAH';
+      this.syncKatAndKelas();
+    }
   }
-
   deleteEntity(entity, id, label = '') {
     this.app.popup.show(
       'Konfirmasi Hapus Data',
@@ -365,7 +342,6 @@ class EntityCrudController {
       () => this.sendCrudRequest(entity, 'delete', id)
     );
   }
-
   filterTableRows(tableId, query) {
     const q = String(query || '').toLowerCase().trim();
     const tbl = document.getElementById(tableId);
@@ -375,7 +351,6 @@ class EntityCrudController {
       tr.style.display = (!q || text.includes(q)) ? '' : 'none';
     });
   }
-
   filterPendaftarCards(status, btnEl) {
     if (btnEl && btnEl.parentElement) {
       btnEl.parentElement.querySelectorAll('.saiga-filter-chip').forEach(b => b.classList.remove('active'));
@@ -386,7 +361,6 @@ class EntityCrudController {
       card.style.display = (status === 'ALL' || st.toLowerCase() === status.toLowerCase()) ? '' : 'none';
     });
   }
-
   searchPendaftarCards(val) {
     const q = String(val || '').toLowerCase().trim();
     document.querySelectorAll('.pendaftar-card-item').forEach(card => {
@@ -394,7 +368,6 @@ class EntityCrudController {
       card.style.display = (!q || hay.includes(q)) ? '' : 'none';
     });
   }
-
   filterBeritaCards(val) {
     const q = String(val || '').toLowerCase().trim();
     document.querySelectorAll('.berita-card-item').forEach(card => {
@@ -402,32 +375,45 @@ class EntityCrudController {
       card.style.display = (!q || hay.includes(q)) ? '' : 'none';
     });
   }
-
   syncKatAndKelas() {
-    const katChecked = Array.from(document.querySelectorAll('.chk-adm-kat:checked')).map(c => c.value);
+    const klsChecked = Array.from(document.querySelectorAll('.chk-adm-kls:checked')).map(c => c.value.trim());
+    const katSet = new Set();
+    klsChecked.forEach(kName => {
+      if (/u14/i.test(kName)) katSet.add('U14');
+      if (/terbuka|open/i.test(kName)) katSet.add('Terbuka');
+    });
+    const katArr = katSet.size > 0 ? Array.from(katSet) : ['U14'];
     const katInp = document.getElementById('inp-rider-kategori');
-    if (katInp) katInp.value = katChecked.length ? katChecked.join(' | ') : 'U14';
-
-    const klsChecked = Array.from(document.querySelectorAll('.chk-adm-kls:checked')).map(c => c.value);
+    if (katInp) katInp.value = katArr.join(' | ');
     const klsInp = document.getElementById('inp-rider-kelas');
     if (klsInp) klsInp.value = klsChecked.join(' | ');
   }
-
   fillRiderEdit(r) {
     document.getElementById('inp-rider-id').value = r.id;
     document.getElementById('inp-rider-kode').value = r.kodeRider || '';
     document.getElementById('inp-rider-nama').value = r.namaLengkap || '';
     document.getElementById('inp-rider-gender').value = r.gender || 'Putra';
     document.getElementById('inp-rider-umur').value = r.umur || 15;
-    document.getElementById('inp-rider-kategori').value = r.kategoriUmur || 'Terbuka';
+    const rawKat = String(r.kategoriUmur || r.kategori || 'U14');
+    const rawKls = String(r.kelasYangDiikuti || r.kelasPilihan || '');
+    const klsParts = rawKls.split(/[|,]/).map(s => s.trim().toLowerCase()).filter(Boolean);
+    const katParts = rawKat.split(/[|,]/).map(s => s.trim().toLowerCase()).filter(Boolean);
+    document.querySelectorAll('.chk-adm-kls').forEach(chk => {
+      const valLow = chk.value.trim().toLowerCase();
+      const matchByKls = klsParts.some(p => p === valLow || valLow.includes(p) || p.includes(valLow));
+      const matchByKat = klsParts.length === 0 && katParts.some(k => valLow.includes(k));
+      chk.checked = matchByKls || matchByKat;
+    });
+    this.syncKatAndKelas();
     document.getElementById('inp-rider-stable').value = r.asalStable || '';
     document.getElementById('inp-rider-pelatih').value = r.namaPelatih || '';
     document.getElementById('inp-rider-kota').value = r.kotaAsal || '';
     document.getElementById('inp-rider-wa').value = r.noWhatsapp || '';
     document.getElementById('title-form-rider').innerText = 'EDIT RIDER: ' + r.namaLengkap;
+    const bMode = document.getElementById('badge-mode-rider');
+    if (bMode) bMode.innerText = 'MODE EDIT';
     document.getElementById('card-form-rider').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
   fillPelatihEdit(c) {
     document.getElementById('inp-pelatih-id').value = c.id;
     document.getElementById('inp-pelatih-nama').value = c.namaLengkap || '';
@@ -438,7 +424,6 @@ class EntityCrudController {
     document.getElementById('title-form-pelatih').innerText = 'EDIT PELATIH: ' + c.namaLengkap;
     document.getElementById('card-form-pelatih').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
   fillStableEdit(s) {
     document.getElementById('inp-stable-id').value = s.id;
     document.getElementById('inp-stable-nama').value = s.namaStable || '';
@@ -448,7 +433,6 @@ class EntityCrudController {
     document.getElementById('title-form-stable').innerText = 'EDIT STABLE: ' + s.namaStable;
     document.getElementById('card-form-stable').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
   fillKelasEdit(k) {
     document.getElementById('inp-kelas-id').value = k.id;
     document.getElementById('inp-kelas-nama').value = k.namaKelas || '';
@@ -458,7 +442,6 @@ class EntityCrudController {
     document.getElementById('title-form-kelas').innerText = 'EDIT KELAS: ' + k.namaKelas;
     document.getElementById('card-form-kelas').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
   fillLintasanEdit(l) {
     document.getElementById('inp-lintasan-id').value = l.id;
     document.getElementById('inp-lintasan-nama').value = l.namaLintasan || '';
@@ -472,7 +455,6 @@ class EntityCrudController {
     document.getElementById('title-form-lintasan').innerText = 'EDIT LINTASAN: ' + l.namaLintasan;
     document.getElementById('card-form-lintasan').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
   fillPanitiaEdit(u) {
     document.getElementById('inp-panitia-id').value = u.id;
     document.getElementById('inp-panitia-nama').value = u.namaLengkap || '';
@@ -481,7 +463,6 @@ class EntityCrudController {
     document.getElementById('title-form-panitia').innerText = 'EDIT PETUGAS: ' + u.namaLengkap;
     document.getElementById('card-form-panitia').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
   fillUnduhanEdit(d) {
     document.getElementById('inp-unduhan-id').value = d.id;
     document.getElementById('inp-unduhan-kode').value = d.kodeBadge || 'DOC';
@@ -491,14 +472,12 @@ class EntityCrudController {
     document.getElementById('title-form-unduhan').innerText = 'EDIT DOKUMEN: ' + d.judul;
     document.getElementById('card-form-unduhan').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
-    updateBeritaPreviewBox(src) {
+  updateBeritaPreviewBox(src) {
     const wrap = document.getElementById('berita-preview-wrap');
     const img = document.getElementById('img-berita-preview');
     const txt = document.getElementById('txt-berita-nopreview');
     const btnClear = document.getElementById('btn-clear-berita-foto');
     if (!img || !txt) return;
-
     if (src && src.trim().length > 4) {
       img.src = src.trim();
       img.style.display = 'block';
@@ -513,11 +492,9 @@ class EntityCrudController {
       if (wrap) wrap.style.borderColor = '';
     }
   }
-
   previewBeritaFile(fileInp) {
     const file = fileInp && fileInp.files && fileInp.files[0];
     if (!file || !file.type.startsWith('image/')) return;
-
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
@@ -526,13 +503,8 @@ class EntityCrudController {
         let w = img.width;
         let h = img.height;
         if (w > maxDim || h > maxDim) {
-          if (w > h) {
-            h = Math.round((h * maxDim) / w);
-            w = maxDim;
-          } else {
-            w = Math.round((w * maxDim) / h);
-            h = maxDim;
-          }
+          if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+          else { w = Math.round((w * maxDim) / h); h = maxDim; }
         }
         const canvas = document.createElement('canvas');
         canvas.width = w;
@@ -541,12 +513,9 @@ class EntityCrudController {
         ctx.drawImage(img, 0, 0, w, h);
         const outType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
         const dataUrl = canvas.toDataURL(outType, 0.86);
-
         const fotoInp = document.getElementById('inp-berita-foto');
         if (fotoInp) fotoInp.value = dataUrl;
         this.updateBeritaPreviewBox(dataUrl);
-
-        // Unggah langsung ke /api/sthac-upload agar menjadi path /uploads/... yang ringan
         try {
           const judulVal = document.getElementById('inp-berita-judul')?.value.trim() || '';
           const res = await fetch('/api/sthac-upload', {
@@ -565,7 +534,6 @@ class EntityCrudController {
     };
     reader.readAsDataURL(file);
   }
-
   clearBeritaPhoto() {
     const fotoInp = document.getElementById('inp-berita-foto');
     const fileInp = document.getElementById('inp-berita-file');
@@ -573,7 +541,6 @@ class EntityCrudController {
     if (fileInp) fileInp.value = '';
     this.updateBeritaPreviewBox('');
   }
-
   fillBeritaEdit(b) {
     document.getElementById('inp-berita-id').value = b.id;
     document.getElementById('inp-berita-judul').value = b.judul || '';
@@ -598,7 +565,6 @@ class LiveScoreCalculator {
     this.app = app;
     this.existingRuns = existingRuns;
   }
-
   syncExistingRunToForm() {
     const kId = Number(document.getElementById('inp-score-kelas')?.value || 0);
     const rId = Number(document.getElementById('inp-score-rider')?.value || 0);
@@ -612,35 +578,29 @@ class LiveScoreCalculator {
     }
     this.recalcPreview();
   }
-
   stepRunNumber(delta) {
     const inp = document.getElementById('inp-score-run');
     if (!inp) return;
     inp.value = Math.max(1, Math.min(10, (parseInt(inp.value, 10) || 1) + delta));
     this.syncExistingRunToForm();
   }
-
   recalcPreview() {
     const t1 = parseFloat(document.getElementById('inp-score-t1')?.value) || 0;
     const t2 = parseFloat(document.getElementById('inp-score-t2')?.value) || 0;
     const t3 = parseFloat(document.getElementById('inp-score-t3')?.value) || 0;
     const waktu = parseFloat(document.getElementById('inp-score-waktu')?.value) || 0;
-
     const selKelas = document.getElementById('inp-score-kelas');
     const opt = selKelas && selKelas.selectedOptions ? selKelas.selectedOptions[0] : null;
     const parTime = opt ? (parseFloat(opt.getAttribute('data-partime')) || 0) : 0;
     const bonusSapu = opt ? (parseFloat(opt.getAttribute('data-bonus')) || 0) : 0;
-
     const poinTarget = t1 + t2 + t3;
     const kenaCount = [t1, t2, t3].filter(v => v > 0).length;
-
     let poinWaktu = 0;
     if (parTime > 0 && waktu > 0 && kenaCount > 0) {
       poinWaktu = parTime - waktu;
     }
     const bonus = (kenaCount === 3 && bonusSapu > 0) ? bonusSapu : 0;
     const total = Math.max(0, poinTarget + poinWaktu + bonus);
-
     const elT = document.getElementById('prev-poin-target');
     const elW = document.getElementById('prev-poin-waktu');
     const elTot = document.getElementById('prev-total-skor');
@@ -648,7 +608,6 @@ class LiveScoreCalculator {
     if (elW) elW.innerText = poinWaktu.toFixed(2) + ' Pts';
     if (elTot) elTot.innerText = total.toFixed(2) + ' Pts';
   }
-
   selectKelasForInput(kelasId, maxRun) {
     this.app.router.openTab('penilaian');
     const sel = document.getElementById('inp-score-kelas');
@@ -658,7 +617,6 @@ class LiveScoreCalculator {
     this.recalcPreview();
     document.getElementById('card-form-penilaian')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
   fillEditScore(kelasId, riderId, runNumber, t1, t2, t3, waktu) {
     this.app.router.openTab('penilaian');
     document.getElementById('inp-score-kelas').value = String(kelasId);
@@ -671,7 +629,6 @@ class LiveScoreCalculator {
     this.recalcPreview();
     document.getElementById('card-form-penilaian')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
-
   async submitScoreRun(e) {
     e.preventDefault();
     const payload = {
@@ -700,7 +657,6 @@ class LiveScoreCalculator {
       this.app.popup.show('Gangguan Koneksi', 'Gagal menghubungi server: ' + err.message, 'error');
     }
   }
-
   deleteScoreRun(id) {
     this.app.popup.show('Hapus Nilai Run?', 'Apakah Anda yakin ingin menghapus catatan nilai run ini?', 'confirm', async () => {
       const res = await fetch('/api/panitia/score-run/delete', {
@@ -722,15 +678,9 @@ class SponsorSlotManager {
     this.app = app;
     this.slots = Array.isArray(slots) ? slots : [];
   }
-
   esc(str) {
-    return String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
-
   async fetchAndRender() {
     try {
       const res = await fetch('/api/sthac-sponsors');
@@ -741,9 +691,7 @@ class SponsorSlotManager {
       }
     } catch (e) {}
   }
-
   renderAdminGrid() {
-    // Update angka badge di dropdown & KPI
     document.querySelectorAll('#kpi-sponsor-count, #lbl-sponsor-count, #badge-nav-sponsor').forEach(el => {
       el.innerText = this.slots.length;
     });
@@ -751,49 +699,45 @@ class SponsorSlotManager {
     if (navLink) {
       navLink.innerHTML = '<i class="bi bi-patch-check-fill me-2 text-warning"></i> Sponsor &amp; Mitra (' + this.slots.length + ')';
     }
-
     const container = document.getElementById('admin-sponsor-grid-container');
     if (!container) return;
-
     if (!this.slots || this.slots.length === 0) {
-      container.innerHTML = `
-        <div class="p-5 rounded-3 text-center" style="background:var(--bg-table-head); border:1px dashed var(--border-main);">
-          <i class="bi bi-patch-plus fs-1 text-warning d-block mb-2"></i>
-          <h6 class="fw-bold text-white mb-1">Belum Ada Sponsor Ditambahkan</h6>
-          <p class="small text-white-50 mb-0">Gunakan formulir di sebelah kiri untuk mengunggah logo/foto sponsor pertama Anda.</p>
-        </div>`;
+      container.innerHTML =
+        '<div class="p-5 rounded-3 text-center" style="background:var(--bg-table-head); border:1px dashed var(--border-main);">' +
+          '<i class="bi bi-patch-plus fs-1 text-warning d-block mb-2"></i>' +
+          '<h6 class="fw-bold text-white mb-1">Belum Ada Sponsor Ditambahkan</h6>' +
+          '<p class="small text-white-50 mb-0">Gunakan formulir di sebelah kiri untuk mengunggah logo/foto sponsor pertama Anda.</p>' +
+        '</div>';
       return;
     }
-
     container.innerHTML = '<div class="row g-3" style="max-height: 620px; overflow-y: auto; padding-right: 4px;">' +
-      this.slots.map((sp, idx) => `
-        <div class="col-sm-6 col-md-4 sponsor-admin-card-item" data-search="${this.esc((sp.namaSponsor + ' ' + sp.kategori).toLowerCase())}">
-          <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background:var(--bg-table-head); border:1px solid var(--border-main);">
-            <div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="badge bg-warning text-dark fw-bold">#${idx + 1}</span>
-                <span class="badge bg-success-subtle text-success" style="font-size:0.65rem;">Aktif</span>
-              </div>
-              <div class="rounded-3 mb-2 d-flex align-items-center justify-content-center overflow-hidden" style="height:105px; background:#FFFFFF; border:1px solid var(--border-main); padding:0.5rem;">
-                <img src="${this.esc(sp.fotoUrl)}" alt="${this.esc(sp.namaSponsor)}" style="max-height:92px; max-width:100%; object-fit:contain;" />
-              </div>
-              <div class="fw-bold text-white text-truncate small" title="${this.esc(sp.namaSponsor)}">${this.esc(sp.namaSponsor)}</div>
-              <div class="text-white-50 text-truncate" style="font-size:0.68rem;">${this.esc(sp.kategori)}</div>
-            </div>
-            <div class="d-flex gap-1 mt-3 pt-2 border-top" style="border-color:var(--border-main) !important;">
-              <button type="button" onclick="onSelectSponsorSlot(${sp.id || sp.slotNumber}, true)" class="btn btn-sm btn-gold-pill flex-grow-1 py-1" style="font-size:0.74rem;">
-                <i class="bi bi-pencil-square me-1"></i> Edit
-              </button>
-              <button type="button" onclick="clearSponsorSlot(${sp.id || sp.slotNumber})" class="btn btn-sm btn-logout-pill px-2 py-1" title="Hapus Sponsor">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      `).join('') +
+      this.slots.map((sp, idx) =>
+        '<div class="col-sm-6 col-md-4 sponsor-admin-card-item" data-search="' + this.esc((sp.namaSponsor + ' ' + sp.kategori).toLowerCase()) + '">' +
+          '<div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background:var(--bg-table-head); border:1px solid var(--border-main);">' +
+            '<div>' +
+              '<div class="d-flex justify-content-between align-items-center mb-2">' +
+                '<span class="badge bg-warning text-dark fw-bold">#' + (idx + 1) + '</span>' +
+                '<span class="badge bg-success-subtle text-success" style="font-size:0.65rem;">Aktif</span>' +
+              '</div>' +
+              '<div class="rounded-3 mb-2 d-flex align-items-center justify-content-center overflow-hidden" style="height:105px; background:#FFFFFF; border:1px solid var(--border-main); padding:0.5rem;">' +
+                '<img src="' + this.esc(sp.fotoUrl) + '" alt="' + this.esc(sp.namaSponsor) + '" style="max-height:92px; max-width:100%; object-fit:contain;" />' +
+              '</div>' +
+              '<div class="fw-bold text-white text-truncate small" title="' + this.esc(sp.namaSponsor) + '">' + this.esc(sp.namaSponsor) + '</div>' +
+              '<div class="text-white-50 text-truncate" style="font-size:0.68rem;">' + this.esc(sp.kategori) + '</div>' +
+            '</div>' +
+            '<div class="d-flex gap-1 mt-3 pt-2 border-top" style="border-color:var(--border-main) !important;">' +
+              '<button type="button" onclick="onSelectSponsorSlot(' + (sp.id || sp.slotNumber) + ', true)" class="btn btn-sm btn-gold-pill flex-grow-1 py-1" style="font-size:0.74rem;">' +
+                '<i class="bi bi-pencil-square me-1"></i> Edit' +
+              '</button>' +
+              '<button type="button" onclick="clearSponsorSlot(' + (sp.id || sp.slotNumber) + ')" class="btn btn-sm btn-logout-pill px-2 py-1" title="Hapus Sponsor">' +
+                '<i class="bi bi-trash"></i>' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      ).join('') +
     '</div>';
   }
-
   updatePreviewBox(src) {
     const img = document.getElementById('img-sponsor-preview');
     const txt = document.getElementById('txt-sponsor-nopreview');
@@ -808,11 +752,9 @@ class SponsorSlotManager {
       txt.style.display = 'inline';
     }
   }
-
   previewFile(fileInp) {
     const file = fileInp && fileInp.files && fileInp.files[0];
     if (!file || !file.type.startsWith('image/')) return;
-
     const reader = new FileReader();
     reader.onload = (evt) => {
       const img = new Image();
@@ -821,13 +763,8 @@ class SponsorSlotManager {
         let w = img.width;
         let h = img.height;
         if (w > maxDim || h > maxDim) {
-          if (w > h) {
-            h = Math.round((h * maxDim) / w);
-            w = maxDim;
-          } else {
-            w = Math.round((w * maxDim) / h);
-            h = maxDim;
-          }
+          if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+          else { w = Math.round((w * maxDim) / h); h = maxDim; }
         }
         const canvas = document.createElement('canvas');
         canvas.width = w;
@@ -836,11 +773,9 @@ class SponsorSlotManager {
         ctx.drawImage(img, 0, 0, w, h);
         const outType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
         const dataUrl = canvas.toDataURL(outType, 0.88);
-
         const fotoInp = document.getElementById('inp-sponsor-foto');
         if (fotoInp) fotoInp.value = dataUrl;
         this.updatePreviewBox(dataUrl);
-
         try {
           const namaSp = document.getElementById('inp-sponsor-nama')?.value.trim() || 'sponsor';
           const res = await fetch('/api/sthac-upload', {
@@ -859,7 +794,6 @@ class SponsorSlotManager {
     };
     reader.readAsDataURL(file);
   }
-
   resetFormToCreate() {
     const idInp = document.getElementById('inp-sponsor-id');
     const namaInp = document.getElementById('inp-sponsor-nama');
@@ -870,7 +804,6 @@ class SponsorSlotManager {
     const titleEl = document.getElementById('title-form-sponsor');
     const badgeEl = document.getElementById('badge-slot-sponsor');
     const btnLabel = document.getElementById('btn-label-sponsor');
-
     if (idInp) idInp.value = '';
     if (namaInp) namaInp.value = '';
     if (katInp) katInp.value = 'Main Sponsor';
@@ -882,19 +815,11 @@ class SponsorSlotManager {
     if (btnLabel) btnLabel.innerText = 'Tambah Sponsor ke Beranda';
     this.updatePreviewBox('');
   }
-
   selectSlot(idOrSlot, scrollToForm = false) {
-    if (!idOrSlot) {
-      this.resetFormToCreate();
-      return;
-    }
+    if (!idOrSlot) { this.resetFormToCreate(); return; }
     const num = Number(idOrSlot);
     const found = this.slots.find(s => Number(s.id) === num || Number(s.slotNumber) === num);
-    if (!found) {
-      this.resetFormToCreate();
-      return;
-    }
-
+    if (!found) { this.resetFormToCreate(); return; }
     const idInp = document.getElementById('inp-sponsor-id');
     if (idInp) idInp.value = String(found.id || found.slotNumber);
     const namaInp = document.getElementById('inp-sponsor-nama');
@@ -907,20 +832,17 @@ class SponsorSlotManager {
     if (fileInp) fileInp.value = '';
     const webInp = document.getElementById('inp-sponsor-web');
     if (webInp) webInp.value = found.websiteUrl || '#';
-
     const titleEl = document.getElementById('title-form-sponsor');
     if (titleEl) titleEl.innerText = 'EDIT SPONSOR: ' + (found.namaSponsor || ('#' + num));
     const badgeEl = document.getElementById('badge-slot-sponsor');
     if (badgeEl) badgeEl.innerText = 'EDIT #' + (found.slotNumber || num);
     const btnLabel = document.getElementById('btn-label-sponsor');
     if (btnLabel) btnLabel.innerText = 'Simpan Perubahan Sponsor';
-
     this.updatePreviewBox(found.fotoUrl || '');
     if (scrollToForm) {
       document.getElementById('card-form-sponsor')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
-
   async submitForm(e) {
     e.preventDefault();
     const idVal = parseInt(document.getElementById('inp-sponsor-id')?.value || '', 10) || null;
@@ -954,13 +876,9 @@ class SponsorSlotManager {
       this.app.popup.show('Gangguan Koneksi', 'Tidak dapat menghubungi server: ' + err.message, 'error');
     }
   }
-
   clearSlot(idParam) {
     const targetId = idParam || parseInt(document.getElementById('inp-sponsor-id')?.value || '', 10);
-    if (!targetId) {
-      this.resetFormToCreate();
-      return;
-    }
+    if (!targetId) { this.resetFormToCreate(); return; }
     const found = this.slots.find(s => Number(s.id) === Number(targetId) || Number(s.slotNumber) === Number(targetId));
     const label = found ? found.namaSponsor : ('Sponsor #' + targetId);
     this.app.popup.show(
@@ -984,7 +902,6 @@ class SponsorSlotManager {
       }
     );
   }
-
   filterCards(query) {
     const q = String(query || '').toLowerCase().trim();
     document.querySelectorAll('.sponsor-admin-card-item').forEach(col => {
@@ -1018,15 +935,9 @@ class RundownAturanManager {
       { id: 7, isi: '<strong>Kesejahteraan kuda (Horse Welfare)</strong> menjadi prioritas utama: segala bentuk kekerasan terhadap kuda berakibat diskualifikasi langsung.' }
     ];
   }
-
   esc(str) {
-    return String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
-
   async fetchAndRender() {
     this.render();
     try {
@@ -1039,7 +950,6 @@ class RundownAturanManager {
       }
     } catch (e) {}
   }
-
   render() {
     ['badge-nav-rundown', 'kpi-rundown-count', 'lbl-rundown-count'].forEach(id => {
       const el = document.getElementById(id);
@@ -1049,51 +959,34 @@ class RundownAturanManager {
       const el = document.getElementById(id);
       if (el) el.innerText = this.peraturanList.length;
     });
-
     const rndTbody = document.getElementById('oop-rundown-tbody');
     if (rndTbody) {
-      rndTbody.innerHTML = this.rundownList.map(item => `
-        <tr>
-          <td>
-            <input type="text" class="form-control form-control-sm sthac-input fw-bold text-warning" id="oop-row-jam-${item.id}" value="${this.esc(item.jam)}" />
-          </td>
-          <td>
-            <input type="text" class="form-control form-control-sm sthac-input" id="oop-row-keg-${item.id}" value="${this.esc(item.kegiatan)}" />
-          </td>
-          <td class="text-end text-nowrap">
-            <button type="button" class="btn btn-sm btn-forest-pill px-2 py-1 me-1" title="Simpan Baris Ini" onclick="window.sthacPanitiaApp.rundownManager.saveInlineRow(${item.id})">
-              <i class="bi bi-check-lg text-warning"></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-dark-pill px-2 py-1 me-1" title="Edit di Form Kiri" onclick="window.sthacPanitiaApp.rundownManager.loadRundownToForm(${item.id})">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-logout-pill px-2 py-1" title="Hapus Jadwal" onclick="window.sthacPanitiaApp.rundownManager.deleteRundown(${item.id})">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      `).join('');
+      rndTbody.innerHTML = this.rundownList.map(item =>
+        '<tr>' +
+          '<td><input type="text" class="form-control form-control-sm sthac-input fw-bold text-warning" id="oop-row-jam-' + item.id + '" value="' + this.esc(item.jam) + '" /></td>' +
+          '<td><input type="text" class="form-control form-control-sm sthac-input" id="oop-row-keg-' + item.id + '" value="' + this.esc(item.kegiatan) + '" /></td>' +
+          '<td class="text-end text-nowrap">' +
+            '<button type="button" class="btn btn-sm btn-forest-pill px-2 py-1 me-1" title="Simpan Baris Ini" onclick="window.sthacPanitiaApp.rundownManager.saveInlineRow(' + item.id + ')"><i class="bi bi-check-lg text-warning"></i></button>' +
+            '<button type="button" class="btn btn-sm btn-dark-pill px-2 py-1 me-1" title="Edit di Form Kiri" onclick="window.sthacPanitiaApp.rundownManager.loadRundownToForm(' + item.id + ')"><i class="bi bi-pencil"></i></button>' +
+            '<button type="button" class="btn btn-sm btn-logout-pill px-2 py-1" title="Hapus Jadwal" onclick="window.sthacPanitiaApp.rundownManager.deleteRundown(' + item.id + ')"><i class="bi bi-trash"></i></button>' +
+          '</td>' +
+        '</tr>'
+      ).join('');
     }
-
     const prtTbody = document.getElementById('oop-aturan-tbody');
     if (prtTbody) {
-      prtTbody.innerHTML = this.peraturanList.map((p, idx) => `
-        <tr>
-          <td class="fw-bold text-warning">${idx + 1}.</td>
-          <td style="line-height: 1.55;">${p.isi}</td>
-          <td class="text-end text-nowrap">
-            <button type="button" class="btn btn-sm btn-dark-pill px-2 py-1 me-1" title="Edit Aturan" onclick="window.sthacPanitiaApp.rundownManager.loadAturanToForm(${p.id})">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-logout-pill px-2 py-1" title="Hapus Aturan" onclick="window.sthacPanitiaApp.rundownManager.deleteAturan(${p.id})">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      `).join('');
+      prtTbody.innerHTML = this.peraturanList.map((p, idx) =>
+        '<tr>' +
+          '<td class="fw-bold text-warning">' + (idx + 1) + '.</td>' +
+          '<td style="line-height: 1.55;">' + p.isi + '</td>' +
+          '<td class="text-end text-nowrap">' +
+            '<button type="button" class="btn btn-sm btn-dark-pill px-2 py-1 me-1" title="Edit Aturan" onclick="window.sthacPanitiaApp.rundownManager.loadAturanToForm(' + p.id + ')"><i class="bi bi-pencil"></i></button>' +
+            '<button type="button" class="btn btn-sm btn-logout-pill px-2 py-1" title="Hapus Aturan" onclick="window.sthacPanitiaApp.rundownManager.deleteAturan(' + p.id + ')"><i class="bi bi-trash"></i></button>' +
+          '</td>' +
+        '</tr>'
+      ).join('');
     }
   }
-
   loadRundownToForm(id) {
     const item = this.rundownList.find(r => Number(r.id) === Number(id));
     if (!item) return;
@@ -1104,7 +997,6 @@ class RundownAturanManager {
     document.getElementById('oop-btn-label-rnd').innerText = 'Update Jadwal';
     document.getElementById('oop-inp-rnd-jam').focus();
   }
-
   resetRundownForm() {
     document.getElementById('oop-inp-rnd-id').value = '';
     document.getElementById('oop-inp-rnd-jam').value = '';
@@ -1112,7 +1004,6 @@ class RundownAturanManager {
     document.getElementById('oop-badge-mode-rnd').innerText = 'MODE TAMBAH';
     document.getElementById('oop-btn-label-rnd').innerText = 'Simpan Jadwal';
   }
-
   async submitRundownForm(e) {
     if (e) e.preventDefault();
     const id = document.getElementById('oop-inp-rnd-id').value;
@@ -1133,7 +1024,6 @@ class RundownAturanManager {
       this.render();
     }
   }
-
   async saveInlineRow(id) {
     const jamEl = document.getElementById('oop-row-jam-' + id);
     const kegEl = document.getElementById('oop-row-keg-' + id);
@@ -1150,7 +1040,6 @@ class RundownAturanManager {
       this.app.popup.show('Jadwal Tersimpan', 'Perubahan waktu & kegiatan acara berhasil disimpan.', 'success');
     }
   }
-
   deleteRundown(id) {
     this.app.popup.show('Hapus Jadwal Acara?', 'Jadwal ini akan dihapus dari Susunan Acara Hari-H.', 'confirm', async () => {
       const res = await fetch('/api/sthac-content/rundown/delete', {
@@ -1165,7 +1054,6 @@ class RundownAturanManager {
       }
     });
   }
-
   restoreDefaultRundown() {
     this.app.popup.show('Reset Default Susunan Acara?', 'Kembalikan 9 jadwal default (07.00 - 16.30)?', 'confirm', async () => {
       const res = await fetch('/api/sthac-content/rundown/reset', { method: 'POST' });
@@ -1176,7 +1064,6 @@ class RundownAturanManager {
       }
     });
   }
-
   loadAturanToForm(id) {
     const item = this.peraturanList.find(p => Number(p.id) === Number(id));
     if (!item) return;
@@ -1186,14 +1073,12 @@ class RundownAturanManager {
     document.getElementById('oop-btn-label-prt').innerText = 'Update Aturan';
     document.getElementById('oop-inp-prt-isi').focus();
   }
-
   resetAturanForm() {
     document.getElementById('oop-inp-prt-id').value = '';
     document.getElementById('oop-inp-prt-isi').value = '';
     document.getElementById('oop-badge-mode-prt').innerText = 'MODE TAMBAH';
     document.getElementById('oop-btn-label-prt').innerText = 'Simpan Aturan';
   }
-
   async submitAturanForm(e) {
     if (e) e.preventDefault();
     const id = document.getElementById('oop-inp-prt-id').value;
@@ -1213,7 +1098,6 @@ class RundownAturanManager {
       this.render();
     }
   }
-
   deleteAturan(id) {
     this.app.popup.show('Hapus Aturan Ini?', 'Butir aturan ini akan dihapus dari daftar Aturan Umum Pertandingan.', 'confirm', async () => {
       const res = await fetch('/api/sthac-content/peraturan/delete', {
@@ -1228,7 +1112,6 @@ class RundownAturanManager {
       }
     });
   }
-
   restoreDefaultAturan() {
     this.app.popup.show('Reset 7 Aturan Default?', 'Kembalikan daftar aturan umum ke 7 butir aturan standar?', 'confirm', async () => {
       const res = await fetch('/api/sthac-content/peraturan/reset', { method: 'POST' });
@@ -1250,23 +1133,19 @@ class PanitiaDashboardApp {
     this.scoreCalculator = new LiveScoreCalculator(this, config.existingRuns || []);
     this.sponsorManager = new SponsorSlotManager(this, config.sponsorSlots || []);
     this.rundownManager = new RundownAturanManager(this);
-
     this.bindLegacyGlobals();
   }
-
   init() {
     this.router.init();
     this.auth.renderSessionState();
     this.sponsorManager.resetFormToCreate();
     this.sponsorManager.fetchAndRender();
     this.rundownManager.fetchAndRender();
+    this.crud.syncKatAndKelas();
   }
-
-  // Menjaga kompatibilitas penuh dengan atribut onclick di template EJS
   bindLegacyGlobals() {
     window.showSthacPopup = (t, m, type, cb) => this.popup.show(t, m, type, cb);
     window.closeSthacPopup = (c) => this.popup.close(c);
-
     window.switchAuthMode = (m) => this.auth.switchMode(m);
     window.resetOtpView = () => this.auth.resetOtpView();
     window.resendCurrentOtp = () => this.auth.resendOtp();
@@ -1274,10 +1153,8 @@ class PanitiaDashboardApp {
     window.handleVerifyOtp = (e) => this.auth.handleVerifyOtp(e);
     window.handleQuickLogin = (e) => this.auth.handleQuickLogin(e);
     window.logoutAdmin = () => this.auth.logout();
-
     window.closeAllAdminDropdowns = (ex) => this.router.closeAllDropdowns(ex);
     window.openAdminTab = (tab) => this.router.openTab(tab);
-
     window.apiPanitiaCrud = (ent, act, id, data) => this.crud.sendCrudRequest(ent, act, id, data);
     window.toggleRegistrationStatus = (st) => this.crud.sendCrudRequest('setelan', 'update', 1, { registrationOpen: st });
     window.submitEntityForm = (e, ent) => this.crud.submitForm(e, ent);
@@ -1285,13 +1162,11 @@ class PanitiaDashboardApp {
     window.deleteEntity = (ent, id, lbl) => this.crud.deleteEntity(ent, id, lbl);
     window.approveReg = (id) => this.crud.sendCrudRequest('pendaftar', 'approve', id);
     window.rejectReg = (id) => this.popup.show('Tolak Pendaftar?', 'Data pendaftar ini akan dihapus dari antrean.', 'confirm', () => this.crud.sendCrudRequest('pendaftar', 'reject', id));
-
     window.filterTableRows = (id, q) => this.crud.filterTableRows(id, q);
     window.filterPendaftarCards = (st, btn) => this.crud.filterPendaftarCards(st, btn);
     window.searchPendaftarCards = (v) => this.crud.searchPendaftarCards(v);
     window.filterBeritaCards = (v) => this.crud.filterBeritaCards(v);
     window.syncAdmKatAndKelas = () => this.crud.syncKatAndKelas();
-
     window.fillRiderEdit = (r) => this.crud.fillRiderEdit(r);
     window.fillPelatihEdit = (c) => this.crud.fillPelatihEdit(c);
     window.fillStableEdit = (s) => this.crud.fillStableEdit(s);
@@ -1303,7 +1178,6 @@ class PanitiaDashboardApp {
     window.previewBeritaFile = (inp) => this.crud.previewBeritaFile(inp);
     window.updateBeritaPreviewBox = (s) => this.crud.updateBeritaPreviewBox(s);
     window.clearBeritaPhoto = () => this.crud.clearBeritaPhoto();
-
     window.syncExistingRunToForm = () => this.scoreCalculator.syncExistingRunToForm();
     window.stepRunNumber = (d) => this.scoreCalculator.stepRunNumber(d);
     window.recalcLiveScorePreview = () => this.scoreCalculator.recalcPreview();
@@ -1311,7 +1185,6 @@ class PanitiaDashboardApp {
     window.isiFormEditSkor = (k, r, rn, t1, t2, t3, w) => this.scoreCalculator.fillEditScore(k, r, rn, t1, t2, t3, w);
     window.submitNilaiRunPanitia = (e) => this.scoreCalculator.submitScoreRun(e);
     window.hapusNilaiRunPanitia = (id) => this.scoreCalculator.deleteScoreRun(id);
-
     window.updateSponsorPreviewBox = (s) => this.sponsorManager.updatePreviewBox(s);
     window.previewSponsorFile = (inp) => this.sponsorManager.previewFile(inp);
     window.onSelectSponsorSlot = (no, sc) => this.sponsorManager.selectSlot(no, sc);
@@ -1323,3 +1196,18 @@ class PanitiaDashboardApp {
 }
 
 window.PanitiaDashboardApp = PanitiaDashboardApp;
+window.cleanAllDummyScoresPanitia = function() {
+  window.showSthacPopup(
+    'Bersihkan Seluruh Skor Dummy / Reset Arena?',
+    'Seluruh catatan nilai run yang tersangkut atau dummy di Papan Skor akan dikosongkan menjadi 0 Run.',
+    'confirm',
+    async function() {
+      const res = await fetch('/api/panitia/clean-dummy-scores', { method: 'POST' });
+      const out = await res.json();
+      if (out && out.ok) {
+        sessionStorage.setItem('sthac_active_adm_tab', 'penilaian');
+        window.location.reload();
+      }
+    }
+  );
+};

@@ -20,48 +20,7 @@
         <a href="/profile" class="btn btn-gold-pill px-4 py-2 fw-bold">
           <i class="bi bi-people-fill me-1"></i> Lihat di Profil Ekosistem
         </a>
-                      <div class="row g-3 mb-3 sthac-upload-widget">
-                <div class="col-md-6">
-                  <label class="small fw-bold mb-1">FOTO PELATIH (UPLOAD FILE)</label>
-                  <input type="file" accept="image/*" class="form-control sthac-input sthac-file-Trigger" />
-                  <input type="hidden" name="fotoUploadedData" class="sthac-hidden-dataurl" />
-                  <input type="hidden" name="fotoUploadedData" class="sthac-hidden-dataurl" />
-                </div>
-                <div class="col-md-6">
-                  <label class="small fw-bold mb-1">ATAU URL FOTO PELATIH</label>
-                  <input type="url" name="fotoUrl" class="form-control sthac-input sthac-url-trigger" placeholder="https://..." />
-                </div>
-                <div class="col-12 d-none sthac-preview-wrap">
-                  <div class="d-inline-flex align-items-center gap-3 p-2 rounded-3 border" style="background: rgba(217,180,92,0.08);">
-                    <img src="" alt="Preview Foto Pelatih" class="sthac-img-preview rounded-circle object-fit-cover border" style="width: 54px; height: 54px;" />
-                    <div>
-                      <div class="small fw-bold">Pratinjau Foto Pelatih</div>
-                                    <div class="row g-3 mb-3 sthac-upload-widget">
-                <div class="col-md-6">
-                  <label class="small fw-bold mb-1">LOGO / FOTO STABLE (UPLOAD FILE)</label>
-                  <input type="file" accept="image/*" class="form-control sthac-input sthac-file-Trigger" />
-                  <input type="hidden" name="fotoUploadedData" class="sthac-hidden-dataurl" />
-                </div>
-                <div class="col-md-6">
-                  <label class="small fw-bold mb-1">ATAU URL LOGO STABLE</label>
-                  <input type="url" name="logoUrl" class="form-control sthac-input sthac-url-trigger" placeholder="https://..." />
-                </div>
-                <div class="col-12 d-none sthac-preview-wrap">
-                  <div class="d-inline-flex align-items-center gap-3 p-2 rounded-3 border" style="background: rgba(217,180,92,0.08);">
-                    <img src="" alt="Preview Logo Stable" class="sthac-img-preview rounded-3 object-fit-cover border" style="width: 54px; height: 54px;" />
-                    <div>
-                      <div class="small fw-bold">Pratinjau Logo / Foto Stable</div>
-                      <button type="button" class="btn btn-link btn-sm text-danger p-0 text-decoration-none sthac-clear-img">Hapus gambar</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button type="button" class="btn btn-link btn-sm text-danger p-0 text-decoration-none sthac-clear-img">Hapus foto</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button type="button" onclick="closeRegPopup()" class="btn btn-dark-pill px-4 py-2">
+        <button type="button" onclick="closeRegPopup()" class="btn btn-dark-pill px-4 py-2">
           Selesai / Daftar Lagi
         </button>
       </div>
@@ -374,3 +333,103 @@
 
 </script>
 <script src="/js/sthac-image-uploader.js"></script>
+<!-- MULTI-CLASS REGISTRATION SYNC START -->
+<script>
+(function() {
+  function syncPublicRegistrationMultiClass() {
+    var form = document.querySelector('form');
+    if (!form) return;
+    var klsCheckboxes = Array.from(form.querySelectorAll('input[type="checkbox"]')).filter(function(chk) {
+      var val = (chk.value || '').toLowerCase();
+      var nm = (chk.name || '').toLowerCase();
+      var cls = (chk.className || '').toLowerCase();
+      return cls.includes('kls') || cls.includes('kelas') || nm.includes('kelas') || /beginner|intermediate|advanced|walk|trot|canter|qabaq/i.test(val);
+    });
+    var katCheckboxes = Array.from(form.querySelectorAll('input[type="checkbox"]')).filter(function(chk) {
+      var val = (chk.value || '').trim().toLowerCase();
+      return (val === 'u14' || val === 'terbuka') && klsCheckboxes.indexOf(chk) === -1;
+    });
+    function updateHiddenAndSelectFields() {
+      var selectedKls = klsCheckboxes.filter(function(c) { return c.checked; }).map(function(c) { return c.value.trim(); });
+      var selectedKat = katCheckboxes.filter(function(c) { return c.checked; }).map(function(c) { return c.value.trim(); });
+      selectedKls.forEach(function(kName) {
+        if (/u14/i.test(kName) && selectedKat.indexOf('U14') === -1) {
+          selectedKat.push('U14');
+          katCheckboxes.forEach(function(kc) { if (kc.value === 'U14') kc.checked = true; });
+        }
+        if (/terbuka|open/i.test(kName) && selectedKat.indexOf('Terbuka') === -1) {
+          selectedKat.push('Terbuka');
+          katCheckboxes.forEach(function(kc) { if (kc.value === 'Terbuka') kc.checked = true; });
+        }
+      });
+      var joinedKls = selectedKls.join(' | ');
+      var joinedKat = selectedKat.length > 0 ? selectedKat.join(' | ') : 'U14';
+      ['kelasPilihan', 'kelasYangDiikuti'].forEach(function(fieldName) {
+        var els = Array.from(form.querySelectorAll('[name="' + fieldName + '"]')).filter(function(el) { return el.type !== 'checkbox'; });
+        if (els.length === 0 && joinedKls) {
+          var hid = document.createElement('input');
+          hid.type = 'hidden';
+          hid.name = fieldName;
+          form.appendChild(hid);
+          els = [hid];
+        }
+        els.forEach(function(el) {
+          if (joinedKls) {
+            if (el.tagName === 'SELECT') {
+              var opt = Array.from(el.options).find(function(o) { return o.value === joinedKls; });
+              if (!opt) {
+                opt = document.createElement('option');
+                opt.value = joinedKls;
+                opt.textContent = joinedKls;
+                el.appendChild(opt);
+              }
+              el.value = joinedKls;
+            } else {
+              el.value = joinedKls;
+            }
+          }
+        });
+      });
+      ['kategoriUmur', 'kategori'].forEach(function(fieldName) {
+        var els = Array.from(form.querySelectorAll('[name="' + fieldName + '"]')).filter(function(el) { return el.type !== 'checkbox'; });
+        if (els.length === 0 && joinedKat) {
+          var hid = document.createElement('input');
+          hid.type = 'hidden';
+          hid.name = fieldName;
+          form.appendChild(hid);
+          els = [hid];
+        }
+        els.forEach(function(el) {
+          if (joinedKat) {
+            if (el.tagName === 'SELECT') {
+              var opt = Array.from(el.options).find(function(o) { return o.value === joinedKat; });
+              if (!opt) {
+                opt = document.createElement('option');
+                opt.value = joinedKat;
+                opt.textContent = joinedKat;
+                el.appendChild(opt);
+              }
+              el.value = joinedKat;
+            } else {
+              el.value = joinedKat;
+            }
+          }
+        });
+      });
+    }
+    klsCheckboxes.concat(katCheckboxes).forEach(function(chk) {
+      chk.addEventListener('change', updateHiddenAndSelectFields);
+    });
+    form.addEventListener('submit', function() {
+      updateHiddenAndSelectFields();
+    }, true);
+    updateHiddenAndSelectFields();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncPublicRegistrationMultiClass);
+  } else {
+    syncPublicRegistrationMultiClass();
+  }
+})();
+</script>
+<!-- MULTI-CLASS REGISTRATION SYNC END -->

@@ -588,7 +588,11 @@
 
             <form id="form-crud-rider" onsubmit="submitEntityForm(event, 'rider')">
               <input type="hidden" name="id" id="inp-rider-id" value="" />
-              <div class="row g-2 mb-2">
+              <input type="hidden" name="kategori" id="inp-rider-kategori" value="U14" />
+              <input type="hidden" name="kelasYangDiikuti" id="inp-rider-kelas" value="Beginner ( Walk ) · U14" />
+
+              <!-- Baris 1: Nama Lengkap & Kode Rider -->
+              <div class="row g-2 mb-3">
                 <div class="col-7">
                   <label class="small fw-bold text-warning mb-1">NAMA LENGKAP RIDER *</label>
                   <input type="text" name="namaLengkap" id="inp-rider-nama" class="form-control sthac-input" placeholder="Nama lengkap atlet..." required />
@@ -599,50 +603,43 @@
                 </div>
               </div>
 
-              <div class="row g-2 mb-2">
-                <div class="col-4">
+              <!-- Baris 2: Gender & Umur (Sejajar 2 Kolom) -->
+              <div class="row g-2 mb-3">
+                <div class="col-6">
                   <label class="small fw-bold text-warning mb-1">GENDER</label>
                   <select name="gender" id="inp-rider-gender" class="form-select sthac-input">
                     <option value="Putra">Putra</option>
                     <option value="Putri">Putri</option>
                   </select>
                 </div>
-                <div class="col-4">
+                <div class="col-6">
                   <label class="small fw-bold text-warning mb-1">UMUR (THN)</label>
                   <input type="number" name="umur" id="inp-rider-umur" value="15" min="5" max="75" class="form-control sthac-input" />
                 </div>
-                <div class="col-4">
-                  <label class="small fw-bold text-warning mb-1">KATEGORI</label>
-                  <input type="hidden" name="kategori" id="inp-rider-kategori" value="U14" />
-                  <div class="sthac-multi-check-group" id="adm-kat-group">
-                    <label class="sthac-check-pill py-1 px-2">
-                      <input type="checkbox" class="chk-adm-kat" value="U14" checked onchange="syncAdmKatAndKelas()" />
-                      <span>U14</span>
-                    </label>
-                    <label class="sthac-check-pill py-1 px-2">
-                      <input type="checkbox" class="chk-adm-kat" value="Terbuka" onchange="syncAdmKatAndKelas()" />
-                      <span>Terbuka</span>
-                    </label>
-                  </div>
-                </div>
               </div>
 
-              <div class="row g-2 mb-2">
-                <div class="col-6">
-                  <div class="mb-3">
-                <label class="small fw-bold mb-1">KELAS PERTANDINGAN DIIKUTI (BISA PILIH &gt; 1 KELAS)</label>
-                <input type="hidden" name="kelasYangDiikuti" id="inp-rider-kelas" value="Beginner ( Walk ) · U14" />
-                <div class="sthac-multi-check-group" id="adm-kelas-group">
-                  <% const admListKls = (typeof kelasList !== 'undefined' && kelasList && kelasList.length > 0) ? kelasList : [{ namaKelas: 'Beginner ( Walk ) · U14' }, { namaKelas: 'Beginner ( Trot ) · Terbuka' }]; %>
-                  <% admListKls.forEach((k, idx) => { %>
-                    <label class="sthac-check-pill">
-                      <input type="checkbox" class="chk-adm-kls" value="<%= k.namaKelas %>" <%= idx === 0 ? 'checked' : '' %> onchange="syncAdmKatAndKelas()" />
-                      <span><%= k.namaKelas %></span>
+              <!-- Baris 3: Kelas Pertandingan Diikuti (Lebar Penuh & Tanpa Duplikasi Kategori) -->
+              <div class="mb-3">
+                <label class="small fw-bold text-warning mb-1 d-block">KELAS PERTANDINGAN DIIKUTI (BISA PILIH &gt; 1 KELAS) *</label>
+                <div class="d-flex flex-wrap gap-2" id="adm-kelas-group">
+                  <% const admListKls = (typeof kelasList !== "undefined" && kelasList && kelasList.length > 0) ? kelasList : [{ namaKelas: "Beginner ( Walk )", kategori: "U14" }, { namaKelas: "Beginner ( Trot )", kategori: "Terbuka" }]; %>
+                  <% admListKls.forEach((k, idx) => {
+                    const fullKlsLabel = (k.kategori && !String(k.namaKelas).includes(k.kategori))
+                      ? (k.namaKelas + " · " + k.kategori)
+                      : k.namaKelas;
+                  %>
+                    <label class="sthac-check-pill flex-fill justify-content-center py-2 px-3">
+                      <input type="checkbox" class="chk-adm-kls" value="<%= fullKlsLabel %>" <%= idx === 0 ? "checked" : "" %> onchange="syncAdmKatAndKelas()" />
+                      <span><%= fullKlsLabel %></span>
                     </label>
                   <% }) %>
                 </div>
               </div>
-              <label class="small fw-bold text-warning mb-1">ASAL STABLE / KLUB *</label>
+
+              <!-- Baris 4: Asal Stable & Nama Pelatih (Sejajar 1 Baris) -->
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <label class="small fw-bold text-warning mb-1">ASAL STABLE / KLUB *</label>
                   <input type="text" name="asalStable" id="inp-rider-stable" class="form-control sthac-input" placeholder="Saiga Stable" required />
                 </div>
                 <div class="col-6">
@@ -651,6 +648,7 @@
                 </div>
               </div>
 
+              <!-- Baris 5: Kota Asal & No. WhatsApp (Sejajar 1 Baris) -->
               <div class="row g-2 mb-3">
                 <div class="col-6">
                   <label class="small fw-bold text-warning mb-1">KOTA ASAL</label>
@@ -692,29 +690,40 @@
                   <tr>
                     <th>KODE</th>
                     <th>NAMA RIDER</th>
-                    <th>KATEGORI</th>
+                    <th>KELAS DIIKUTI</th>
                     <th>STABLE</th>
                     <th class="text-end">AKSI</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <% riderList.forEach(r => { %>
+                  <% riderList.forEach(r => {
+                    const _klsItems = String(r.kelasYangDiikuti || r.kelasPilihan || r.kategoriUmur || "Beginner ( Walk ) · U14")
+                      .split(/[|,]/)
+                      .map(s => s.trim())
+                      .filter(Boolean);
+                  %>
                     <tr>
                       <td class="font-monospace fw-bold text-warning"><%= r.kodeRider %></td>
                       <td>
                         <div class="d-flex align-items-center gap-2">
-                          <span class="saiga-avatar" style="width:28px;height:28px;font-size:0.7rem;"><%= (r.namaLengkap || 'R').substring(0,2).toUpperCase() %></span>
+                          <span class="saiga-avatar" style="width:28px;height:28px;font-size:0.7rem;"><%= (r.namaLengkap || "R").substring(0,2).toUpperCase() %></span>
                           <div>
                             <div class="fw-bold text-white"><%= r.namaLengkap %></div>
                             <small class="text-white-50" style="font-size:0.68rem;"><%= r.gender %> · <%= r.umur %> thn · <%= r.kotaAsal %></small>
                           </div>
                         </div>
                       </td>
-                      <td><span class="badge-gold-outline"><%= r.kategoriUmur %></span></td>
+                      <td>
+                        <div class="d-flex flex-wrap gap-1">
+                          <% _klsItems.forEach(kLbl => { %>
+                            <span class="badge-gold-outline" style="font-size:0.68rem;"><%= kLbl %></span>
+                          <% }) %>
+                        </div>
+                      </td>
                       <td><span class="badge-green-soft"><%= r.asalStable %></span></td>
                       <td class="text-end text-nowrap">
                         <button type="button" class="btn btn-sm btn-dark-pill px-2 py-1 me-1"
-                          onclick='fillRiderEdit(<%- JSON.stringify({ id: r.id, kodeRider: r.kodeRider, namaLengkap: r.namaLengkap, gender: r.gender, umur: r.umur, kategoriUmur: r.kategoriUmur, asalStable: r.asalStable, namaPelatih: r.namaPelatih, kotaAsal: r.kotaAsal, noWhatsapp: r.noWhatsapp }) %>)'>
+                          onclick='fillRiderEdit(<%- JSON.stringify({ id: r.id, kodeRider: r.kodeRider, namaLengkap: r.namaLengkap, gender: r.gender, umur: r.umur, kategoriUmur: r.kategoriUmur || r.kategori, kelasYangDiikuti: r.kelasYangDiikuti || r.kelasPilihan || "", asalStable: r.asalStable, namaPelatih: r.namaPelatih, kotaAsal: r.kotaAsal, noWhatsapp: r.noWhatsapp }) %>)'>
                           <i class="bi bi-pencil"></i>
                         </button>
                         <button type="button" class="btn btn-sm btn-logout-pill px-2 py-1" onclick="deleteEntity('rider', <%= r.id %>, '<%= r.namaLengkap %>')">
@@ -1362,7 +1371,7 @@
       <div class="sthac-card p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h6 class="font-display fw-bold text-uppercase text-white mb-0">Entri Penilaian Run Terakhir di Arena (<%= scoreRunList.length %> Run)</h6>
-          <a href="/skor" target="_blank" class="small text-warning text-decoration-none fw-bold">Buka Layar Penuh &nearr;</a>
+          <div class="d-flex align-items-center gap-3"><button type="button" onclick="cleanAllDummyScoresPanitia()" class="btn btn-sm btn-logout-pill px-3 py-1"><i class="bi bi-trash3 me-1"></i> Bersihkan Skor Dummy / Reset Arena</button><a href="/skor" target="_blank" class="small text-warning text-decoration-none fw-bold">Buka Layar Penuh &nearr;</a></div>
         </div>
         <div class="table-responsive">
           <table class="table sthac-table mb-0 small">

@@ -222,32 +222,12 @@
         Klasemen lengkap &rarr;
       </a>
     </div>
-
-    <%
-      const _ptsMap = [10, 8, 6, 5, 4, 3, 2, 1];
-      const _rawStandings = (typeof standings !== 'undefined' && Array.isArray(standings) && standings.length > 0)
-        ? standings
-        : ((typeof riderList !== 'undefined' && Array.isArray(riderList)) ? riderList : []);
-    %>
-
+    <% const _rawStandings = (typeof standings !== 'undefined' && Array.isArray(standings)) ? standings : []; %>
     <% if (_rawStandings.length > 0) { %>
       <div class="row g-4">
         <% _rawStandings.slice(0, 4).forEach((st, idx) => {
-          const _rawKat = String(st.kategori || st.kategoriUmur || 'U14');
-          const _katArr = Array.isArray(st.kategoriList) && st.kategoriList.length > 0
-            ? st.kategoriList
-            : _rawKat.split(/[|,]/).map(s => s.trim()).filter(Boolean);
-          const _entriesCnt = Math.max(_katArr.length, 1);
-          const _basePt = idx < _ptsMap.length ? _ptsMap[idx] : 0;
-          const _calcPts = _entriesCnt * _basePt;
-          const _finalPoin = Math.max(
-            Number(st.totalPoints) || 0,
-            Number(st.totalPoin) || 0,
-            Number(st.poinKejuaraan) || 0,
-            Number(st.poinSeri) || 0,
-            Number(st.poin) || 0,
-            _calcPts
-          );
+          const _rincian = Array.isArray(st.rincianKelas) ? st.rincianKelas : [];
+          const _finalPoin = Number(st.totalPoints ?? st.totalPoin ?? 0);
         %>
           <div class="col-sm-6 col-lg-4">
             <div class="sthac-card p-4 h-100 d-flex flex-column justify-content-between">
@@ -258,23 +238,20 @@
                   </span>
                   <span class="font-monospace fw-bold small text-muted"><%= st.kodeRider || ('R-00' + (idx + 1)) %></span>
                 </div>
-
                 <h4 class="font-display fw-bold mb-1" style="font-size: 1.25rem;"><%= st.namaLengkap %></h4>
                 <div class="small text-muted mb-3">
                   <i class="bi bi-shield-check text-success me-1"></i> <%= st.asalStable || '-' %>
                 </div>
-
-                <% if (_katArr.length > 0) { %>
+                <% if (_rincian.length > 0) { %>
                   <div class="d-flex flex-wrap gap-1 mb-3">
-                    <% _katArr.forEach(kat => { %>
+                    <% _rincian.forEach(rk => { %>
                       <span class="badge rounded-pill sthac-kat-pts-badge px-2 py-1">
-                        <%= kat %>: <strong><%= _basePt %> pts</strong>
+                        <%= rk.kategori || rk.namaKelas %>: <strong><%= rk.poinKlasmen %> pts</strong>
                       </span>
                     <% }) %>
                   </div>
                 <% } %>
               </div>
-
               <div class="d-flex justify-content-between align-items-center pt-3 border-top" style="border-color: rgba(7,38,25,0.08) !important;">
                 <span class="small text-muted">Total Poin Seri</span>
                 <span class="font-display fw-bold fs-3 sthac-total-pts-value"><%= _finalPoin %> <small class="fs-6 fw-bold">pts</small></span>

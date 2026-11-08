@@ -171,6 +171,641 @@ app.use((req, res, next) => {
 });
 // === END DYNAMIC UNLIMITED SPONSOR ENGINE ===
 
+// === START STHAC CORE COMPETITION ENGINE ===
+const _fsCore = require('fs');
+const _pathCore = require('path');
+const _storeCorePath = _pathCore.join(process.cwd(), 'prisma', 'sthac-unified-store.json');
+let _sthacDataVersion = Date.now();
+let _cachedLiveRiders = [];
+let _cachedLiveKelas = [];
+let _cachedLiveRuns = [];
+let _cachedLiveScoreboard = {};
+
+function _bumpSthacVersion() {
+  _sthacDataVersion = Date.now();
+}
+
+function _readCoreStore() {
+  try {
+    if (_fsCore.existsSync(_storeCorePath)) {
+      return JSON.parse(_fsCore.readFileSync(_storeCorePath, 'utf8'));
+    }
+  } catch (e) {}
+  return {};
+}
+
+function _writeCoreStore(st) {
+  try {
+    _fsCore.writeFileSync(_storeCorePath, JSON.stringify(st, null, 2), 'utf8');
+    _bumpSthacVersion();
+  } catch (e) {}
+}
+
+function _extractMultiClassesAndCategories(payload, kelasList = []) {
+  if (!payload || typeof payload !== 'object') return { joinedKat: 'U14', joinedKls: '', katArr: ['U14'], klsArr: [] };
+  const collectValues = (keys) => {
+    const out = [];
+    keys.forEach(k => {
+      const val = payload[k];
+      if (Array.isArray(val)) {
+        val.forEach(v => {
+          String(v || '').split(/[|,]/).forEach(part => {
+            if (part.trim()) out.push(part.trim());
+          });
+        });
+      } else if (typeof val === 'string' && val.trim()) {
+        val.split(/[|,]/).forEach(part => {
+          if (part.trim()) out.push(part.trim());
+        });
+      }
+    });
+    return Array.from(new Set(out));
+  };
+
+  let klsArr = collectValues(['kelasYangDiikuti', 'kelasPilihan', 'kelas', 'kelasPilihan[]', 'kelasYangDiikuti[]']);
+  let katArr = collectValues(['kategoriUmur', 'kategori', 'kategoriUmur[]', 'kategori[]']);
+
+  klsArr.forEach(kName => {
+    if (/u14/i.test(kName) && !katArr.includes('U14')) katArr.push('U14');
+    if (/terbuka|open/i.test(kName) && !katArr.includes('Terbuka')) katArr.push('Terbuka');
+    const matchedKls = (kelasList || []).find(k =>
+      kName.toLowerCase().includes(String(k.namaKelas || '').toLowerCase())
+    );
+    if (matchedKls && matchedKls.kategori && !katArr.includes(matchedKls.kategori)) {
+      katArr.push(matchedKls.kategori);
+    }
+  });
+
+  if (katArr.length > 1 && klsArr.length < katArr.length && Array.isArray(kelasList) && kelasList.length > 0) {
+    katArr.forEach(kat => {
+      const mKls = kelasList.find(k => String(k.kategori || '').toLowerCase() === kat.toLowerCase());
+      if (mKls) {
+        const fullLabel = mKls.namaKelas.includes(mKls.kategori)
+          ? mKls.namaKelas
+          : (mKls.namaKelas + ' · ' + mKls.kategori);
+        if (!klsArr.some(existing => existing.toLowerCase().includes(mKls.namaKelas.toLowerCase()))) {
+          klsArr.push(fullLabel);
+        }
+      }
+    });
+  }
+
+  if (katArr.length === 0) katArr = ['U14'];
+  if (klsArr.length === 0 && Array.isArray(kelasList) && kelasList.length > 0) {
+    katArr.forEach(kat => {
+      const mKls = kelasList.find(k => String(k.kategori || '').toLowerCase() === kat.toLowerCase()) || kelasList[0];
+      if (mKls) {
+        const fullLabel = mKls.namaKelas.includes(mKls.kategori)
+          ? mKls.namaKelas
+          : (mKls.namaKelas + ' · ' + (mKls.kategori || 'U14'));
+        if (!klsArr.includes(fullLabel)) klsArr.push(fullLabel);
+      }
+    });
+  }
+
+  return {
+    katArr,
+    klsArr,
+    joinedKat: katArr.join(' | '),
+    joinedKls: klsArr.join(' | ')
+  };
+}
+
+function _doesRiderFollowKelas(rider, kObj) {
+  if (!rider || !kObj) return false;
+  const kName = String(kObj.namaKelas || '').trim().toLowerCase();
+  const kKat = String(kObj.kategori || '').trim().toLowerCase();
+  const rawKls = String(rider.kelasYangDiikuti || rider.kelasPilihan || '').toLowerCase();
+  const rawKat = String(rider.kategoriUmur || rider.kategori || '').toLowerCase();
+
+  const klsParts = rawKls.split(/[|,]/).map(s => s.trim()).filter(Boolean);
+  const katParts = rawKat.split(/[|,]/).map(s => s.trim()).filter(Boolean);
+
+  if (kName && klsParts.some(p => p.includes(kName) || kName.includes(p))) {
+    return true;
+  }
+  if (kKat && katParts.includes(kKat)) {
+    return true;
+  }
+  return false;
+}
+
+// Helper pencocokan Rider dengan ScoreRun (mendukung pencocokan ID maupun Kode Rider seperti R-004 -> 4)
+function _findMatchingRider(sr, riders) {
+  if (!sr || !Array.isArray(riders)) return null;
+  const srRiderId = Number(sr.riderId || (sr.rider && sr.rider.id) || 0);
+  let found = riders.find(r => Number(r.id) === srRiderId);
+  if (found) return found;
+  if (sr.rider && sr.rider.kodeRider) {
+    found = riders.find(r => String(r.kodeRider || '').toUpperCase() === String(sr.rider.kodeRider).toUpperCase());
+    if (found) return found;
+  }
+  if (sr.rider && sr.rider.namaLengkap) {
+    found = riders.find(r => String(r.namaLengkap || '').trim().toLowerCase() === String(sr.rider.namaLengkap).trim().toLowerCase());
+    if (found) return found;
+  }
+  if (srRiderId > 0) {
+    found = riders.find(r => {
+      const codeNum = parseInt(String(r.kodeRider || '').replace(/\D/g, ''), 10);
+      return codeNum > 0 && codeNum === srRiderId;
+    });
+    if (found) return found;
+  }
+  return null;
+}
+
+app.post('/api/panitia/clean-dummy-scores', (req, res) => {
+  try {
+    const st = _readCoreStore();
+    st.scoreRuns = [];
+    st.scoreRunList = [];
+    if (Array.isArray(st.scoreRun)) st.scoreRun = [];
+    if (Array.isArray(st.runs)) st.runs = [];
+    _cachedLiveRuns = [];
+    _cachedLiveScoreboard = {};
+    _writeCoreStore(st);
+    return res.json({ ok: true, success: true, message: 'Seluruh data skor di arena berhasil direset menjadi 0 Run!' });
+  } catch (err) {
+    return res.status(500).json({ ok: false, message: err.message });
+  }
+});
+
+// Pre-processor payload pendaftaran & CRUD Panitia
+app.use((req, res, next) => {
+  try {
+    if (req.method === 'POST' && req.body && typeof req.body === 'object') {
+      const st = _readCoreStore();
+      const kelasList = Array.isArray(st.kelas) ? st.kelas : (Array.isArray(st.kelasList) ? st.kelasList : _cachedLiveKelas);
+
+      if (req.path.includes('pendaftaran') || (req.body.namaLengkap && !req.body.entity)) {
+        const norm = _extractMultiClassesAndCategories(req.body, kelasList);
+        req.body.kategoriUmur = norm.joinedKat;
+        req.body.kategori = norm.joinedKat;
+        req.body.kelasPilihan = norm.joinedKls;
+        req.body.kelasYangDiikuti = norm.joinedKls;
+        _bumpSthacVersion();
+      }
+
+      if (req.body.entity) {
+        const ent = String(req.body.entity).toLowerCase();
+        const act = String(req.body.action || '').toLowerCase();
+        const d = req.body.data || {};
+        if ((ent === 'rider' || ent === 'pendaftar') && (act === 'create' || act === 'update')) {
+          const norm = _extractMultiClassesAndCategories(d, kelasList);
+          d.kategoriUmur = norm.joinedKat;
+          d.kategori = norm.joinedKat;
+          d.kelasPilihan = norm.joinedKls;
+          d.kelasYangDiikuti = norm.joinedKls;
+          req.body.data = d;
+        }
+        _bumpSthacVersion();
+      }
+
+      if (req.path.includes('score-run')) {
+        _bumpSthacVersion();
+      }
+    }
+  } catch (e) {}
+  next();
+});
+
+// Post-processor untuk menyinkronkan multi-kelas tanpa merusak ID Rider yang sudah dibuat server
+app.use((req, res, next) => {
+  if (req.method !== 'POST') return next();
+  const _origJson = res.json.bind(res);
+  res.json = function(body) {
+    try {
+      const st = _readCoreStore();
+      const riders = Array.isArray(st.riders) ? st.riders : (Array.isArray(st.riderList) ? st.riderList : []);
+      const pendaftar = Array.isArray(st.pendaftar) ? st.pendaftar : (Array.isArray(st.pendaftarList) ? st.pendaftarList : []);
+      const kelasList = Array.isArray(st.kelas) ? st.kelas : (Array.isArray(st.kelasList) ? st.kelasList : _cachedLiveKelas);
+      let scoreRuns = Array.isArray(st.scoreRuns) && st.scoreRuns.length > 0
+        ? st.scoreRuns
+        : (Array.isArray(st.scoreRunList) ? st.scoreRunList : []);
+      let modified = false;
+
+      const ent = req.body && req.body.entity ? String(req.body.entity).toLowerCase() : '';
+      const act = req.body && req.body.action ? String(req.body.action).toLowerCase() : '';
+      const targetId = Number((req.body && (req.body.id || (req.body.data && req.body.data.id))) || 0);
+
+      if (ent === 'rider' && act === 'delete' && targetId > 0) {
+        scoreRuns = scoreRuns.filter(sr => Number(sr.riderId) !== targetId);
+        _cachedLiveRuns = _cachedLiveRuns.filter(sr => Number(sr.riderId) !== targetId);
+        modified = true;
+      }
+
+      if ((ent === 'pendaftar' && act === 'approve') || (ent === 'rider' && (act === 'create' || act === 'update'))) {
+        const d = (req.body && req.body.data) || {};
+        const norm = _extractMultiClassesAndCategories(d, kelasList);
+
+        if (ent === 'rider' && targetId > 0 && act === 'update') {
+          const rObj = riders.find(r => Number(r.id) === targetId);
+          if (rObj) {
+            rObj.kategoriUmur = norm.joinedKat;
+            rObj.kategori = norm.joinedKat;
+            rObj.kelasPilihan = norm.joinedKls;
+            rObj.kelasYangDiikuti = norm.joinedKls;
+            modified = true;
+          }
+        } else if (ent === 'rider' && act === 'create' && riders.length > 0) {
+          const newest = riders[riders.length - 1];
+          if (newest) {
+            newest.kategoriUmur = norm.joinedKat;
+            newest.kategori = norm.joinedKat;
+            newest.kelasPilihan = norm.joinedKls;
+            newest.kelasYangDiikuti = norm.joinedKls;
+            scoreRuns = scoreRuns.filter(sr => Number(sr.riderId) !== Number(newest.id));
+            modified = true;
+          }
+        } else if (ent === 'pendaftar' && act === 'approve' && riders.length > 0) {
+          const newestRider = riders[riders.length - 1];
+          if (newestRider) {
+            const pNorm = _extractMultiClassesAndCategories(newestRider, kelasList);
+            newestRider.kategoriUmur = pNorm.joinedKat;
+            newestRider.kategori = pNorm.joinedKat;
+            newestRider.kelasPilihan = pNorm.joinedKls;
+            newestRider.kelasYangDiikuti = pNorm.joinedKls;
+            scoreRuns = scoreRuns.filter(sr => Number(sr.riderId) !== Number(newestRider.id));
+            modified = true;
+          }
+        }
+      }
+
+      if (req.path.includes('pendaftaran') && pendaftar.length > 0) {
+        const newestP = pendaftar[pendaftar.length - 1];
+        if (newestP) {
+          const norm = _extractMultiClassesAndCategories(req.body, kelasList);
+          newestP.kategoriUmur = norm.joinedKat;
+          newestP.kategori = norm.joinedKat;
+          newestP.kelasPilihan = norm.joinedKls;
+          newestP.kelasYangDiikuti = norm.joinedKls;
+          modified = true;
+        }
+      }
+
+      if (modified) {
+        st.riders = riders;
+        st.riderList = riders;
+        st.pendaftar = pendaftar;
+        st.pendaftarList = pendaftar;
+        st.scoreRuns = scoreRuns;
+        st.scoreRunList = scoreRuns;
+        _writeCoreStore(st);
+      } else {
+        _bumpSthacVersion();
+      }
+    } catch (e) {}
+    return _origJson(body);
+  };
+  next();
+});
+
+// Fungsi Inti Pembangun Scoreboard, Entri Run Panitia & Klasemen Poin Juara Umum
+function _buildAccurateScoreboardAndStandings(locals) {
+  const ptsTable = [10, 8, 6, 5, 4, 3, 2, 1];
+  const st = _readCoreStore();
+
+  const storeRiders = Array.isArray(st.riders) && st.riders.length > 0
+    ? st.riders
+    : (Array.isArray(st.riderList) ? st.riderList : []);
+  const storeKelas = Array.isArray(st.kelas) && st.kelas.length > 0
+    ? st.kelas
+    : (Array.isArray(st.kelasList) ? st.kelasList : []);
+  const storeRuns = [st.scoreRuns, st.scoreRunList, st.scoreRun, st.runs, st.scores].find(arr => Array.isArray(arr) && arr.length > 0) || [];
+
+  // 1. Pilih daftar Rider aktif (utamakan locals.riderList -> storeRiders -> _cachedLiveRiders)
+  const riders = (Array.isArray(locals.riderList) && locals.riderList.length > 0)
+    ? locals.riderList
+    : (storeRiders.length > 0 ? storeRiders : _cachedLiveRiders);
+  if (riders.length > 0) _cachedLiveRiders = riders;
+
+  // 2. Pilih daftar Kelas aktif
+  const kelasList = (Array.isArray(locals.kelasList) && locals.kelasList.length > 0)
+    ? locals.kelasList
+    : (storeKelas.length > 0 ? storeKelas : _cachedLiveKelas);
+  if (kelasList.length > 0) _cachedLiveKelas = kelasList;
+
+  // Normalisasi multi-kelas pada setiap rider
+  riders.forEach(r => {
+    if (!r || typeof r !== 'object') return;
+    const norm = _extractMultiClassesAndCategories(r, kelasList);
+    r.kategoriUmur = norm.joinedKat;
+    r.kategori = norm.joinedKat;
+    r.kategoriList = norm.katArr;
+    r.kelasPilihan = norm.joinedKls;
+    r.kelasYangDiikuti = norm.joinedKls;
+    r.kelasListArray = norm.klsArr;
+  });
+
+  // 3. Kumpulkan seluruh ScoreRun dari: locals.scoreRunList, storeRuns, locals.scoreboardByKelas, atau _cachedLiveRuns
+  let candidateRuns = [];
+  if (Array.isArray(locals.scoreRunList) && locals.scoreRunList.length > 0) {
+    candidateRuns = locals.scoreRunList;
+  } else if (storeRuns.length > 0) {
+    candidateRuns = storeRuns;
+  } else if (_cachedLiveRuns.length > 0) {
+    candidateRuns = _cachedLiveRuns;
+  }
+
+  // Jika candidateRuns masih kosong tetapi locals.scoreboardByKelas memiliki data run (seperti di /skor), ekstrak run-nya!
+  if (candidateRuns.length === 0 && locals.scoreboardByKelas && typeof locals.scoreboardByKelas === 'object') {
+    const extracted = [];
+    Object.keys(locals.scoreboardByKelas).forEach(kId => {
+      const board = locals.scoreboardByKelas[kId];
+      if (!Array.isArray(board)) return;
+      board.forEach(row => {
+        if (!row || !Array.isArray(row.runs)) return;
+        row.runs.forEach((sr, idx) => {
+          if (sr && typeof sr === 'object' && (Number(sr.totalSkor ?? sr.skor ?? 0) > 0 || Number(sr.waktuTempuh ?? 0) > 0)) {
+            extracted.push({
+              id: sr.id || ( Number(kId) * 1000 + Number(row.riderId || 1) * 10 + (idx + 1) ),
+              kelasId: Number(sr.kelasId || kId),
+              riderId: Number(sr.riderId || row.riderId || (row.rider && row.rider.id)),
+              runNumber: Number(sr.runNumber || (idx + 1)),
+              target1: Number(sr.target1 ?? sr.t1 ?? 0),
+              target2: Number(sr.target2 ?? sr.t2 ?? 0),
+              target3: Number(sr.target3 ?? sr.t3 ?? 0),
+              waktuTempuh: Number(sr.waktuTempuh ?? sr.waktu ?? 0),
+              totalSkor: Number(sr.totalSkor ?? sr.skor ?? 0),
+              rider: row.rider || null
+            });
+          }
+        });
+      });
+    });
+    if (extracted.length > 0) candidateRuns = extracted;
+  }
+
+  // 4. Filter hanya run yang memiliki Rider valid di daftar Rider resmi & lengkapi properti .rider dan .kelas
+  const cleanScoreRuns = [];
+  candidateRuns.forEach((sr, idx) => {
+    if (!sr || typeof sr !== 'object') return;
+    const matchedRider = _findMatchingRider(sr, riders);
+    if (!matchedRider) return;
+    const kObj = kelasList.find(k => Number(k.id) === Number(sr.kelasId)) || sr.kelas || null;
+    const t1 = Number(sr.target1 ?? sr.t1 ?? 0);
+    const t2 = Number(sr.target2 ?? sr.t2 ?? 0);
+    const t3 = Number(sr.target3 ?? sr.t3 ?? 0);
+    const wVal = Number(sr.waktuTempuh ?? sr.waktu ?? 0);
+    const totVal = Number(sr.totalSkor ?? sr.skor ?? (t1 + t2 + t3));
+
+    cleanScoreRuns.push({
+      ...sr,
+      id: sr.id || (idx + 1),
+      kelasId: Number(sr.kelasId || (kObj && kObj.id) || 1),
+      riderId: Number(matchedRider.id),
+      runNumber: Number(sr.runNumber || 1),
+      target1: t1,
+      target2: t2,
+      target3: t3,
+      waktuTempuh: wVal,
+      totalSkor: Number(totVal.toFixed(2)),
+      rider: matchedRider,
+      kelas: kObj
+    });
+  });
+
+  if (cleanScoreRuns.length > 0) {
+    _cachedLiveRuns = cleanScoreRuns;
+  }
+
+  locals.scoreRunList = cleanScoreRuns;
+  locals.riderList = riders;
+  if (locals.stats && typeof locals.stats === 'object') {
+    locals.stats.totalRunTercatat = cleanScoreRuns.length;
+  }
+
+  // 5. Bangun scoreboardByKelas secara akurat dari cleanScoreRuns
+  const scoreboardByKelas = {};
+
+  kelasList.forEach(k => {
+    if (!k) return;
+    const kId = Number(k.id);
+    const maxRun = Number(k.jumlahRun) || 3;
+    const isExhibition = /exhibition|qabaq/i.test(k.namaKelas || '');
+
+    const runsInKelas = cleanScoreRuns.filter(sr => Number(sr.kelasId) === kId);
+    const runsByRider = new Map();
+    runsInKelas.forEach(sr => {
+      const rId = Number(sr.riderId);
+      if (!runsByRider.has(rId)) runsByRider.set(rId, []);
+      runsByRider.get(rId).push(sr);
+    });
+
+    const scoredParticipants = riders.filter(r => runsByRider.has(Number(r.id)));
+
+    const scoredRows = scoredParticipants.map(r => {
+      const rId = Number(r.id);
+      const rRuns = runsByRider.get(rId) || [];
+      const runMap = {};
+      let totalSkor = 0;
+      let totalWaktu = 0;
+      let validRunCount = 0;
+
+      rRuns.forEach(sr => {
+        const rNo = Number(sr.runNumber) || 1;
+        if (rNo >= 1 && rNo <= maxRun) {
+          runMap[rNo] = sr;
+        }
+      });
+
+      const runsArray = [];
+      for (let i = 1; i <= maxRun; i++) {
+        const sr = runMap[i] || null;
+        if (sr) {
+          const sVal = Number(sr.totalSkor ?? sr.skor ?? 0);
+          const wVal = Number(sr.waktuTempuh ?? sr.waktu ?? 0);
+          totalSkor += sVal;
+          totalWaktu += wVal;
+          validRunCount++;
+          runsArray.push(sr);
+        } else {
+          runsArray.push(null);
+        }
+      }
+
+      return {
+        riderId: rId,
+        rider: r,
+        kodeRider: r.kodeRider,
+        namaLengkap: r.namaLengkap,
+        asalStable: r.asalStable,
+        kategoriUmur: r.kategoriUmur,
+        runs: runsArray,
+        runMap,
+        validRunCount,
+        sudahDinilai: validRunCount > 0 && totalSkor > 0,
+        totalSkor: Number(totalSkor.toFixed(2)),
+        totalScore: Number(totalSkor.toFixed(2)),
+        totalWaktu: Number(totalWaktu.toFixed(2)),
+        rank: 1,
+        pos: 1,
+        poinKlasmen: 0,
+        poinKejuaraan: 0
+      };
+    }).filter(x => x.sudahDinilai);
+
+    scoredRows.sort((a, b) => {
+      if (b.totalSkor !== a.totalSkor) return b.totalSkor - a.totalSkor;
+      if (a.totalWaktu > 0 && b.totalWaktu > 0 && a.totalWaktu !== b.totalWaktu) return a.totalWaktu - b.totalWaktu;
+      return a.riderId - b.riderId;
+    });
+
+    scoredRows.forEach((row, idx) => {
+      const rk = idx + 1;
+      row.rank = rk;
+      row.pos = rk;
+      const pts = (!isExhibition && row.totalSkor > 0 && rk >= 1 && rk <= ptsTable.length) ? ptsTable[rk - 1] : 0;
+      row.poinKlasmen = pts;
+      row.poinKejuaraan = pts;
+    });
+
+    scoreboardByKelas[kId] = scoredRows;
+    k.scoreboard = scoredRows;
+    k.rows = scoredRows;
+  });
+
+  _cachedLiveScoreboard = scoreboardByKelas;
+  locals.scoreboardByKelas = scoreboardByKelas;
+
+  // 6. Bangun Klasemen Poin Juara Umum (standings) dari akumulasi nyata seluruh kelas
+  const standings = riders.map(r => {
+    const rId = Number(r.id);
+    const rincianKelas = [];
+    let totalPoints = 0;
+    let p1Count = 0;
+    let totalSkorLintasan = 0;
+
+    kelasList.forEach(k => {
+      if (!k) return;
+      const kId = Number(k.id);
+      const isExhibition = /exhibition|qabaq/i.test(k.namaKelas || '');
+      const board = scoreboardByKelas[kId] || [];
+      const entry = board.find(row => {
+        if (Number(row.riderId) === rId) return true;
+        if (row.kodeRider && r.kodeRider && String(row.kodeRider) === String(r.kodeRider)) return true;
+        return false;
+      });
+
+      if (entry || _doesRiderFollowKelas(r, k)) {
+        const pts = entry ? Number(entry.poinKlasmen || 0) : 0;
+        const skorRun = entry ? Number(entry.totalSkor || 0) : 0;
+        const rk = entry && entry.sudahDinilai ? entry.rank : '-';
+        const sudahDinilai = !!(entry && entry.sudahDinilai);
+
+        if (!isExhibition) {
+          totalPoints += pts;
+          if (rk === 1 && sudahDinilai && pts > 0) p1Count++;
+        }
+        totalSkorLintasan += skorRun;
+
+        rincianKelas.push({
+          kelasId: kId,
+          namaKelas: k.namaKelas,
+          kategori: k.kategori || 'Terbuka',
+          labelLengkap: k.namaKelas + ' (' + (k.kategori || 'Terbuka') + ')',
+          peringkat: rk,
+          poinKlasmen: pts,
+          skorRun: Number(skorRun.toFixed(2)),
+          sudahDinilai
+        });
+      }
+    });
+
+    if (rincianKelas.length === 0) {
+      (r.kategoriList || ['U14']).forEach(kat => {
+        rincianKelas.push({
+          kelasId: 0,
+          namaKelas: kat,
+          kategori: kat,
+          labelLengkap: kat,
+          peringkat: '-',
+          poinKlasmen: 0,
+          skorRun: 0,
+          sudahDinilai: false
+        });
+      });
+    }
+
+    return {
+      id: rId,
+      riderId: rId,
+      kodeRider: r.kodeRider,
+      namaLengkap: r.namaLengkap,
+      asalStable: r.asalStable,
+      kotaAsal: r.kotaAsal,
+      kategoriUmur: r.kategoriUmur,
+      kategori: r.kategoriUmur,
+      kategoriList: r.kategoriList || ['U14'],
+      kelasPilihan: r.kelasYangDiikuti,
+      kelasYangDiikuti: r.kelasYangDiikuti,
+      kelasListArray: r.kelasListArray || [],
+      rincianKelas,
+      p1Count,
+      totalSkorLintasan: Number(totalSkorLintasan.toFixed(2)),
+      totalPoints,
+      totalPoin: totalPoints,
+      poinKejuaraan: totalPoints,
+      poinSeri: totalPoints,
+      poin: totalPoints
+    };
+  });
+
+  standings.sort((a, b) => {
+    if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+    if (b.p1Count !== a.p1Count) return b.p1Count - a.p1Count;
+    if (b.totalSkorLintasan !== a.totalSkorLintasan) return b.totalSkorLintasan - a.totalSkorLintasan;
+    return a.id - b.id;
+  });
+
+  locals.standings = standings;
+  return { scoreboardByKelas, standings, cleanScoreRuns };
+}
+
+app.get('/api/sthac-live-state', (req, res) => {
+  try {
+    const st = _readCoreStore();
+    const dummyLocals = {
+      riderList: st.riders || st.riderList || _cachedLiveRiders,
+      pendaftarList: st.pendaftar || st.pendaftarList || [],
+      kelasList: st.kelas || st.kelasList || _cachedLiveKelas,
+      scoreRunList: (Array.isArray(st.scoreRuns) && st.scoreRuns.length > 0) ? st.scoreRuns : _cachedLiveRuns,
+      scoreboardByKelas: _cachedLiveScoreboard
+    };
+    _buildAccurateScoreboardAndStandings(dummyLocals);
+    res.json({
+      ok: true,
+      version: _sthacDataVersion,
+      counts: {
+        riders: dummyLocals.riderList.length,
+        pendaftar: dummyLocals.pendaftarList.length,
+        scoreRuns: dummyLocals.scoreRunList.length
+      },
+      standings: dummyLocals.standings
+    });
+  } catch (err) {
+    res.status(500).json({ ok: false, message: err.message });
+  }
+});
+
+app.use((req, res, next) => {
+  const _origRenderCore = res.render.bind(res);
+  res.render = function(view, locals, cb) {
+    try {
+      if (!locals || typeof locals !== 'object') locals = {};
+      _buildAccurateScoreboardAndStandings(locals);
+      res.locals.standings = locals.standings;
+      res.locals.scoreboardByKelas = locals.scoreboardByKelas;
+      res.locals.scoreRunList = locals.scoreRunList;
+    } catch (e) {}
+    return _origRenderCore(view, locals, cb);
+  };
+  next();
+});
+// === END STHAC CORE COMPETITION ENGINE ===
+
+
+
 // === START PUBLIC BERITA PHOTO SYNC ===
 const _fsBrt = require('fs');
 const _pathBrt = require('path');
@@ -246,157 +881,7 @@ app.get(['/jadwal', '/jadwal/*'], (req, res) => {
 });
 // === END JADWAL ROUTE ALIAS ===
 
-// === START UNIFIED STANDINGS SYNC MIDDLEWARE ===
-app.use((req, res, next) => {
-  const _origRenderStandings = res.render.bind(res);
-  res.render = function(view, locals, cb) {
-    try {
-      if (!locals || typeof locals !== 'object') locals = {};
-      const ptsTable = [10, 8, 6, 5, 4, 3, 2, 1];
 
-      const riders = Array.isArray(locals.riderList) ? locals.riderList : [];
-      const kelasList = Array.isArray(locals.kelasList) ? locals.kelasList : [];
-      const scoreRuns = Array.isArray(locals.scoreRunList) ? locals.scoreRunList : [];
-      const sbByKelas = (locals.scoreboardByKelas && typeof locals.scoreboardByKelas === 'object') ? locals.scoreboardByKelas : {};
-
-      // Hitung peringkat & poin per kelas dari scoreboardByKelas atau scoreRunList
-      const classRankPointsByRider = {}; // riderId -> [{ kelasNama, kategori, rank, poin, skorRun }]
-
-      kelasList.forEach(k => {
-        if (!k || /exhibition|qabaq/i.test(k.namaKelas || '')) return;
-        const board = Array.isArray(sbByKelas[k.id]) ? sbByKelas[k.id] : [];
-        board.forEach((row, idx) => {
-          const rId = Number(row.riderId || (row.rider && row.rider.id) || 0);
-          if (!rId) return;
-          const pts = idx < ptsTable.length ? ptsTable[idx] : 0;
-          if (!classRankPointsByRider[rId]) classRankPointsByRider[rId] = [];
-          classRankPointsByRider[rId].push({
-            kelasId: k.id,
-            namaKelas: k.namaKelas || '',
-            kategori: k.kategori || '',
-            rank: idx + 1,
-            poin: pts,
-            skorRun: Number(row.totalSkor || row.totalScore || 0)
-          });
-        });
-      });
-
-      // Sinkronkan ke array standings agar Beranda & Klasemen selalu identik
-      if (Array.isArray(locals.standings)) {
-        locals.standings.forEach((st, idx) => {
-          if (!st || typeof st !== 'object') return;
-          const rObj = riders.find(r =>
-            (st.id && Number(r.id) === Number(st.id)) ||
-            (st.riderId && Number(r.id) === Number(st.riderId)) ||
-            (st.kodeRider && r.kodeRider === st.kodeRider) ||
-            (st.namaLengkap && r.namaLengkap === st.namaLengkap)
-          ) || st;
-
-          const rId = Number(rObj.id || st.riderId || st.id || 0);
-          const rawKat = String(rObj.kategori || rObj.kategoriUmur || st.kategoriUmur || st.kategori || 'U14');
-          const rawKls = String(rObj.kelasYangDiikuti || rObj.kelasPilihan || st.kelasYangDiikuti || '');
-
-          const katParts = rawKat.split(/[|,]/).map(s => s.trim()).filter(Boolean);
-          const klsParts = rawKls.split(/[|,]/).map(s => s.trim()).filter(Boolean);
-          const entriesCount = Math.max(katParts.length, klsParts.length, 1);
-
-          // Cek poin dari hasil papan skor kelas
-          const recordedClasses = classRankPointsByRider[rId] || [];
-          let computedPoints = 0;
-          let p1Wins = 0;
-          let breakdown = [];
-
-          if (recordedClasses.length > 0) {
-            recordedClasses.forEach(rc => {
-              computedPoints += rc.poin;
-              if (rc.rank === 1) p1Wins++;
-              breakdown.push({
-                label: rc.kategori || rc.namaKelas,
-                poin: rc.poin,
-                skorRun: rc.skorRun
-              });
-            });
-          }
-
-          // Jika rider mengikuti multi-kategori (misal U14 & Terbuka seperti di halaman Klasemen)
-          // pastikan perhitungannya sama persis dengan tabel Klasemen Poin Juara Umum (10 * jumlah kategori/kelas juara)
-          const singleBasePoint = idx < ptsTable.length ? ptsTable[idx] : 0;
-          const klasemenSyncedPoints = entriesCount * singleBasePoint;
-
-          const finalPoints = Math.max(
-            computedPoints,
-            klasemenSyncedPoints,
-            Number(st.totalPoints) || 0,
-            Number(st.totalPoin) || 0,
-            Number(st.poinKejuaraan) || 0,
-            Number(st.poin) || 0
-          );
-
-          if (breakdown.length < entriesCount && katParts.length > 0) {
-            breakdown = katParts.map(kat => ({
-              label: kat,
-              poin: singleBasePoint
-            }));
-          }
-
-          // Isi semua alias properti poin agar template manapun (beranda.ejs / juara.ejs / klasemen.ejs / panitia.ejs) langsung terbaca
-          st.totalPoints = finalPoints;
-          st.totalPoin = finalPoints;
-          st.poinKejuaraan = finalPoints;
-          st.poinSeri = finalPoints;
-          st.poin = finalPoints;
-          st.p1Count = Math.max(p1Wins, entriesCount, Number(st.p1Count) || 0);
-          st.kategoriList = katParts.length > 0 ? katParts : ['Terbuka'];
-          st.breakdownKelas = breakdown;
-        });
-
-        // Urutkan kembali berdasarkan poin tertinggi -> jumlah kemenangan -> skor lintasan
-        locals.standings.sort((a, b) => {
-          if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-          if ((b.p1Count || 0) !== (a.p1Count || 0)) return (b.p1Count || 0) - (a.p1Count || 0);
-          return (Number(b.totalSkorLintasan) || 0) - (Number(a.totalSkorLintasan) || 0);
-        });
-      }
-    } catch (e) {}
-    return _origRenderStandings(view, locals, cb);
-  };
-  next();
-});
-// === END UNIFIED STANDINGS SYNC MIDDLEWARE ===
-
-// === START SCOREBOARD POIN KLASMEN ENRICHER ===
-app.use((req, res, next) => {
-  const _origRenderSkor = res.render.bind(res);
-  res.render = function(view, locals, cb) {
-    try {
-      if (!locals || typeof locals !== 'object') locals = {};
-      const ptsTable = [10, 8, 6, 5, 4, 3, 2, 1];
-      const kelasList = Array.isArray(locals.kelasList) ? locals.kelasList : [];
-      const sbByKelas = (locals.scoreboardByKelas && typeof locals.scoreboardByKelas === 'object') ? locals.scoreboardByKelas : {};
-
-      Object.keys(sbByKelas).forEach(kId => {
-        const board = sbByKelas[kId];
-        if (!Array.isArray(board)) return;
-        const kObj = kelasList.find(k => String(k.id) === String(kId));
-        const isExhibition = kObj && /exhibition|qabaq/i.test(kObj.namaKelas || '');
-
-        board.forEach((row, idx) => {
-          if (!row || typeof row !== 'object') return;
-          const rankNum = Number(row.rank || row.pos || row.peringkat || (idx + 1));
-          const hasScore = (Number(row.totalSkor ?? row.totalScore ?? 0) > 0) || (Array.isArray(row.runs) && row.runs.length > 0);
-          const pts = (!isExhibition && hasScore && rankNum >= 1 && rankNum <= ptsTable.length)
-            ? ptsTable[rankNum - 1]
-            : (!isExhibition && rankNum >= 1 && rankNum <= ptsTable.length ? ptsTable[rankNum - 1] : 0);
-          row.poinKlasmen = pts;
-          row.poinKejuaraan = pts;
-        });
-      });
-    } catch (e) {}
-    return _origRenderSkor(view, locals, cb);
-  };
-  next();
-});
-// === END SCOREBOARD POIN KLASMEN ENRICHER ===
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Pasang rute CRUD & Penilaian Universal terlebih dahulu
