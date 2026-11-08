@@ -368,20 +368,20 @@
   }
 
   function injectPublicNewsPhotos() {
-    // HANYA jalankan pada halaman Berita (/berita atau /news), JANGAN di Beranda agar kartu Leaderboard Rider tidak terkena!
     var pathName = (window.location.pathname || '').toLowerCase();
-    var isNewsPage = pathName.indexOf('/berita') !== -1 || pathName.indexOf('/news') !== -1 || /WARTAs+STHAC/i.test(document.body.innerText || '');
+    var isNewsPage = pathName.indexOf('/berita') !== -1 || pathName.indexOf('/news') !== -1 || /WARTA\s+STHAC/i.test(document.body.innerText || '');
     if (!isNewsPage) return;
 
-    fetch('/api/sthac-media-map')
+    fetch('/api/sthac-berita-photos')
       .then(function(r) { return r.json(); })
-      .then(function(map) {
-        if (!map) return;
-        // HANYA gunakan byBeritaTitle (JANGAN gunakan byName milik Rider!)
-        var byTitle = map.byBeritaTitle || {};
+      .then(function(data) {
+        if (!data || !data.ok) return;
+        var byTitle = data.byTitle || {};
 
         document.querySelectorAll('.sthac-card, .card').forEach(function(card) {
           if (card.closest('#admin-dashboard-panel')) return;
+          if (card.querySelector('.sthac-public-news-img')) return;
+
           var heading = card.querySelector('h2, h3, h4, h5, h6');
           if (!heading) return;
 
@@ -391,14 +391,12 @@
           var photoUrl = byTitle[titleText] || '';
           if (!photoUrl || photoUrl.trim().length <= 4) return;
 
-          if (!card.querySelector('.sthac-public-news-img')) {
-            var wrap = document.createElement('div');
-            wrap.className = 'mb-3 rounded-3 overflow-hidden border sthac-public-news-img-wrap';
-            wrap.style.height = '210px';
-            wrap.style.background = 'rgba(7,38,25,0.05)';
-            wrap.innerHTML = '<img src="' + photoUrl + '" alt="' + escHtml(heading.textContent.trim()) + '" class="w-100 h-100 object-fit-cover d-block sthac-public-news-img" />';
-            heading.parentNode.insertBefore(wrap, heading);
-          }
+          var wrap = document.createElement('div');
+          wrap.className = 'mb-3 rounded-3 overflow-hidden border sthac-news-photo-box';
+          wrap.style.height = '215px';
+          wrap.style.background = 'rgba(7,38,25,0.06)';
+          wrap.innerHTML = '<img src="' + escHtml(photoUrl) + '" alt="' + escHtml(heading.textContent.trim()) + '" class="w-100 h-100 object-fit-cover d-block sthac-public-news-img" />';
+          heading.parentNode.insertBefore(wrap, heading);
         });
       })
       .catch(function() {});
@@ -453,5 +451,20 @@
   } else {
     injectPublicNewsPhotos();
     syncPublicBerandaSponsors();
+  }
+})();
+
+// === START JADWAL LINK REWRITER ===
+(function() {
+  function fixJadwalLinks() {
+    document.querySelectorAll('a[href^="/jadwal"]').forEach(function(a) {
+      var oldHref = a.getAttribute('href') || '/jadwal';
+      a.setAttribute('href', oldHref.replace(/^\/jadwal/i, '/event'));
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fixJadwalLinks);
+  } else {
+    fixJadwalLinks();
   }
 })();

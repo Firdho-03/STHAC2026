@@ -2410,3 +2410,133 @@ html[data-theme="dark"] body .sthac-seri1-btn-outline:hover {
   background: rgba(217, 180, 92, 0.2) !important;
   border-color: #D9B45C !important;
 }
+
+/* ==================== DARK MODE TEXT CONTRAST FIX ==================== */
+/* Light Mode Default untuk elemen kustom Beranda */
+.sthac-section-subtext {
+  color: #4A6358 !important;
+}
+.sthac-eyebrow-label {
+  letter-spacing: 0.08em;
+  color: #5A7065 !important;
+  font-size: 0.72rem;
+}
+.sthac-link-klasemen {
+  color: #072619 !important;
+  transition: color 0.2s ease;
+}
+.sthac-link-klasemen:hover {
+  color: #9A721C !important;
+}
+.sthac-kat-pts-badge {
+  background: rgba(7, 38, 25, 0.05) !important;
+  color: #072619 !important;
+  border: 1px solid rgba(7, 38, 25, 0.15) !important;
+  font-size: 0.68rem;
+}
+.sthac-total-pts-value {
+  color: #9A721C !important;
+}
+
+/* Dark Mode Override: Pastikan semua subjudul, text-muted, dan link terlihat jelas */
+html[data-theme="dark"] body .text-muted,
+html[data-theme="dark"] body .text-secondary,
+html[data-theme="dark"] body .sthac-section-subtext,
+body.dark-mode .text-muted,
+body.dark-mode .sthac-section-subtext {
+  color: #C4D7CE !important;
+}
+
+html[data-theme="dark"] body .sthac-eyebrow-label,
+body.dark-mode .sthac-eyebrow-label {
+  color: #9FE6C3 !important;
+}
+
+html[data-theme="dark"] body .sthac-link-klasemen,
+body.dark-mode .sthac-link-klasemen {
+  color: #F2D078 !important;
+}
+html[data-theme="dark"] body .sthac-link-klasemen:hover,
+body.dark-mode .sthac-link-klasemen:hover {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] body h1,
+html[data-theme="dark"] body h2,
+html[data-theme="dark"] body h3,
+html[data-theme="dark"] body h4,
+html[data-theme="dark"] body h5,
+html[data-theme="dark"] body h6,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] body .sthac-kat-pts-badge,
+body.dark-mode .sthac-kat-pts-badge {
+  background: rgba(19, 92, 61, 0.45) !important;
+  color: #E6F4ED !important;
+  border: 1px solid rgba(159, 230, 195, 0.35) !important;
+}
+
+html[data-theme="dark"] body .sthac-total-pts-value,
+body.dark-mode .sthac-total-pts-value {
+  color: #F2D078 !important;
+}
+
+html[data-theme="dark"] body .sthac-public-sponsor-box .fw-bold,
+body.dark-mode .sthac-public-sponsor-box .fw-bold {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] body #section-poin-kejuaraan-beranda .sthac-card,
+html[data-theme="dark"] body #sponsor-mitra .sthac-card,
+body.dark-mode #section-poin-kejuaraan-beranda .sthac-card,
+body.dark-mode #sponsor-mitra .sthac-card {
+  background: linear-gradient(165deg, #072318 0%, #04150E 100%) !important;
+  border: 1px solid rgba(217, 180, 92, 0.32) !important;
+  color: #E2ECE7 !important;
+}
+
+/* === EXTRA DARK MODE LEADERBOARD & SPONSOR TEXT FIX === */
+.sthac-rank-pill {
+  background: rgba(16, 124, 79, 0.14) !important;
+  color: #0B5C3B !important;
+  font-size: 0.74rem;
+}
+
+html[data-theme="dark"] .sthac-rank-pill,
+body.dark-mode .sthac-rank-pill,
+.dark .sthac-rank-pill {
+  background: rgba(16, 185, 129, 0.22) !important;
+  color: #6EE7B7 !important;
+  border: 1px solid rgba(110, 231, 183, 0.35) !important;
+}
+
+/* Pastikan seluruh teks di dalam section Poin Kejuaraan & Sponsor terlihat terang saat Dark Mode */
+html[data-theme="dark"] #section-poin-kejuaraan-beranda .text-muted,
+html[data-theme="dark"] #section-poin-kejuaraan-beranda .small,
+html[data-theme="dark"] #sponsor-mitra .text-muted,
+html[data-theme="dark"] #sponsor-mitra p,
+body.dark-mode #section-poin-kejuaraan-beranda .text-muted,
+body.dark-mode #section-poin-kejuaraan-beranda .small,
+body.dark-mode #sponsor-mitra .text-muted,
+body.dark-mode #sponsor-mitra p {
+  color: #D1E4DB !important;
+}
+
+html[data-theme="dark"] #section-poin-kejuaraan-beranda a.sthac-link-klasemen,
+body.dark-mode #section-poin-kejuaraan-beranda a.sthac-link-klasemen {
+  color: #F2D078 !important;
+}
+
+html[data-theme="dark"] #sponsor-mitra .badge,
+body.dark-mode #sponsor-mitra .badge {
+  background: rgba(217, 180, 92, 0.22) !important;
+  color: #F5DC93 !important;
+  border-color: rgba(242, 208, 120, 0.45) !important;
+}

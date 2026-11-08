@@ -171,6 +171,81 @@ app.use((req, res, next) => {
 });
 // === END DYNAMIC UNLIMITED SPONSOR ENGINE ===
 
+// === START PUBLIC BERITA PHOTO SYNC ===
+const _fsBrt = require('fs');
+const _pathBrt = require('path');
+const _storeBrtPath = _pathBrt.join(process.cwd(), 'prisma', 'sthac-unified-store.json');
+const _mediaBrtPath = _pathBrt.join(process.cwd(), 'prisma', 'sthac-media-map.json');
+
+function _getEnrichedBeritaPhotosMap() {
+  const byId = {};
+  const byTitle = {};
+  try {
+    if (_fsBrt.existsSync(_mediaBrtPath)) {
+      const m = JSON.parse(_fsBrt.readFileSync(_mediaBrtPath, 'utf8'));
+      Object.assign(byId, m.byBeritaId || {});
+      Object.assign(byTitle, m.byBeritaTitle || {});
+    }
+  } catch (e) {}
+  try {
+    if (_fsBrt.existsSync(_storeBrtPath)) {
+      const st = JSON.parse(_fsBrt.readFileSync(_storeBrtPath, 'utf8'));
+      const list = Array.isArray(st.berita) ? st.berita : (Array.isArray(st.beritaList) ? st.beritaList : []);
+      list.forEach(b => {
+        if (!b || typeof b !== 'object') return;
+        const p = b.fotoUrl || b.foto || b.gambar || b.image || '';
+        if (p && String(p).trim().length > 4) {
+          if (b.id) byId[String(b.id)] = String(p).trim();
+          if (b.judul) byTitle[String(b.judul).trim().toLowerCase()] = String(p).trim();
+        }
+      });
+    }
+  } catch (e) {}
+  return { byId, byTitle };
+}
+
+app.get('/api/sthac-berita-photos', (req, res) => {
+  res.json({ ok: true, ..._getEnrichedBeritaPhotosMap() });
+});
+
+app.use((req, res, next) => {
+  const _origRenderBrt = res.render.bind(res);
+  res.render = function(view, locals, cb) {
+    try {
+      if (!locals || typeof locals !== 'object') locals = {};
+      const { byId, byTitle } = _getEnrichedBeritaPhotosMap();
+      Object.keys(locals).forEach(k => {
+        if (Array.isArray(locals[k])) {
+          locals[k].forEach(item => {
+            if (!item || typeof item !== 'object') return;
+            if (!item.judul && !item.ringkasan) return;
+            const tKey = String(item.judul || '').trim().toLowerCase();
+            const resolved =
+              item.fotoUrl || item.foto || item.gambar || item.image ||
+              (item.id && byId[String(item.id)]) ||
+              (tKey && byTitle[tKey]) || '';
+            if (resolved && String(resolved).trim().length > 4) {
+              item.fotoUrl = String(resolved).trim();
+              item.foto = String(resolved).trim();
+              item.gambar = String(resolved).trim();
+            }
+          });
+        }
+      });
+    } catch (e) {}
+    return _origRenderBrt(view, locals, cb);
+  };
+  next();
+});
+// === END PUBLIC BERITA PHOTO SYNC ===
+
+// === START JADWAL ROUTE ALIAS ===
+app.get(['/jadwal', '/jadwal/*'], (req, res) => {
+  const qs = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+  return res.redirect('/event' + qs);
+});
+// === END JADWAL ROUTE ALIAS ===
+
 // === START UNIFIED STANDINGS SYNC MIDDLEWARE ===
 app.use((req, res, next) => {
   const _origRenderStandings = res.render.bind(res);
