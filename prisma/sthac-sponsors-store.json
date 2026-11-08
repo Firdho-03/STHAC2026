@@ -1,0 +1,34 @@
+{
+  "sponsors": [
+    {
+      "id": 1,
+      "slotNumber": 1,
+      "namaSponsor": "YANTO GRUB",
+      "kategori": "Main Sponsor",
+      "fotoUrl": "/uploads/sponsor-1794178919407-2118.png?v=1794178919408",
+      "websiteUrl": "#",
+      "terisi": true,
+      "updatedAt": 1794178973226
+    },
+    {
+      "id": 2,
+      "slotNumber": 2,
+      "namaSponsor": "Slot Sponsor 2",
+      "kategori": "Official Partner",
+      "fotoUrl": "/uploads/member-1794030247970-3501.png",
+      "websiteUrl": "#",
+      "terisi": true,
+      "updatedAt": 1794178973226
+    },
+    {
+      "id": 3,
+      "slotNumber": 3,
+      "namaSponsor": "Hehe",
+      "kategori": "Official Partner",
+      "fotoUrl": "/uploads/sponsor-1794178973225-3486.jpg?v=1794178973226",
+      "websiteUrl": "#",
+      "terisi": true,
+      "updatedAt": 1794178973226
+    }
+  ]
+}

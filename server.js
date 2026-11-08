@@ -29,24 +29,26 @@ app.use(express.urlencoded({ extended: true, limit: '30mb' }));
 const _fsSp = require('fs');
 const _pathSp = require('path');
 const _storeSpPath = _pathSp.join(process.cwd(), 'prisma', 'sthac-unified-store.json');
+const _dedicatedSpPath = _pathSp.join(process.cwd(), 'prisma', 'sthac-sponsors-store.json');
 const _uploadsSpDir = _pathSp.join(process.cwd(), 'public', 'uploads');
 
 function _saveSponsorBase64(dataUrl) {
-  const m = String(dataUrl || '').match(/^data:image\/([a-zA-Z0-9+.-]+);base64,(.+)$/);
+  const cleanUrl = String(dataUrl || '').split('?')[0];
+  const m = cleanUrl.match(/^data:image\/([a-zA-Z0-9+.-]+);base64,(.+)$/);
   if (!m) return dataUrl;
   let ext = m[1].toLowerCase().replace('jpeg', 'jpg').replace('svg+xml', 'svg');
   if (!['jpg', 'png', 'webp', 'gif', 'svg'].includes(ext)) ext = 'png';
   if (!_fsSp.existsSync(_uploadsSpDir)) _fsSp.mkdirSync(_uploadsSpDir, { recursive: true });
   const fileName = 'sponsor-' + Date.now() + '-' + Math.round(Math.random() * 1e4) + '.' + ext;
   _fsSp.writeFileSync(_pathSp.join(_uploadsSpDir, fileName), Buffer.from(m[2], 'base64'));
-  return '/uploads/' + fileName;
+  return '/uploads/' + fileName + '?v=' + Date.now();
 }
 
 function _readDynamicSponsors() {
   try {
-    if (_fsSp.existsSync(_storeSpPath)) {
-      const st = JSON.parse(_fsSp.readFileSync(_storeSpPath, 'utf8'));
-      const raw = Array.isArray(st.sponsors) ? st.sponsors : (Array.isArray(st.sponsorList) ? st.sponsorList : []);
+    if (_fsSp.existsSync(_dedicatedSpPath)) {
+      const spStore = JSON.parse(_fsSp.readFileSync(_dedicatedSpPath, 'utf8'));
+      const raw = Array.isArray(spStore) ? spStore : (Array.isArray(spStore.sponsors) ? spStore.sponsors : []);
       return raw
         .filter(s => s && s.fotoUrl && String(s.fotoUrl).trim().length > 2 && s.terisi !== false)
         .map((s, idx) => ({
@@ -63,14 +65,30 @@ function _readDynamicSponsors() {
   return [];
 }
 
-function _writeDynamicSponsors(list) {
-  let st = {};
-  try {
-    if (_fsSp.existsSync(_storeSpPath)) {
-      st = JSON.parse(_fsSp.readFileSync(_storeSpPath, 'utf8'));
-    }
-  } catch (e) { st = {}; }
+// Pasang Interceptor pada fs.writeFileSync agar setiap kali server.js menulis ke sthac-unified-store.json
+// (misalnya saat Edit Rider, Pelatih, Stable, Kelas, atau Skor), data sponsor di dalamnya SELALU diambil
+// dari _dedicatedSpPath terbaru dan TIDAK PERNAH tertimpa oleh memori RAM lama!
+if (!_fsSp._sthacSponsorWriteHooked) {
+  const _origWriteFileSync = _fsSp.writeFileSync.bind(_fsSp);
+  _fsSp.writeFileSync = function(filePath, data, options) {
+    try {
+      const normPath = String(filePath || '').replace(/\\/g, '/');
+      if (normPath.endsWith('sthac-unified-store.json') && typeof data === 'string') {
+        const parsed = JSON.parse(data);
+        if (parsed && typeof parsed === 'object') {
+          const latestSponsors = _readDynamicSponsors();
+          parsed.sponsors = latestSponsors;
+          parsed.sponsorList = latestSponsors;
+          data = JSON.stringify(parsed, null, 2);
+        }
+      }
+    } catch (e) {}
+    return _origWriteFileSync(filePath, data, options);
+  };
+  _fsSp._sthacSponsorWriteHooked = true;
+}
 
+function _writeDynamicSponsors(list) {
   const normalized = (list || []).map((s, idx) => ({
     id: Number(s.id) || (idx + 1),
     slotNumber: idx + 1,
@@ -78,17 +96,29 @@ function _writeDynamicSponsors(list) {
     kategori: String(s.kategori || 'Official Partner').trim(),
     fotoUrl: String(s.fotoUrl || '').trim(),
     websiteUrl: String(s.websiteUrl || '#').trim() || '#',
-    terisi: true
+    terisi: true,
+    updatedAt: Date.now()
   }));
 
-  st.sponsors = normalized;
-  st.sponsorList = normalized;
-  _fsSp.writeFileSync(_storeSpPath, JSON.stringify(st, null, 2), 'utf8');
+  // 1. Simpan ke file khusus sponsor (Single Source of Truth)
+  _fsSp.writeFileSync(_dedicatedSpPath, JSON.stringify({ sponsors: normalized }, null, 2), 'utf8');
+
+  // 2. Sinkronkan juga ke sthac-unified-store.json
+  try {
+    let st = {};
+    if (_fsSp.existsSync(_storeSpPath)) {
+      st = JSON.parse(_fsSp.readFileSync(_storeSpPath, 'utf8'));
+    }
+    st.sponsors = normalized;
+    st.sponsorList = normalized;
+    _fsSp.writeFileSync(_storeSpPath, JSON.stringify(st, null, 2), 'utf8');
+  } catch (e) {}
+
   return normalized;
 }
 
-// Endpoint khusus GET & POST Sponsor Dinamis Tanpa Batas
 app.get('/api/sthac-sponsors', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.json({ ok: true, sponsorList: _readDynamicSponsors() });
 });
 
@@ -101,7 +131,10 @@ app.post('/api/sthac-sponsors/save', (req, res) => {
     let photo = String(d.fotoUrl || d.foto || '').trim();
     if (photo.startsWith('data:image/')) {
       photo = _saveSponsorBase64(photo);
+    } else if (photo.startsWith('/uploads/')) {
+      photo = photo.split('?')[0] + '?v=' + Date.now();
     }
+
     if (!photo) {
       return res.status(400).json({ ok: false, message: 'Silakan pilih file logo/foto sponsor atau tempel URL gambar terlebih dahulu.' });
     }
@@ -130,10 +163,11 @@ app.post('/api/sthac-sponsors/save', (req, res) => {
     }
 
     const saved = _writeDynamicSponsors(list);
+    if (typeof _bumpSthacVersion === 'function') _bumpSthacVersion();
     return res.json({
       ok: true,
       success: true,
-      message: existingIdx !== -1 ? 'Data sponsor berhasil diperbarui.' : 'Sponsor baru berhasil ditambahkan ke Beranda!',
+      message: existingIdx !== -1 ? 'Data sponsor berhasil diperbarui Permanen!' : 'Sponsor baru berhasil ditambahkan ke Beranda!',
       sponsorList: saved
     });
   } catch (err) {
@@ -147,13 +181,58 @@ app.post('/api/sthac-sponsors/delete', (req, res) => {
     let list = _readDynamicSponsors();
     list = list.filter(s => Number(s.id) !== targetId && Number(s.slotNumber) !== targetId);
     const saved = _writeDynamicSponsors(list);
+    if (typeof _bumpSthacVersion === 'function') _bumpSthacVersion();
     return res.json({ ok: true, success: true, message: 'Sponsor berhasil dihapus.', sponsorList: saved });
   } catch (err) {
     return res.status(500).json({ ok: false, message: err.message });
   }
 });
 
-// Intercept res.render SEBELUM semua route agar sponsorList selalu terisi di Beranda & Panitia
+// Intercept jika ada request ke /api/panitia/crud dengan entity === 'sponsor'
+app.use((req, res, next) => {
+  try {
+    if (req.method === 'POST' && req.body && String(req.body.entity || '').toLowerCase() === 'sponsor') {
+      const action = String(req.body.action || 'create').toLowerCase();
+      const d = req.body.data || {};
+      const targetId = Number(req.body.id || d.id || d.slotNumber || 0);
+      let list = _readDynamicSponsors();
+
+      if (action === 'delete') {
+        list = list.filter(s => Number(s.id) !== targetId && Number(s.slotNumber) !== targetId);
+        const saved = _writeDynamicSponsors(list);
+        return res.json({ ok: true, success: true, message: 'Sponsor berhasil dihapus.', sponsorList: saved });
+      }
+
+      let photo = String(d.fotoUrl || d.foto || '').trim();
+      if (photo.startsWith('data:image/')) photo = _saveSponsorBase64(photo);
+      else if (photo.startsWith('/uploads/')) photo = photo.split('?')[0] + '?v=' + Date.now();
+
+      const existingIdx = targetId > 0 ? list.findIndex(s => Number(s.id) === targetId || Number(s.slotNumber) === targetId) : -1;
+      if (existingIdx !== -1) {
+        list[existingIdx].namaSponsor = String(d.namaSponsor || list[existingIdx].namaSponsor).trim();
+        list[existingIdx].kategori = String(d.kategori || list[existingIdx].kategori).trim();
+        if (photo) list[existingIdx].fotoUrl = photo;
+        list[existingIdx].websiteUrl = String(d.websiteUrl || '#').trim() || '#';
+      } else if (photo) {
+        const nextId = list.length > 0 ? Math.max(...list.map(s => Number(s.id) || 0)) + 1 : 1;
+        list.push({
+          id: nextId,
+          slotNumber: list.length + 1,
+          namaSponsor: String(d.namaSponsor || ('Sponsor #' + (list.length + 1))).trim(),
+          kategori: String(d.kategori || 'Main Sponsor').trim(),
+          fotoUrl: photo,
+          websiteUrl: String(d.websiteUrl || '#').trim() || '#',
+          terisi: true
+        });
+      }
+      const saved = _writeDynamicSponsors(list);
+      return res.json({ ok: true, success: true, message: 'Sponsor berhasil disimpan.', sponsorList: saved });
+    }
+  } catch (e) {}
+  next();
+});
+
+// Pastikan res.render selalu menyuntikkan sponsor dari file khusus _dedicatedSpPath
 app.use((req, res, next) => {
   const _origRenderTopSp = res.render.bind(res);
   res.render = function(view, locals, cb) {
@@ -170,6 +249,7 @@ app.use((req, res, next) => {
   next();
 });
 // === END DYNAMIC UNLIMITED SPONSOR ENGINE ===
+
 
 // === START STHAC CORE COMPETITION ENGINE ===
 const _fsCore = require('fs');

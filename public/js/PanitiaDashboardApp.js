@@ -683,7 +683,7 @@ class SponsorSlotManager {
   }
   async fetchAndRender() {
     try {
-      const res = await fetch('/api/sthac-sponsors');
+      const res = await fetch('/api/sthac-sponsors', { cache: 'no-store' });
       const out = await res.json();
       if (out && out.ok && Array.isArray(out.sponsorList)) {
         this.slots = out.sponsorList;

@@ -406,7 +406,7 @@
     var gridWrap = document.getElementById("public-beranda-sponsor-grid");
     if (!gridWrap) return;
 
-    fetch("/api/sthac-sponsors")
+    fetch("/api/sthac-sponsors", { cache: "no-store" })
       .then(function(r) { return r.json(); })
       .then(function(res) {
         if (!res || !res.ok || !Array.isArray(res.sponsorList)) return;
