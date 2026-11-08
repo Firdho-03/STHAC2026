@@ -410,35 +410,41 @@
       .then(function(r) { return r.json(); })
       .then(function(res) {
         if (!res || !res.ok || !Array.isArray(res.sponsorList)) return;
-        var list = res.sponsorList.filter(function(s) {
+        var active = res.sponsorList.filter(function(s) {
           return s && s.fotoUrl && String(s.fotoUrl).trim().length > 2;
         });
-        if (list.length === 0) return;
+        var totalSlots = Math.max(6, active.length);
+        var htmlCols = [];
 
-        gridWrap.innerHTML =
-          '<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3 justify-content-center">' +
-            list.map(function(sp) {
-              var hasLink = sp.websiteUrl && sp.websiteUrl !== '#';
-              return '<div class="col">' +
+        for (var i = 0; i < totalSlots; i++) {
+          var sp = active[i];
+          var slotNumStr = String(i + 1).padStart(2, '0');
+          if (sp && sp.fotoUrl) {
+            var hasLink = sp.websiteUrl && sp.websiteUrl !== '#';
+            htmlCols.push(
+              '<div class="col-6 col-sm-4 col-md-4 col-lg-2">' +
                 '<a href="' + (hasLink ? escHtml(sp.websiteUrl) : 'javascript:void(0)') + '" ' +
                    (hasLink ? 'target="_blank" rel="noopener"' : '') +
-                   ' class="sthac-card p-3 h-100 d-flex flex-column justify-content-between text-decoration-none sthac-public-sponsor-box">' +
-                  '<div class="d-flex justify-content-between align-items-center mb-2">' +
-                    '<span class="badge rounded-pill px-2 py-1 text-truncate" style="max-width: 115px; font-size: 0.62rem; background: rgba(217,180,92,0.18); color: #8C6514; border: 1px solid rgba(217,180,92,0.45);">' +
-                      escHtml(sp.kategori || 'Official Partner') +
-                    '</span>' +
-                    '<i class="bi bi-patch-check-fill text-warning" style="font-size: 0.8rem;"></i>' +
-                  '</div>' +
-                  '<div class="rounded-3 d-flex align-items-center justify-content-center my-1 overflow-hidden" style="height: 96px; background: #FFFFFF; padding: 0.55rem; border: 1px solid rgba(7,38,25,0.08);">' +
-                    '<img src="' + escHtml(sp.fotoUrl) + '" alt="' + escHtml(sp.namaSponsor) + '" style="max-height: 82px; max-width: 100%; object-fit: contain;" />' +
-                  '</div>' +
-                  '<div class="text-center mt-2 pt-1">' +
-                    '<div class="fw-bold small text-truncate">' + escHtml(sp.namaSponsor) + '</div>' +
-                  '</div>' +
+                   ' class="sthac-sponsor-slot-filled d-flex flex-column align-items-center justify-content-center text-decoration-none"' +
+                   ' title="' + escHtml(sp.namaSponsor + ' (' + (sp.kategori || 'Official Sponsor') + ')') + '">' +
+                  '<img src="' + escHtml(sp.fotoUrl) + '" alt="' + escHtml(sp.namaSponsor) + '" class="sthac-sponsor-slot-img" />' +
                 '</a>' +
-              '</div>';
-            }).join('') +
-          '</div>';
+              '</div>'
+            );
+          } else {
+            htmlCols.push(
+              '<div class="col-6 col-sm-4 col-md-4 col-lg-2">' +
+                '<div class="sthac-sponsor-slot-empty d-flex flex-column align-items-center justify-content-center text-center">' +
+                  '<span class="sthac-sponsor-slot-num mb-2">' + slotNumStr + '</span>' +
+                  '<div class="sthac-sponsor-slot-name">Slot Sponsor ' + (i + 1) + '</div>' +
+                  '<div class="sthac-sponsor-slot-tier">' + (i === 1 ? 'MAIN PARTNER' : 'OFFICIAL SPONSOR') + '</div>' +
+                '</div>' +
+              '</div>'
+            );
+          }
+        }
+
+        gridWrap.innerHTML = '<div class="row g-3 justify-content-center">' + htmlCols.join('') + '</div>';
       })
       .catch(function() {});
   }
@@ -466,5 +472,108 @@
     document.addEventListener('DOMContentLoaded', fixJadwalLinks);
   } else {
     fixJadwalLinks();
+  }
+})();
+
+// === START SCOREBOARD POIN KLASMEN COLUMN INJECTOR ===
+(function() {
+  var PTS_MAP = [10, 8, 6, 5, 4, 3, 2, 1];
+
+  function ensurePoinKlasmenColumn() {
+    document.querySelectorAll('table').forEach(function(table) {
+      // Abaikan tabel di dalam panel admin panitia
+      if (table.closest('#admin-dashboard-panel')) return;
+
+      var theadRow = table.querySelector('thead tr');
+      if (!theadRow) return;
+
+      var headers = Array.from(theadRow.querySelectorAll('th'));
+      var headerTexts = headers.map(function(th) { return (th.textContent || '').trim().toUpperCase(); });
+
+      // Hanya targetkan tabel Papan Skor Pertandingan yang memiliki POS dan TOTAL SKOR
+      var totalSkorIdx = headerTexts.indexOf('TOTAL SKOR');
+      if (headerTexts.indexOf('POS') === -1 || totalSkorIdx === -1) return;
+
+      // Cek apakah kelas ini adalah Exhibition / Qabaq
+      var card = table.closest('.sthac-card, .card, section, div');
+      var cardHeading = card ? card.querySelector('h2, h3, h4, h5') : null;
+      var isExhibition = cardHeading && /exhibition|qabaq/i.test(cardHeading.textContent || '');
+
+      // Jika header "POIN KLASMEN" belum ada, tambahkan di samping kanan "TOTAL SKOR"
+      var poinIdx = headerTexts.indexOf('POIN KLASMEN');
+      if (poinIdx === -1) {
+        var totalSkorTh = headers[totalSkorIdx];
+        var poinTh = document.createElement('th');
+        poinTh.className = totalSkorTh.className || 'text-end';
+        poinTh.classList.add('text-end');
+        poinTh.textContent = 'POIN KLASMEN';
+        if (totalSkorTh.nextSibling) {
+          theadRow.insertBefore(poinTh, totalSkorTh.nextSibling);
+        } else {
+          theadRow.appendChild(poinTh);
+        }
+      }
+
+      // Isi nilai Poin Klasmen pada setiap baris peserta berdasarkan peringkatnya
+      var rows = Array.from(table.querySelectorAll('tbody tr'));
+      rows.forEach(function(tr, rowIdx) {
+        var cells = Array.from(tr.querySelectorAll('td'));
+        if (cells.length <= 1) {
+          // Baris kosong ("Belum ada data") -> tambah colspan
+          if (cells[0] && cells[0].hasAttribute('colspan') && !tr.dataset.colspanAdjusted) {
+            tr.dataset.colspanAdjusted = '1';
+            cells[0].setAttribute('colspan', String((parseInt(cells[0].getAttribute('colspan'), 10) || 4) + 1));
+          }
+          return;
+        }
+
+        // Baca nomor peringkat dari kolom POS (misal "#1", "#2", "1")
+        var posText = (cells[0].textContent || '').replace(/[^0-9]/g, '');
+        var rankNum = parseInt(posText, 10) || (rowIdx + 1);
+        var ptsVal = (!isExhibition && rankNum >= 1 && rankNum <= PTS_MAP.length) ? PTS_MAP[rankNum - 1] : 0;
+
+        // Jika baris sudah punya badge .sthac-poin-klasmen-badge, cukup pastikan nilainya akurat
+        var existingBadge = tr.querySelector('.sthac-poin-klasmen-badge');
+        if (existingBadge) {
+          existingBadge.textContent = ptsVal + ' Pts';
+          return;
+        }
+
+        var poinTd = document.createElement('td');
+        poinTd.className = 'text-end text-nowrap';
+        poinTd.innerHTML = '<span class="sthac-poin-klasmen-badge">' + ptsVal + ' Pts</span>';
+        tr.appendChild(poinTd);
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ensurePoinKlasmenColumn);
+  } else {
+    ensurePoinKlasmenColumn();
+  }
+})();
+
+// === START KLASEMEN HEADER RENAME GUARD ===
+(function() {
+  function syncKlasemenTableHeaders() {
+    document.querySelectorAll('table thead th').forEach(function(th) {
+      var txt = (th.textContent || '').trim().toUpperCase();
+      if (txt === 'TOTAL SKOR RUN' || txt === 'SKOR LINTASAN') {
+        th.textContent = 'POIN KLASMEN';
+      } else if (txt === 'POIN KEJUARAAN' || txt === 'TOTAL POIN') {
+        // Pastikan hanya di tabel klasemen juara umum
+        var tr = th.closest('tr');
+        if (tr && /PERINGKAT/i.test(tr.textContent || '')) {
+          th.textContent = 'TOTAL';
+        }
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncKlasemenTableHeaders);
+  } else {
+    syncKlasemenTableHeaders();
   }
 })();

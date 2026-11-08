@@ -340,48 +340,52 @@
 </script>
 
 <!-- START SPONSOR & MITRA BERANDA SECTION -->
-<section class="py-5 border-top" id="sponsor-mitra" style="border-color: rgba(7,38,25,0.08) !important;">
+<section class="py-5" id="sponsor-mitra">
   <div class="container">
-    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
-      <div>
-        <span class="badge rounded-pill px-3 py-1 mb-2 fw-bold" style="background: rgba(217,180,92,0.16); color: #9A721C; border: 1px solid rgba(217,180,92,0.45); font-size: 0.72rem;">
-          <i class="bi bi-patch-check-fill me-1"></i> DUKUNGAN EKOSISTEM KEJUARAAN
+    <div class="sthac-sponsor-showcase-banner p-4 p-md-5">
+      <div class="text-center mb-4">
+        <span class="sthac-sponsor-top-pill d-inline-flex align-items-center gap-1 mb-3">
+          <i class="bi bi-stars"></i> OFFICIAL SPONSOR &amp; MITRA KEJUARAAN
         </span>
-        <h2 class="font-display fw-bold text-uppercase mb-1">SPONSOR &amp; MITRA RESMI STHAC 2026</h2>
-        <p class="text-muted sthac-section-subtext small mb-0">Terima kasih kepada seluruh sponsor, mitra strategis, dan pendukung resmi South Tangerang Horseback Archery Cup.</p>
+        <h2 class="font-display fw-bold text-uppercase mb-2 sthac-sponsor-banner-title">
+          DIDUKUNG OLEH MITRA &amp; SPONSOR RESMI
+        </h2>
+        <p class="small mb-0 mx-auto sthac-sponsor-banner-sub" style="max-width: 680px;">
+          Apresiasi setinggi-tingginya kepada para sponsor dan mitra pendukung penyelenggaraan South Tangerang Horseback Archery Cup 2026.
+        </p>
       </div>
-    </div>
 
-    <div id="public-beranda-sponsor-grid">
-      <% const activeSponsors = (typeof sponsorList !== 'undefined' && Array.isArray(sponsorList)) ? sponsorList.filter(s => s && s.fotoUrl && String(s.fotoUrl).trim().length > 2) : []; %>
-      <% if (activeSponsors.length > 0) { %>
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3 justify-content-center">
-          <% activeSponsors.forEach((sp) => { %>
-            <div class="col">
-              <a href="<%= (sp.websiteUrl && sp.websiteUrl !== '#') ? sp.websiteUrl : 'javascript:void(0)' %>"
-                 <%= (sp.websiteUrl && sp.websiteUrl !== '#') ? 'target="_blank" rel="noopener"' : '' %>
-                 class="sthac-card p-3 h-100 d-flex flex-column justify-content-between text-decoration-none sthac-public-sponsor-box">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="badge rounded-pill px-2 py-1 text-truncate" style="max-width: 115px; font-size: 0.62rem; background: rgba(217,180,92,0.18); color: #8C6514; border: 1px solid rgba(217,180,92,0.45);">
-                    <%= sp.kategori || 'Official Partner' %>
-                  </span>
-                  <i class="bi bi-patch-check-fill text-warning" style="font-size: 0.8rem;"></i>
+      <div id="public-beranda-sponsor-grid">
+        <%
+          const _activeSponsors = (typeof sponsorList !== 'undefined' && Array.isArray(sponsorList))
+            ? sponsorList.filter(s => s && s.fotoUrl && String(s.fotoUrl).trim().length > 2)
+            : [];
+          const _totalSlots = Math.max(6, _activeSponsors.length);
+        %>
+        <div class="row g-3 justify-content-center">
+          <% for (let i = 0; i < _totalSlots; i++) {
+            const sp = _activeSponsors[i];
+            const slotNumStr = String(i + 1).padStart(2, '0');
+          %>
+            <div class="col-6 col-sm-4 col-md-4 col-lg-2">
+              <% if (sp && sp.fotoUrl) { %>
+                <a href="<%= (sp.websiteUrl && sp.websiteUrl !== '#') ? sp.websiteUrl : 'javascript:void(0)' %>"
+                   <%= (sp.websiteUrl && sp.websiteUrl !== '#') ? 'target="_blank" rel="noopener"' : '' %>
+                   class="sthac-sponsor-slot-filled d-flex flex-column align-items-center justify-content-center text-decoration-none"
+                   title="<%= sp.namaSponsor %> (<%= sp.kategori || 'Official Sponsor' %>)">
+                  <img src="<%= sp.fotoUrl %>" alt="<%= sp.namaSponsor %>" class="sthac-sponsor-slot-img" />
+                </a>
+              <% } else { %>
+                <div class="sthac-sponsor-slot-empty d-flex flex-column align-items-center justify-content-center text-center">
+                  <span class="sthac-sponsor-slot-num mb-2"><%= slotNumStr %></span>
+                  <div class="sthac-sponsor-slot-name">Slot Sponsor <%= i + 1 %></div>
+                  <div class="sthac-sponsor-slot-tier"><%= i === 1 ? 'MAIN PARTNER' : 'OFFICIAL SPONSOR' %></div>
                 </div>
-                <div class="rounded-3 d-flex align-items-center justify-content-center my-1 overflow-hidden" style="height: 96px; background: #FFFFFF; padding: 0.55rem; border: 1px solid rgba(7,38,25,0.08);">
-                  <img src="<%= sp.fotoUrl %>" alt="<%= sp.namaSponsor %>" style="max-height: 82px; max-width: 100%; object-fit: contain;" />
-                </div>
-                <div class="text-center mt-2 pt-1">
-                  <div class="fw-bold small text-truncate"><%= sp.namaSponsor %></div>
-                </div>
-              </a>
+              <% } %>
             </div>
-          <% }) %>
+          <% } %>
         </div>
-      <% } else { %>
-        <div class="sthac-card p-4 text-center text-muted small">
-          Slot kemitraan dan sponsor resmi STHAC 2026 terbuka bagi instansi &amp; brand pendukung.
-        </div>
-      <% } %>
+      </div>
     </div>
   </div>
 </section>

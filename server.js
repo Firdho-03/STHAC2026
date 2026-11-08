@@ -363,6 +363,40 @@ app.use((req, res, next) => {
   next();
 });
 // === END UNIFIED STANDINGS SYNC MIDDLEWARE ===
+
+// === START SCOREBOARD POIN KLASMEN ENRICHER ===
+app.use((req, res, next) => {
+  const _origRenderSkor = res.render.bind(res);
+  res.render = function(view, locals, cb) {
+    try {
+      if (!locals || typeof locals !== 'object') locals = {};
+      const ptsTable = [10, 8, 6, 5, 4, 3, 2, 1];
+      const kelasList = Array.isArray(locals.kelasList) ? locals.kelasList : [];
+      const sbByKelas = (locals.scoreboardByKelas && typeof locals.scoreboardByKelas === 'object') ? locals.scoreboardByKelas : {};
+
+      Object.keys(sbByKelas).forEach(kId => {
+        const board = sbByKelas[kId];
+        if (!Array.isArray(board)) return;
+        const kObj = kelasList.find(k => String(k.id) === String(kId));
+        const isExhibition = kObj && /exhibition|qabaq/i.test(kObj.namaKelas || '');
+
+        board.forEach((row, idx) => {
+          if (!row || typeof row !== 'object') return;
+          const rankNum = Number(row.rank || row.pos || row.peringkat || (idx + 1));
+          const hasScore = (Number(row.totalSkor ?? row.totalScore ?? 0) > 0) || (Array.isArray(row.runs) && row.runs.length > 0);
+          const pts = (!isExhibition && hasScore && rankNum >= 1 && rankNum <= ptsTable.length)
+            ? ptsTable[rankNum - 1]
+            : (!isExhibition && rankNum >= 1 && rankNum <= ptsTable.length ? ptsTable[rankNum - 1] : 0);
+          row.poinKlasmen = pts;
+          row.poinKejuaraan = pts;
+        });
+      });
+    } catch (e) {}
+    return _origRenderSkor(view, locals, cb);
+  };
+  next();
+});
+// === END SCOREBOARD POIN KLASMEN ENRICHER ===
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Pasang rute CRUD & Penilaian Universal terlebih dahulu
