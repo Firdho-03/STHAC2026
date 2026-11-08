@@ -2563,160 +2563,263 @@ body.dark-mode .sthac-poin-klasmen-badge,
   box-shadow: 0 0 12px rgba(217, 180, 92, 0.12);
 }
 
-/* === MODEL 2 SPONSOR SHOWCASE BANNER (LIGHT & DARK SAFE) === */
-.sthac-sponsor-showcase-banner {
-  background: radial-gradient(circle at 50% 0%, #0C3826 0%, #062015 58%, #04150E 100%) !important;
-  border: 1px solid rgba(217, 180, 92, 0.35) !important;
-  border-radius: 1.5rem !important;
-  box-shadow: 0 18px 42px rgba(3, 18, 12, 0.22) !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.sthac-sponsor-top-pill {
-  background: rgba(217, 180, 92, 0.14) !important;
-  border: 1px solid rgba(217, 180, 92, 0.5) !important;
-  color: #F2D078 !important;
-  font-size: 0.7rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.06em !important;
-  padding: 0.38rem 1rem !important;
-  border-radius: 50rem !important;
-  text-transform: uppercase;
-}
-
-/* Kunci warna judul & subjudul di dalam banner agar SELALU terang di Light Mode maupun Dark Mode */
-#sponsor-mitra .sthac-sponsor-banner-title,
-html[data-theme="light"] #sponsor-mitra .sthac-sponsor-banner-title,
-html[data-theme="dark"] #sponsor-mitra .sthac-sponsor-banner-title,
-body.dark-mode #sponsor-mitra .sthac-sponsor-banner-title {
-  color: #FFFFFF !important;
-  font-size: clamp(1.45rem, 2.5vw, 2.1rem);
-  letter-spacing: 0.03em;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-}
-
-#sponsor-mitra .sthac-sponsor-banner-sub,
-html[data-theme="light"] #sponsor-mitra .sthac-sponsor-banner-sub,
-html[data-theme="dark"] #sponsor-mitra .sthac-sponsor-banner-sub,
-body.dark-mode #sponsor-mitra .sthac-sponsor-banner-sub {
-  color: #C9DDD4 !important;
-  line-height: 1.6;
-}
-
-/* Kartu Slot Terisi (Putih Bersih Seperti Gambar 2) */
-.sthac-sponsor-slot-filled {
+/* === ARENA WALK-TROT SHOWCASE (LIGHT & DARK ADAPTIVE) === */
+/* Default Light Mode: Latar Putih Bersih & Teks Gelap Tajam */
+.sthac-arena-showcase-card {
   background: #FFFFFF !important;
-  border: 2px solid rgba(255, 255, 255, 0.95) !important;
-  border-radius: 0.95rem !important;
-  height: 126px !important;
-  padding: 0.6rem !important;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18) !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  overflow: hidden;
+  border: 1px solid rgba(7, 38, 25, 0.14) !important;
+  border-radius: 1.35rem !important;
+  box-shadow: 0 14px 34px rgba(3, 18, 12, 0.06) !important;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.sthac-sponsor-slot-filled:hover {
-  transform: translateY(-3px);
-  border-color: #D9B45C !important;
-  box-shadow: 0 12px 26px rgba(217, 180, 92, 0.28) !important;
+.sthac-arena-img-col {
+  background: #F6F3E4 !important;
+  border-right: 1px solid rgba(7, 38, 25, 0.08);
 }
 
-.sthac-sponsor-slot-img {
+.sthac-arena-diagram-img {
+  max-height: 410px;
   width: 100%;
-  height: 100%;
-  max-height: 104px;
   object-fit: contain;
-  display: block;
 }
 
-/* Kartu Slot Kosong / Placeholder Bernomor (02, 03, 04, 05, 06) */
-.sthac-sponsor-slot-empty {
-  background: rgba(255, 255, 255, 0.035) !important;
-  border: 1px solid rgba(217, 180, 92, 0.22) !important;
-  border-radius: 0.95rem !important;
-  height: 126px !important;
-  padding: 0.75rem 0.5rem !important;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.sthac-sponsor-slot-empty:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border-color: rgba(217, 180, 92, 0.45) !important;
-}
-
-.sthac-sponsor-slot-num {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+.sthac-arena-badge-ihaa {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border-radius: 50rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   background: rgba(217, 180, 92, 0.2) !important;
-  border: 1px solid rgba(217, 180, 92, 0.45) !important;
-  color: #F2D078 !important;
+  color: #7A5610 !important;
+  border: 1px solid rgba(217, 180, 92, 0.5) !important;
+}
+
+.sthac-arena-badge-circle {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border-radius: 50rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: rgba(16, 124, 79, 0.12) !important;
+  color: #0B5C3B !important;
+  border: 1px solid rgba(16, 124, 79, 0.32) !important;
+}
+
+#section-arena-lapangan-beranda .sthac-arena-title {
+  color: #072619 !important;
+  font-size: clamp(1.5rem, 2.2vw, 1.95rem);
+  letter-spacing: 0.02em;
+}
+
+.sthac-arena-specs-box {
+  background: rgba(7, 38, 25, 0.035) !important;
+  border: 1px solid rgba(7, 38, 25, 0.12) !important;
+}
+
+.sthac-arena-meta-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8C6514 !important;
+  margin-bottom: 0.25rem;
+}
+
+.sthac-arena-meta-val {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #072619 !important;
+}
+
+.sthac-arena-used-val {
+  font-size: 1.02rem;
+  color: #2E473D !important;
+}
+
+.sthac-arena-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding: 0.58rem 1.25rem;
+  border-radius: 50rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  font-size: 0.74rem;
+  background: rgba(7, 38, 25, 0.05) !important;
+  color: #072619 !important;
+  border: 1px solid rgba(7, 38, 25, 0.18) !important;
+  transition: all 0.2s ease;
 }
 
-.sthac-sponsor-slot-name {
+.sthac-arena-action-btn:hover {
+  background: #072619 !important;
   color: #FFFFFF !important;
-  font-weight: 700;
-  font-size: 0.8rem;
-  line-height: 1.25;
-  margin-bottom: 2px;
+  border-color: #072619 !important;
 }
 
-.sthac-sponsor-slot-tier {
-  color: #8FA99D !important;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+/* ==================== DARK MODE OVERRIDES (PERSIS GAMBAR 2) ==================== */
+html[data-theme="dark"] .sthac-arena-showcase-card,
+body.dark-mode .sthac-arena-showcase-card,
+.dark .sthac-arena-showcase-card {
+  background: linear-gradient(165deg, #072318 0%, #04150E 100%) !important;
+  border: 1px solid rgba(217, 180, 92, 0.32) !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35) !important;
 }
 
-/* === ADAPTIVE LIGHT/DARK SPONSOR BANNER & TRANSPARENT LOGO === */
-/* Default Light Mode: Banner Putih Bersih */
-.sthac-sponsor-showcase-banner {
+html[data-theme="dark"] .sthac-arena-img-col,
+body.dark-mode .sthac-arena-img-col,
+.dark .sthac-arena-img-col {
+  background: #F6F3E4 !important;
+  border-right: 1px solid rgba(217, 180, 92, 0.2);
+}
+
+html[data-theme="dark"] .sthac-arena-badge-ihaa,
+body.dark-mode .sthac-arena-badge-ihaa,
+.dark .sthac-arena-badge-ihaa {
+  background: rgba(217, 180, 92, 0.16) !important;
+  color: #D9B45C !important;
+  border: 1px solid rgba(217, 180, 92, 0.38) !important;
+}
+
+html[data-theme="dark"] .sthac-arena-badge-circle,
+body.dark-mode .sthac-arena-badge-circle,
+.dark .sthac-arena-badge-circle {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #6EE7B7 !important;
+  border: 1px solid rgba(110, 231, 183, 0.32) !important;
+}
+
+html[data-theme="dark"] #section-arena-lapangan-beranda .sthac-arena-title,
+body.dark-mode #section-arena-lapangan-beranda .sthac-arena-title,
+.dark #section-arena-lapangan-beranda .sthac-arena-title {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .sthac-arena-specs-box,
+body.dark-mode .sthac-arena-specs-box,
+.dark .sthac-arena-specs-box {
+  background: rgba(255, 255, 255, 0.025) !important;
+  border: 1px solid rgba(217, 180, 92, 0.24) !important;
+}
+
+html[data-theme="dark"] .sthac-arena-meta-label,
+body.dark-mode .sthac-arena-meta-label,
+.dark .sthac-arena-meta-label {
+  color: #C5A358 !important;
+}
+
+html[data-theme="dark"] .sthac-arena-meta-val,
+body.dark-mode .sthac-arena-meta-val,
+.dark .sthac-arena-meta-val {
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .sthac-arena-used-val,
+body.dark-mode .sthac-arena-used-val,
+.dark .sthac-arena-used-val {
+  color: #B8CEC4 !important;
+}
+
+html[data-theme="dark"] .sthac-arena-action-btn,
+body.dark-mode .sthac-arena-action-btn,
+.dark .sthac-arena-action-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(217, 180, 92, 0.28) !important;
+}
+
+html[data-theme="dark"] .sthac-arena-action-btn:hover,
+body.dark-mode .sthac-arena-action-btn:hover,
+.dark .sthac-arena-action-btn:hover {
+  background: #D9B45C !important;
+  color: #04150E !important;
+  border-color: #D9B45C !important;
+}
+
+/* === SPONSOR DYNAMIC CENTERED & LIGHT-DARK FIX === */
+/* 1. MODE LIGHT (DEFAULT): Kartu Putih Bersih & Teks Hijau Tua Kontras Tinggi */
+#sponsor-mitra .sthac-sponsor-showcase-banner,
+html[data-theme="light"] #sponsor-mitra .sthac-sponsor-showcase-banner {
   background: #FFFFFF !important;
   border: 1px solid rgba(7, 38, 25, 0.12) !important;
   border-radius: 1.5rem !important;
-  box-shadow: 0 16px 36px rgba(3, 18, 12, 0.07) !important;
+  box-shadow: 0 14px 36px rgba(3, 18, 12, 0.06) !important;
   position: relative;
   overflow: hidden;
-  transition: background 0.3s ease, border-color 0.3s ease;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.sthac-sponsor-top-pill {
-  background: rgba(217, 180, 92, 0.15) !important;
-  border: 1px solid rgba(217, 180, 92, 0.45) !important;
-  color: #8C6514 !important;
-  font-size: 0.7rem !important;
+#sponsor-mitra .sthac-sponsor-top-pill,
+html[data-theme="light"] #sponsor-mitra .sthac-sponsor-top-pill {
+  background: rgba(217, 180, 92, 0.16) !important;
+  border: 1px solid rgba(180, 138, 44, 0.45) !important;
+  color: #7A5610 !important;
+  font-size: 0.72rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.06em !important;
-  padding: 0.38rem 1rem !important;
+  padding: 0.38rem 1.05rem !important;
   border-radius: 50rem !important;
   text-transform: uppercase;
 }
 
-#sponsor-mitra .sthac-sponsor-banner-title {
+#sponsor-mitra .sthac-sponsor-banner-title,
+html[data-theme="light"] #sponsor-mitra .sthac-sponsor-banner-title {
   color: #072619 !important;
-  font-size: clamp(1.45rem, 2.5vw, 2.1rem);
+  font-size: clamp(1.5rem, 2.5vw, 2.15rem);
   letter-spacing: 0.03em;
+  text-shadow: none !important;
 }
 
-#sponsor-mitra .sthac-sponsor-banner-sub {
-  color: #5A7065 !important;
+#sponsor-mitra .sthac-sponsor-banner-sub,
+html[data-theme="light"] #sponsor-mitra .sthac-sponsor-banner-sub {
+  color: #4A6358 !important;
+  font-size: 0.92rem;
   line-height: 1.6;
 }
 
-/* Kartu Slot Terisi: Latar Transparan Tanpa Kotak Putih, Logo Menyatu Natural */
+/* 2. TATA LETAK FLEXBOX DINAMIS (OTOMATIS RATA TENGAH SESUAI JUMLAH SPONSOR) */
+.sthac-sponsor-dynamic-flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.15rem;
+  width: 100%;
+}
+
+.sthac-sponsor-flex-item {
+  flex: 0 1 210px;
+  width: 210px;
+  max-width: calc(50% - 0.6rem);
+}
+
+/* Jika hanya 1 atau 2 sponsor, berikan ukuran sedikit lebih lega di tengah */
+.sthac-sponsor-dynamic-flex[data-count="1"] .sthac-sponsor-flex-item {
+  flex: 0 1 250px;
+  width: 250px;
+  max-width: 100%;
+}
+
+.sthac-sponsor-dynamic-flex[data-count="2"] .sthac-sponsor-flex-item {
+  flex: 0 1 230px;
+  width: 230px;
+}
+
+@media (min-width: 576px) {
+  .sthac-sponsor-flex-item {
+    max-width: 230px;
+  }
+}
+
+/* Kartu Logo Sponsor (Tanpa Kotak Putih Kaku, Menyatu Natural) */
 .sthac-sponsor-slot-filled {
-  background: rgba(7, 38, 25, 0.035) !important;
+  background: rgba(7, 38, 25, 0.03) !important;
   border: 1px solid rgba(7, 38, 25, 0.1) !important;
-  border-radius: 0.95rem !important;
-  height: 126px !important;
-  padding: 0.6rem !important;
+  border-radius: 1rem !important;
+  height: 132px !important;
+  padding: 0.65rem 0.85rem !important;
   box-shadow: none !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
   overflow: hidden;
@@ -2724,76 +2827,31 @@ body.dark-mode #sponsor-mitra .sthac-sponsor-banner-sub {
 
 .sthac-sponsor-slot-filled:hover {
   transform: translateY(-3px);
-  background: #FFFFFF !important;
+  background: rgba(217, 180, 92, 0.08) !important;
   border-color: #D9B45C !important;
-  box-shadow: 0 10px 24px rgba(217, 180, 92, 0.22) !important;
+  box-shadow: 0 10px 24px rgba(7, 38, 25, 0.08) !important;
 }
 
 .sthac-sponsor-slot-img {
   width: 100%;
   height: 100%;
-  max-height: 104px;
+  max-height: 108px;
   object-fit: contain;
   display: block;
 }
 
-/* Kartu Slot Kosong / Placeholder Bernomor */
-.sthac-sponsor-slot-empty {
-  background: rgba(7, 38, 25, 0.025) !important;
-  border: 1px dashed rgba(7, 38, 25, 0.15) !important;
-  border-radius: 0.95rem !important;
-  height: 126px !important;
-  padding: 0.75rem 0.5rem !important;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-
-.sthac-sponsor-slot-empty:hover {
-  background: rgba(7, 38, 25, 0.05) !important;
-  border-color: rgba(217, 180, 92, 0.45) !important;
-}
-
-.sthac-sponsor-slot-num {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: rgba(217, 180, 92, 0.2) !important;
-  border: 1px solid rgba(217, 180, 92, 0.45) !important;
-  color: #8C6514 !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.74rem;
-}
-
-.sthac-sponsor-slot-name {
-  color: #072619 !important;
-  font-weight: 700;
-  font-size: 0.8rem;
-  line-height: 1.25;
-  margin-bottom: 2px;
-}
-
-.sthac-sponsor-slot-tier {
-  color: #5A7065 !important;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-/* ==================== DARK MODE OVERRIDES ==================== */
-html[data-theme="dark"] .sthac-sponsor-showcase-banner,
-body.dark-mode .sthac-sponsor-showcase-banner,
-.dark .sthac-sponsor-showcase-banner {
+/* 3. MODE DARK OVERRIDES: Banner Hijau Zamrud Gelap & Teks Putih Terang */
+html[data-theme="dark"] #sponsor-mitra .sthac-sponsor-showcase-banner,
+body.dark-mode #sponsor-mitra .sthac-sponsor-showcase-banner,
+.dark #sponsor-mitra .sthac-sponsor-showcase-banner {
   background: radial-gradient(circle at 50% 0%, #0C3826 0%, #062015 58%, #04150E 100%) !important;
   border: 1px solid rgba(217, 180, 92, 0.35) !important;
-  box-shadow: 0 18px 42px rgba(3, 18, 12, 0.22) !important;
+  box-shadow: 0 18px 42px rgba(3, 18, 12, 0.28) !important;
 }
 
-html[data-theme="dark"] .sthac-sponsor-top-pill,
-body.dark-mode .sthac-sponsor-top-pill,
-.dark .sthac-sponsor-top-pill {
+html[data-theme="dark"] #sponsor-mitra .sthac-sponsor-top-pill,
+body.dark-mode #sponsor-mitra .sthac-sponsor-top-pill,
+.dark #sponsor-mitra .sthac-sponsor-top-pill {
   background: rgba(217, 180, 92, 0.14) !important;
   border: 1px solid rgba(217, 180, 92, 0.5) !important;
   color: #F2D078 !important;
@@ -2803,7 +2861,7 @@ html[data-theme="dark"] #sponsor-mitra .sthac-sponsor-banner-title,
 body.dark-mode #sponsor-mitra .sthac-sponsor-banner-title,
 .dark #sponsor-mitra .sthac-sponsor-banner-title {
   color: #FFFFFF !important;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35) !important;
 }
 
 html[data-theme="dark"] #sponsor-mitra .sthac-sponsor-banner-sub,
@@ -2812,43 +2870,17 @@ body.dark-mode #sponsor-mitra .sthac-sponsor-banner-sub,
   color: #C9DDD4 !important;
 }
 
-html[data-theme="dark"] .sthac-sponsor-slot-filled,
-body.dark-mode .sthac-sponsor-slot-filled,
-.dark .sthac-sponsor-slot-filled {
-  background: rgba(255, 255, 255, 0.035) !important;
+html[data-theme="dark"] #sponsor-mitra .sthac-sponsor-slot-filled,
+body.dark-mode #sponsor-mitra .sthac-sponsor-slot-filled,
+.dark #sponsor-mitra .sthac-sponsor-slot-filled {
+  background: rgba(255, 255, 255, 0.04) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
-html[data-theme="dark"] .sthac-sponsor-slot-filled:hover,
-body.dark-mode .sthac-sponsor-slot-filled:hover,
-.dark .sthac-sponsor-slot-filled:hover {
+html[data-theme="dark"] #sponsor-mitra .sthac-sponsor-slot-filled:hover,
+body.dark-mode #sponsor-mitra .sthac-sponsor-slot-filled:hover,
+.dark #sponsor-mitra .sthac-sponsor-slot-filled:hover {
   background: rgba(255, 255, 255, 0.08) !important;
   border-color: #D9B45C !important;
-}
-
-html[data-theme="dark"] .sthac-sponsor-slot-empty,
-body.dark-mode .sthac-sponsor-slot-empty,
-.dark .sthac-sponsor-slot-empty {
-  background: rgba(255, 255, 255, 0.025) !important;
-  border: 1px dashed rgba(217, 180, 92, 0.22) !important;
-}
-
-html[data-theme="dark"] .sthac-sponsor-slot-num,
-body.dark-mode .sthac-sponsor-slot-num,
-.dark .sthac-sponsor-slot-num {
-  background: rgba(217, 180, 92, 0.2) !important;
-  border: 1px solid rgba(217, 180, 92, 0.45) !important;
-  color: #F2D078 !important;
-}
-
-html[data-theme="dark"] .sthac-sponsor-slot-name,
-body.dark-mode .sthac-sponsor-slot-name,
-.dark .sthac-sponsor-slot-name {
-  color: #FFFFFF !important;
-}
-
-html[data-theme="dark"] .sthac-sponsor-slot-tier,
-body.dark-mode .sthac-sponsor-slot-tier,
-.dark .sthac-sponsor-slot-tier {
-  color: #8FA99D !important;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28) !important;
 }

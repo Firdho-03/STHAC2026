@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 540" width="100%" height="100%">
+  <defs>
+    <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#E2DEC9" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="680" height="540" rx="14" fill="#F6F3E4"/>
+  <rect width="680" height="540" rx="14" fill="url(#grid)"/>
+  <text x="340" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="17" fill="#232323">MODIFIKASI LINTASAN 30M DALAM PADDOCK 20m x 20m</text>
+  <text x="340" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-weight="600" font-size="14" fill="#3A3A3A">(Target Menghadap ke Lintasan)</text>
+  <!-- Penanda Ukuran 20m Atas & Kiri -->
+  <line x1="125" y1="84" x2="310" y2="84" stroke="#4A4A4A" stroke-width="2"/>
+  <line x1="370" y1="84" x2="555" y2="84" stroke="#4A4A4A" stroke-width="2"/>
+  <line x1="125" y1="78" x2="125" y2="90" stroke="#4A4A4A" stroke-width="2"/>
+  <line x1="555" y1="78" x2="555" y2="90" stroke="#4A4A4A" stroke-width="2"/>
+  <text x="340" y="89" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="14" fill="#333">20m</text>
+  <line x1="95" y1="105" x2="95" y2="275" stroke="#4A4A4A" stroke-width="2"/>
+  <line x1="95" y1="325" x2="95" y2="490" stroke="#4A4A4A" stroke-width="2"/>
+  <line x1="89" y1="105" x2="101" y2="105" stroke="#4A4A4A" stroke-width="2"/>
+  <line x1="89" y1="490" x2="101" y2="490" stroke="#4A4A4A" stroke-width="2"/>
+  <text x="95" y="305" text-anchor="middle" transform="rotate(-90, 95, 305)" font-family="Arial, sans-serif" font-weight="700" font-size="14" fill="#333">20m</text>
+  <!-- Area Pasir Paddock 20m x 20m -->
+  <rect x="125" y="105" width="430" height="385" fill="#C9A679" stroke="#5C3A21" stroke-width="10" rx="4"/>
+  <!-- Jalur Lengkung Lintasan 30m -->
+  <path d="M 162 475 L 162 290 A 178 165 0 0 1 518 290 L 518 475" fill="none" stroke="#F5E9C9" stroke-width="48" stroke-linecap="round"/>
+  <!-- Highlight Hijau Lintasan Melengkung -->
+  <path d="M 162 365 A 178 165 0 0 1 518 365" fill="none" stroke="#18E299" stroke-width="26" stroke-linecap="round" opacity="0.88"/>
+  <line x1="138" y1="365" x2="186" y2="365" stroke="#18E299" stroke-width="18" stroke-linecap="round"/>
+  <line x1="494" y1="365" x2="542" y2="365" stroke="#18E299" stroke-width="18" stroke-linecap="round"/>
+  <!-- 3 Target Panahan Menghadap ke Lintasan -->
+  <!-- Target Tengah -->
+  <g transform="translate(340, 260)">
+    <line x1="0" y1="-28" x2="0" y2="-52" stroke="#222" stroke-width="2" stroke-dasharray="3,3"/>
+    <circle cx="0" cy="0" r="24" fill="#1E6B9B" stroke="#FFFFFF" stroke-width="3"/>
+    <circle cx="0" cy="0" r="14" fill="#D93829"/>
+    <circle cx="0" cy="0" r="6" fill="#F2C94C"/>
+  </g>
+  <!-- Target Kiri -->
+  <g transform="translate(262, 292) rotate(-25)">
+    <circle cx="0" cy="0" r="23" fill="#1E6B9B" stroke="#FFFFFF" stroke-width="3"/>
+    <circle cx="0" cy="0" r="13" fill="#D93829"/>
+    <circle cx="0" cy="0" r="6" fill="#F2C94C"/>
+  </g>
+  <!-- Target Kanan -->
+  <g transform="translate(418, 292) rotate(25)">
+    <circle cx="0" cy="0" r="23" fill="#1E6B9B" stroke="#FFFFFF" stroke-width="3"/>
+    <circle cx="0" cy="0" r="13" fill="#D93829"/>
+    <circle cx="0" cy="0" r="6" fill="#F2C94C"/>
+  </g>
+  <!-- Teks Keterangan Tengah -->
+  <text x="340" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="13" fill="#2B2118">SANGAT PENTING:</text>
+  <text x="340" y="369" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="13" fill="#2B2118">Area Target Panah</text>
+  <text x="340" y="428" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="14" fill="#2B2118">Lintasan Melengkung</text>
+  <text x="340" y="446" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#3B2E22">(Horseback Archery)</text>
+  <!-- Bendera Start & Finish -->
+  <polygon points="145,442 165,448 145,454" fill="#E02424"/>
+  <line x1="145" y1="442" x2="145" y2="475" stroke="#222" stroke-width="2.5"/>
+  <polygon points="515,442 535,448 515,454" fill="#E02424"/>
+  <line x1="515" y1="442" x2="515" y2="475" stroke="#222" stroke-width="2.5"/>
+  <text x="162" y="512" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="13" fill="#222">Start</text>
+  <text x="162" y="528" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#444">(0m)</text>
+  <text x="518" y="512" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="13" fill="#222">Finish</text>
+  <text x="518" y="528" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#444">(30m)</text>
+  <path d="M 190 508 Q 340 535 490 508" fill="none" stroke="#444" stroke-width="1.5" stroke-dasharray="4,4"/>
+  <text x="340" y="532" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="13" fill="#333">Panjang Lintasan ~30m</text>
+</svg>

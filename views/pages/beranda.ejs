@@ -211,6 +211,81 @@
     <!-- END KELAS PADA SERI 1 SECTION -->
   </div>
 </section>
+<!-- START ARENA LAPANGAN WALK-TROT SECTION -->
+<section class="py-4" id="section-arena-lapangan-beranda">
+  <div class="container">
+    <%
+      const _lintasanArr = (typeof lintasanList !== "undefined" && Array.isArray(lintasanList) && lintasanList.length > 0)
+        ? lintasanList
+        : [{
+            id: 1,
+            namaLintasan: "ARENA WALK-TROT",
+            sistem: "IHAA",
+            tipeLintasan: "CIRCLE",
+            panjangMeter: 30,
+            jumlahTarget: 3,
+            parTime: 0,
+            dipakaiPada: "Beginner ( Walk )"
+          }];
+      const _mainArena = _lintasanArr[0];
+      const _arenaImg = _mainArena.fotoUrl || _mainArena.gambar || "/images/desain-lintasan-30m.svg";
+      const _waktuLabel = (_mainArena.parTime && Number(_mainArena.parTime) > 0) ? (_mainArena.parTime + " detik") : "Tanpa waktu";
+    %>
+    <div class="sthac-arena-showcase-card overflow-hidden">
+      <div class="row g-0 align-items-stretch">
+        <!-- Kiri: Gambar Skema Modifikasi Lintasan 30m dalam Paddock 20m x 20m -->
+        <div class="col-lg-7 sthac-arena-img-col d-flex align-items-center justify-content-center p-3 p-md-4">
+          <img src="<%= _arenaImg %>" alt="Skema <%= _mainArena.namaLintasan || 'ARENA WALK-TROT' %>" class="img-fluid rounded-3 sthac-arena-diagram-img" />
+        </div>
+
+        <!-- Kanan: Spesifikasi Arena Walk-Trot (Adaptif Mode Light & Dark) -->
+        <div class="col-lg-5 p-4 p-xl-5 d-flex flex-column justify-content-center sthac-arena-info-col">
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="sthac-arena-badge-ihaa"><%= _mainArena.sistem || "IHAA" %></span>
+            <span class="sthac-arena-badge-circle"><%= _mainArena.tipeLintasan || "CIRCLE" %></span>
+          </div>
+
+          <h3 class="font-display fw-bold text-uppercase mb-4 sthac-arena-title">
+            <%= _mainArena.namaLintasan || "ARENA WALK-TROT" %>
+          </h3>
+
+          <div class="sthac-arena-specs-box p-3 rounded-3 mb-4">
+            <div class="row g-2 text-start">
+              <div class="col-4">
+                <div class="sthac-arena-meta-label">PANJANG</div>
+                <div class="sthac-arena-meta-val"><%= _mainArena.panjangMeter || 30 %> m</div>
+              </div>
+              <div class="col-4">
+                <div class="sthac-arena-meta-label">TARGET</div>
+                <div class="sthac-arena-meta-val"><%= _mainArena.jumlahTarget || 3 %></div>
+              </div>
+              <div class="col-4">
+                <div class="sthac-arena-meta-label">WAKTU</div>
+                <div class="sthac-arena-meta-val"><%= _waktuLabel %></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="sthac-arena-meta-label mb-1">DIPAKAI PADA</div>
+            <div class="sthac-arena-used-val fw-semibold"><%= _mainArena.dipakaiPada || "Beginner ( Walk )" %></div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mt-1">
+            <a href="<%= _arenaImg %>" target="_blank" rel="noopener" class="sthac-arena-action-btn text-decoration-none">
+              Buka gambar penuh
+            </a>
+            <a href="/event" class="sthac-arena-action-btn text-decoration-none">
+              Aturan penilaian
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- END ARENA LAPANGAN WALK-TROT SECTION -->
+
 <section class="py-5" id="section-poin-kejuaraan-beranda">
   <div class="container">
     <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
@@ -334,34 +409,28 @@
 
       <div id="public-beranda-sponsor-grid">
         <%
-          const _activeSponsors = (typeof sponsorList !== 'undefined' && Array.isArray(sponsorList))
+          const _activeSponsors = (typeof sponsorList !== "undefined" && Array.isArray(sponsorList))
             ? sponsorList.filter(s => s && s.fotoUrl && String(s.fotoUrl).trim().length > 2)
             : [];
-          const _totalSlots = Math.max(6, _activeSponsors.length);
         %>
-        <div class="row g-3 justify-content-center">
-          <% for (let i = 0; i < _totalSlots; i++) {
-            const sp = _activeSponsors[i];
-            const slotNumStr = String(i + 1).padStart(2, '0');
-          %>
-            <div class="col-6 col-sm-4 col-md-4 col-lg-2">
-              <% if (sp && sp.fotoUrl) { %>
+        <% if (_activeSponsors.length > 0) { %>
+          <div class="sthac-sponsor-dynamic-flex" data-count="<%= _activeSponsors.length %>">
+            <% _activeSponsors.forEach((sp) => { %>
+              <div class="sthac-sponsor-flex-item">
                 <a href="<%= (sp.websiteUrl && sp.websiteUrl !== '#') ? sp.websiteUrl : 'javascript:void(0)' %>"
-                   <%= (sp.websiteUrl && sp.websiteUrl !== '#') ? 'target="_blank" rel="noopener"' : '' %>
+                   <%= (sp.websiteUrl && sp.websiteUrl !== "#") ? 'target="_blank" rel="noopener"' : "" %>
                    class="sthac-sponsor-slot-filled d-flex flex-column align-items-center justify-content-center text-decoration-none"
                    title="<%= sp.namaSponsor %> (<%= sp.kategori || 'Official Sponsor' %>)">
                   <img src="<%= sp.fotoUrl %>" alt="<%= sp.namaSponsor %>" class="sthac-sponsor-slot-img" />
                 </a>
-              <% } else { %>
-                <div class="sthac-sponsor-slot-empty d-flex flex-column align-items-center justify-content-center text-center">
-                  <span class="sthac-sponsor-slot-num mb-2"><%= slotNumStr %></span>
-                  <div class="sthac-sponsor-slot-name">Slot Sponsor <%= i + 1 %></div>
-                  <div class="sthac-sponsor-slot-tier"><%= i === 1 ? 'MAIN PARTNER' : 'OFFICIAL SPONSOR' %></div>
-                </div>
-              <% } %>
-            </div>
-          <% } %>
-        </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <div class="text-center py-3 sthac-sponsor-banner-sub small">
+            Slot kemitraan dan sponsor resmi STHAC 2026 terbuka bagi instansi &amp; brand pendukung.
+          </div>
+        <% } %>
       </div>
     </div>
   </div>

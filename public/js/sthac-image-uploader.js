@@ -403,48 +403,35 @@
   }
 
   function syncPublicBerandaSponsors() {
-    var gridWrap = document.getElementById('public-beranda-sponsor-grid');
+    var gridWrap = document.getElementById("public-beranda-sponsor-grid");
     if (!gridWrap) return;
 
-    fetch('/api/sthac-sponsors')
+    fetch("/api/sthac-sponsors")
       .then(function(r) { return r.json(); })
       .then(function(res) {
         if (!res || !res.ok || !Array.isArray(res.sponsorList)) return;
         var active = res.sponsorList.filter(function(s) {
           return s && s.fotoUrl && String(s.fotoUrl).trim().length > 2;
         });
-        var totalSlots = Math.max(6, active.length);
-        var htmlCols = [];
 
-        for (var i = 0; i < totalSlots; i++) {
-          var sp = active[i];
-          var slotNumStr = String(i + 1).padStart(2, '0');
-          if (sp && sp.fotoUrl) {
-            var hasLink = sp.websiteUrl && sp.websiteUrl !== '#';
-            htmlCols.push(
-              '<div class="col-6 col-sm-4 col-md-4 col-lg-2">' +
-                '<a href="' + (hasLink ? escHtml(sp.websiteUrl) : 'javascript:void(0)') + '" ' +
-                   (hasLink ? 'target="_blank" rel="noopener"' : '') +
-                   ' class="sthac-sponsor-slot-filled d-flex flex-column align-items-center justify-content-center text-decoration-none"' +
-                   ' title="' + escHtml(sp.namaSponsor + ' (' + (sp.kategori || 'Official Sponsor') + ')') + '">' +
-                  '<img src="' + escHtml(sp.fotoUrl) + '" alt="' + escHtml(sp.namaSponsor) + '" class="sthac-sponsor-slot-img" />' +
-                '</a>' +
-              '</div>'
-            );
-          } else {
-            htmlCols.push(
-              '<div class="col-6 col-sm-4 col-md-4 col-lg-2">' +
-                '<div class="sthac-sponsor-slot-empty d-flex flex-column align-items-center justify-content-center text-center">' +
-                  '<span class="sthac-sponsor-slot-num mb-2">' + slotNumStr + '</span>' +
-                  '<div class="sthac-sponsor-slot-name">Slot Sponsor ' + (i + 1) + '</div>' +
-                  '<div class="sthac-sponsor-slot-tier">' + (i === 1 ? 'MAIN PARTNER' : 'OFFICIAL SPONSOR') + '</div>' +
-                '</div>' +
-              '</div>'
-            );
-          }
+        if (active.length === 0) {
+          gridWrap.innerHTML = '<div class="text-center py-3 sthac-sponsor-banner-sub small">Slot kemitraan dan sponsor resmi STHAC 2026 terbuka bagi instansi &amp; brand pendukung.</div>';
+          return;
         }
 
-        gridWrap.innerHTML = '<div class="row g-3 justify-content-center">' + htmlCols.join('') + '</div>';
+        var itemsHtml = active.map(function(sp) {
+          var hasLink = sp.websiteUrl && sp.websiteUrl !== "#";
+          return '<div class="sthac-sponsor-flex-item">' +
+            '<a href="' + (hasLink ? escHtml(sp.websiteUrl) : "javascript:void(0)") + '" ' +
+               (hasLink ? 'target="_blank" rel="noopener"' : "") +
+               ' class="sthac-sponsor-slot-filled d-flex flex-column align-items-center justify-content-center text-decoration-none"' +
+               ' title="' + escHtml(sp.namaSponsor + " (" + (sp.kategori || "Official Sponsor") + ")") + '">' +
+              '<img src="' + escHtml(sp.fotoUrl) + '" alt="' + escHtml(sp.namaSponsor) + '" class="sthac-sponsor-slot-img" />' +
+            '</a>' +
+          '</div>';
+        }).join("");
+
+        gridWrap.innerHTML = '<div class="sthac-sponsor-dynamic-flex" data-count="' + active.length + '">' + itemsHtml + '</div>';
       })
       .catch(function() {});
   }
