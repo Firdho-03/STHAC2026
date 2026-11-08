@@ -8,7 +8,7 @@
       "fotoUrl": "/uploads/sponsor-1794178919407-2118.png?v=1794178919408",
       "websiteUrl": "#",
       "terisi": true,
-      "updatedAt": 1794178973226
+      "updatedAt": 1794179717876
     },
     {
       "id": 2,
@@ -18,7 +18,7 @@
       "fotoUrl": "/uploads/member-1794030247970-3501.png",
       "websiteUrl": "#",
       "terisi": true,
-      "updatedAt": 1794178973226
+      "updatedAt": 1794179717876
     },
     {
       "id": 3,
@@ -28,7 +28,27 @@
       "fotoUrl": "/uploads/sponsor-1794178973225-3486.jpg?v=1794178973226",
       "websiteUrl": "#",
       "terisi": true,
-      "updatedAt": 1794178973226
+      "updatedAt": 1794179717876
+    },
+    {
+      "id": 4,
+      "slotNumber": 4,
+      "namaSponsor": "kampret",
+      "kategori": "Community Partner",
+      "fotoUrl": "/uploads/sponsor-1794179653782-1196.png?v=1794179653784",
+      "websiteUrl": "#",
+      "terisi": true,
+      "updatedAt": 1794179717876
+    },
+    {
+      "id": 5,
+      "slotNumber": 5,
+      "namaSponsor": "Test",
+      "kategori": "Supporting Partner",
+      "fotoUrl": "/uploads/sponsor-1794179717875-6402.png?v=1794179717876",
+      "websiteUrl": "#",
+      "terisi": true,
+      "updatedAt": 1794179717876
     }
   ]
 }
